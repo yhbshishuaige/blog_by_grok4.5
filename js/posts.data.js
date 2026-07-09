@@ -28,6 +28,6 @@ export const posts = [
 <p>那就这样——<em>Hello World</em>，我们下次见。</p>
 <h2>配图示例</h2>
 <p>把图片放进项目根目录的 <code>img/</code> 文件夹，在 Markdown 里这样写（路径相对站点根）：</p>
-<p class="article-figure"><img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" /></p>`,
+<p>千山鸟飞绝,万径人踪灭 <img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" /></p>`,
   }
 ];
