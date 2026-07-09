@@ -47,6 +47,4 @@ console.log("Hello, Weather World! ☀️🌧️❄️☁️");
 
 把图片放进项目根目录的 `img/` 文件夹，在 Markdown 里这样写（路径相对站点根）：
 
-```md
 ![千山鸟飞绝,万径人踪灭](img/a.jpg)
-```
