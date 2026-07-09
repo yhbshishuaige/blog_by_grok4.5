@@ -1,8 +1,29 @@
 # Weather Blog · 天气博客
 
 带**天气粒子**、**24 小时天空**和**丝滑页面转场**的静态博客。  
-项目路径：`/home/loo/work/grok5.4`  
-技术栈：纯 HTML / CSS / ES Modules，无构建步骤，打开即用。
+技术栈：纯 HTML / CSS / ES Modules（构建脚本仅用 Node 内置模块，**无需 `npm install`**）。
+
+---
+
+## 写文章只需三步（推荐）
+
+```text
+posts/某篇文章.md   +   img/配图.jpg   →   git push   →   线上博客自动更新
+```
+
+| 步骤 | 做什么 |
+|------|--------|
+| ① 写 | 在 `posts/` 新建 Markdown（或 `npm run new -- "标题" my-slug`） |
+| ② 图 | 图片放进 `img/`，正文里写 `![说明](img/文件名.jpg)` |
+| ③ 发 | `git add posts/ img/ && git commit -m "…" && git push` |
+
+- **本地预览**：`npm start` → http://127.0.0.1:3456/（会先自动 `build`）
+- **边写边编**：另开终端 `npm run watch`（改 `posts/*.md` 自动生成列表数据）
+- **提交时自动 build**（推荐一次启用）：`npm run hooks`  
+  之后只要改了 `posts/`，`git commit` 会自动刷新 `js/posts.data.js`
+- **GitHub**：推送到 `main` 后，Actions 会再 `npm run build` 并部署 Pages（约 1～2 分钟）
+
+详细 frontmatter、草稿、CI 设置见下文「六、怎么写文章」。
 
 ---
 
@@ -12,7 +33,8 @@ ES Modules 必须通过 HTTP 访问，**不能**直接用浏览器打开 `file:/
 
 ```bash
 cd /home/loo/work/grok5.4
-python3 -m http.server 3456 --bind 127.0.0.1
+npm start
+# 等价于：先 node scripts/build-posts.mjs，再 python3 -m http.server 3456
 ```
 
 然后浏览器打开：
@@ -20,10 +42,10 @@ python3 -m http.server 3456 --bind 127.0.0.1
 - 首页：http://127.0.0.1:3456/
 - 第一篇博文：http://127.0.0.1:3456/#/post/hello-world
 
-等价命令：
+只起静态服务（不重新编文章）：
 
 ```bash
-npm start   # 内部同样是 python3 -m http.server 3456
+python3 -m http.server 3456 --bind 127.0.0.1
 ```
 
 换端口示例：
@@ -108,7 +130,7 @@ python3 -m http.server 3457 --bind 127.0.0.1
 
 ### 4. 第一篇博文 Hello World（需求 4）
 
-- 数据在 `js/posts.js`。
+- 源文件：`posts/hello-world.md`（由 `npm run build` 生成 `js/posts.data.js`）。
 - 路由：`#/post/hello-world`。
 - 内容说明了天气、昼夜、转场该怎么体验，本身就是验收清单。
 
@@ -168,59 +190,148 @@ WeatherBlog.router.navigate()
 
 ```
 /home/loo/work/grok5.4/
-├── index.html              # 壳：天空层、粒子 canvas、转场层、页眉
-├── package.json            # type:module；npm start 起静态服
-├── README.md               # 本说明
-├── styles/
-│   ├── main.css            # 布局、玻璃卡片、文章排版、昼夜 token
-│   ├── weather.css         # 天气相关氛围（雨感、雪雾等）
-│   └── transitions.css     # 路由 veil / 粒子 / 进场出场
+├── posts/                  # ★ 文章源文件（Markdown，在此写作）
+│   ├── hello-world.md
+│   └── _template.md        # 模板（文件名以 _ 开头，不参与构建）
+├── img/                    # ★ 文章图片（md 里写 img/xxx.jpg）
+├── scripts/
+│   ├── build-posts.mjs     # 把 posts/*.md → js/posts.data.js
+│   ├── new-post.mjs        # 脚手架：npm run new -- "标题"
+│   └── watch-posts.mjs     # 监听 posts/ 自动 build
+├── .githooks/pre-commit    # 提交 posts 时自动 build（npm run hooks 启用）
+├── .github/workflows/
+│   └── pages.yml           # git push 后自动构建并部署 GitHub Pages
+├── index.html
+├── package.json            # build / start / new / watch / hooks
+├── styles/ …
 └── js/
-    ├── main.js             # 启动：天空 + 天气 + 转场 + 路由
-    ├── time-sky.js         # 24h 天空采样与日月位置
-    ├── weather.js          # 天气 API、徽章、canvas 粒子引擎
-    ├── transitions.js      # 页面切换动画编排
-    ├── router.js           # hash 路由与页面 HTML 渲染
-    └── posts.js            # 博文数据（在此加文章）
+    ├── posts.js            # 对外 API（getPostBySlug 等）
+    ├── posts.data.js       # ★ 自动生成，勿手改
+    ├── main.js / router.js / weather.js / …
 ```
 
-依赖关系（概念上）：
+写作管线：
 
 ```
-main.js
-  ├── time-sky.js      → 改 CSS 变量与 body 阶段 class
-  ├── weather.js       → body.weather-* + canvas 粒子
-  ├── transitions.js   → 读当前天气，播 veil
-  └── router.js        → 读 posts，调 transitions，写 #main
+posts/*.md + img/*
+        │
+        ├── 本地: npm start / npm run watch / pre-commit
+        └── CI:   git push → Actions 跑 npm run build
+                │
+                ▼
+        js/posts.data.js  →  浏览器列表与文章页
 ```
 
 ---
 
-## 六、怎么加第二篇文章
+## 六、怎么写文章（Markdown + 图片 + Git）
 
-编辑 `js/posts.js`，在 `posts` 数组里追加一项，例如：
+### 推荐流程（你的想法）
 
-```js
-{
-  slug: "second-post",
-  title: "第二篇标题",
-  date: "2026-07-10",
-  tag: "随笔",
-  readingMinutes: 5,
-  excerpt: "列表卡片上显示的摘要……",
-  lead: "文章页标题下的导语……",
-  content: `
-    <p>正文支持 HTML。</p>
-    <h2>小标题</h2>
-    <pre><code>console.log("ok");</code></pre>
-  `,
-}
+1. 在 `posts/` 下新建 `某标题.md`（或用脚手架）
+2. 图片放到 `img/`，在 md 里写 `![说明](img/文件名.jpg)`
+3. 本地预览：`npm start`（会先自动 build）
+4. `git add` → `commit` → `push` → 线上博客更新
+
+### 最快新建一篇
+
+```bash
+cd /home/loo/work/grok5.4
+npm run new -- "我的第二篇" second-post
+# 会生成 posts/second-post.md
 ```
 
-访问：`http://127.0.0.1:3456/#/post/second-post`  
-首页列表会自动出现新卡片（数组顺序即列表顺序）。
+或手动复制 `posts/_template.md` 为 `posts/second-post.md` 再改。
 
-正文是 HTML 字符串，样式类名已在 `main.css` 的 `.article-body` 里覆盖 `p / h2 / h3 / pre / blockquote / code / a / ul`。
+### Markdown 文件格式
+
+```md
+---
+title: 我的第二篇
+date: 2026-07-10
+tag: 随笔
+slug: second-post
+excerpt: 首页卡片摘要（可省略，自动截正文）
+lead: 标题下导语（可省略）
+---
+
+正文从这里开始，支持 **加粗**、*斜体*、列表、引用、代码块。
+
+## 小标题
+
+![一张配图](img/photo.jpg)
+```
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `title` | 建议 | 标题 |
+| `date` | 建议 | `YYYY-MM-DD`，列表按日期新→旧排序 |
+| `tag` | 否 | 默认「随笔」 |
+| `slug` | 否 | URL 段；默认用文件名（如 `hello-world.md` → `hello-world`） |
+| `excerpt` / `lead` | 否 | 摘要 / 导语 |
+| `readingMinutes` | 否 | 不写则按字数估算 |
+| `draft: true` | 否 | 草稿，构建时跳过 |
+
+- 文件名以 `_` 开头（如 `_template.md`）**不会**被构建。
+- 访问地址：`#/post/<slug>`，例如 `#/post/second-post`。
+
+### 图片
+
+```text
+img/
+  photo.jpg
+  diagram.png
+```
+
+在 md 中任选一种写法（都会归一成站点根路径）：
+
+```md
+![说明](img/photo.jpg)
+![说明](../img/photo.jpg)
+```
+
+公开站上图片 URL 即 `https://你的域名/img/photo.jpg`。
+
+### 本地预览
+
+```bash
+npm start          # 先 build 再开 http://127.0.0.1:3456/
+# 或
+npm run build && python3 -m http.server 3456 --bind 127.0.0.1
+```
+
+### 用 Git 更新公开博客
+
+```bash
+# 1. 写好 posts/xxx.md，放好 img/
+# 2.（可选）本地确认
+npm run build
+
+# 3. 只提交源文件即可；若启用了 npm run hooks，posts.data.js 会随 commit 自动更新
+git add posts/ img/
+git commit -m "Add post: second-post"
+git push
+```
+
+**GitHub Pages（推荐配合本仓库工作流）：**
+
+1. 仓库 **Settings → Pages → Source** 选 **GitHub Actions**（不要用「Deploy from a branch」）。
+2. 推送到 `main` / `master` 后，`.github/workflows/pages.yml` 会：
+   - `npm run build`（从 Markdown 生成 `posts.data.js`）
+   - 部署整个站点
+3. 约 1～2 分钟后线上出现新文章。
+
+**第一次 clone 后建议：**
+
+```bash
+npm run hooks    # 启用 .githooks/pre-commit（改文章时自动 build）
+```
+
+若用 **Netlify / Cloudflare 拖文件夹**：发布前在本机跑一次 `npm run build`，把生成的 `js/posts.data.js` 一起带上。
+
+### 不要手改 `js/posts.data.js`
+
+它由 `scripts/build-posts.mjs` 生成。**改文章只动 `posts/*.md` 和 `img/`**。
 
 ---
 
@@ -251,7 +362,7 @@ main.js
 
 ### 设计取舍
 
-- **不做构建**：方便本地双击目录 + 静态服即预览，改完刷新即可。
+- **Markdown 源 + 轻量构建**：文章写在 `posts/*.md`，`npm run build`（或 CI / pre-commit）生成 `js/posts.data.js`；浏览器仍是纯静态，无框架。
 - **hash 路由**：静态托管零配置，GitHub Pages 一类也能直接用。
 - **天气与时间拆开**：天气管粒子与徽章，时间管天空色与日月；互不阻塞，失败也能好看。
 - **跳转只动内容**：顶栏与天空不动，避免像整页刷新或额外 loading 页。
@@ -316,21 +427,28 @@ git push -u origin main
 ```
 
 3. 打开仓库 → **Settings → Pages**：
-   - **Source**：Deploy from a branch
-   - **Branch**：`main`，目录选 `/`（根目录）
-   - 点 Save
+   - **Source**：选 **GitHub Actions**（本仓库已有 `.github/workflows/pages.yml`）
+   - 若暂时没有 Actions 权限，可退回：Branch `main` / 目录 `/`，但需在 push 前本地 `npm run build` 并提交 `js/posts.data.js`
 4. 等 1～2 分钟，访问：
 
 ```text
-https://<你的用户名>.github.io/weather-blog/
+https://<你的用户名>.github.io/<仓库名>/
 ```
 
-**子路径说明**：若仓库名不是 `username.github.io`，站点会落在 `/weather-blog/` 这类子路径下。  
+本仓库示例：`https://yhbshishuaige.github.io/blog_by_grok4.5/`（以实际仓库名为准）。
+
+**子路径说明**：若仓库名不是 `username.github.io`，站点会落在 `/仓库名/` 这类子路径下。  
 本项目资源已是相对路径（`styles/...`、`js/...`），hash 路由 `#/post/...` 也不需要服务器端 404 回退，一般**开箱即用**。
 
 **可选自定义域名**：Pages 设置里填 Custom domain，并按提示在域名 DNS 加 CNAME。
 
-**更新文章**：改 `js/posts.js` → `git commit` → `git push` → 自动重新部署。
+**更新文章（日常）**：
+
+```text
+posts/*.md + img/*  →  git commit  →  git push  →  Actions 构建并部署
+```
+
+不要再手改 `js/posts.js` / `js/posts.data.js`。
 
 ---
 
@@ -343,8 +461,8 @@ https://<你的用户名>.github.io/weather-blog/
    - **Connect to Git**：连 GitHub 仓库，之后 push 即部署；
    - **Direct Upload**：把本项目文件夹打成 zip 或直接上传。
 3. 构建设置：
-   - Build command：**留空**（无构建）
-   - Build output directory：`/` 或 `.`
+   - Build command：`npm run build`（从 `posts/*.md` 生成数据）
+   - Build output directory：`/` 或 `.`（输出仍在仓库根目录）
 4. 部署后得到 `https://xxx.pages.dev`，可在自定义域名里绑定自己的域名。
 
 ---
@@ -364,7 +482,7 @@ https://<你的用户名>.github.io/weather-blog/
 ### 方案 D · Vercel（同样免费静态托管）
 
 1. 注册 [Vercel](https://vercel.com/) → **Add New Project** → 导入 GitHub 仓库（或 CLI 上传）。
-2. Framework Preset 选 **Other**；Build Command 留空；Output 指项目根。
+2. Framework Preset 选 **Other**；Build Command 填 `npm run build`；Output 指项目根。
 3. 得到 `https://xxx.vercel.app`。
 
 ---
@@ -391,16 +509,17 @@ python3 -m http.server 80 --bind 0.0.0.0
 | 天气地点 | 默认**江苏南京江宁区**（固定坐标，**不使用**浏览器定位）；改 `js/weather.js` 的 `WEATHER_LOCATION` |
 | Google Fonts | 需能访问外网；国内访客若慢，可日后改本地字体 |
 | 隐私 | 无定位弹窗、无用户数据上报；仅访客浏览器请求天气 API |
-| 内容 | 在 `js/posts.js` 写好文章再发布 |
+| 内容 | 只改 `posts/*.md` + `img/`；本地 `npm start` 或 push 触发 CI |
 | 仓库可见性 | GitHub Pages 免费版要求**公开仓库**（或付费私有） |
+| Pages 源 | 选 **GitHub Actions**，与 `pages.yml` 配套 |
 
 ### 日常更新公开站
 
 ```text
-本地改完 → git add / commit / push → Pages / Cloudflare / Vercel 自动重新部署
+posts/ + img/ 写好 → git commit → git push → GitHub Actions 自动 build + 部署
 ```
 
-Netlify Drop：改完再拖一次文件夹。
+Netlify Drop：改完再拖一次文件夹（拖之前先 `npm run build`）。
 
 ### 还要自己的域名吗？
 
@@ -428,4 +547,4 @@ Netlify Drop：改完再拖一次文件夹。
 打开 http://127.0.0.1:3456 ，点进 Hello World，再戳右上角天气徽章，把八种天气（尤其阴天是否够轻、小/中/大雨与雷电）和昼夜都看一遍，就够验收了。  
 要公开：走 **GitHub Pages / Cloudflare Pages / Netlify / Vercel**，**不用自己买服务器**（详见第九节）。
 
-有想改的（多文章、观测城市、配色关键帧），优先改 `js/posts.js`、`js/weather.js`、`js/time-sky.js` 和 `styles/*`，改完刷新浏览器即可，一般不用重新装依赖。
+有想改的：文章只动 `posts/*.md` 与 `img/`，然后 `git push`（或本地 `npm start` / `npm run watch`）；观测城市 / 天空配色改 `js/weather.js`、`js/time-sky.js` 和 `styles/*`。一般不用装 npm 依赖（构建脚本是纯 Node 内置模块）。

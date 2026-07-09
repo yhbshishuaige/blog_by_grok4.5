@@ -1,0 +1,14 @@
+#!/bin/sh
+# 提交前：若改了 posts/ 或构建脚本，自动重新生成 js/posts.data.js
+# 启用方式见 README：git config core.hooksPath .githooks
+
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+changed=$(git diff --cached --name-only --diff-filter=ACMR || true)
+echo "$changed" | grep -qE '^(posts/|scripts/build-posts\.mjs)' || exit 0
+
+echo "[pre-commit] 检测到文章/构建脚本变更 → npm run build"
+npm run build
+git add js/posts.data.js
+echo "[pre-commit] 已更新并暂存 js/posts.data.js"

@@ -1,53 +1,11 @@
 /**
- * Blog posts data
+ * Blog posts API
+ * Content is generated from posts/*.md by: npm run build
+ * → js/posts.data.js
  */
-export const posts = [
-  {
-    slug: "hello-world",
-    title: "Hello World",
-    date: "2026-07-09",
-    tag: "第一篇",
-    readingMinutes: 3,
-    excerpt:
-      "欢迎来到 Weather Blog。这是第一篇测试文章，用来验证天气动画、昼夜天空与丝滑页面转场是否工作正常。",
-    lead:
-      "从这一刻起，每一次点击、每一次日出日落，都应该感觉像风吹过页面一样自然。",
-    content: `
-      <p>你好，世界。这是 <strong>Weather Blog</strong> 的第一篇文章——用来确认整站动画链路是否「丝滑流转」。</p>
+export { posts } from "./posts.data.js";
 
-      <h2>你会看到什么</h2>
-      <p>这个博客把三件事叠在一起：</p>
-      <ul>
-        <li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、雪、大风、雷电，粒子密度与氛围色会明显变化；</li>
-        <li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；</li>
-        <li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li>
-      </ul>
-
-      <h2>如何体验</h2>
-      <ol>
-        <li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
-        <li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雪 → 大风 → 雷电；</li>
-        <li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li>
-        <li>阴天时云层应偏淡、靠上，不挡正文；雷电天气请多看几秒——会有闪电与雨粒子。</li>
-      </ol>
-
-      <blockquote>
-        「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」
-      </blockquote>
-
-      <h2>一段小代码</h2>
-      <p>经典的问候当然少不了：</p>
-      <pre><code>console.log("Hello, Weather World! ☀️🌧️❄️☁️");</code></pre>
-
-      <h3>设计意图</h3>
-      <p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
-
-      <p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
-
-      <p>那就这样——<em>Hello World</em>，我们下次见。</p>
-    `,
-  },
-];
+import { posts } from "./posts.data.js";
 
 export function getPostBySlug(slug) {
   return posts.find((p) => p.slug === slug) || null;

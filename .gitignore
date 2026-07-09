@@ -1,0 +1,17 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# Node (本项目构建脚本零依赖，一般无 node_modules)
+node_modules/
+npm-debug.log*
+.npm/
+
+# Local-only notes (optional personal archive)
+# .MY_README.md

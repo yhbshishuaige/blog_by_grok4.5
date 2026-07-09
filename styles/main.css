@@ -651,6 +651,37 @@ body.is-dusk .moon-orb { opacity: 0.18; }
   opacity: 0.8;
 }
 
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 0.35rem 0 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.article-body p.article-figure {
+  margin: 1.6rem 0;
+  text-align: center;
+}
+
+.article-body p.article-figure img {
+  margin-inline: auto;
+}
+
+.article-body hr {
+  border: none;
+  height: 1px;
+  margin: 2rem 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
 .article-end {
   margin-top: 3rem;
   padding-top: 1.5rem;

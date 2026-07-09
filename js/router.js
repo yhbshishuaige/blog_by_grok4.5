@@ -51,6 +51,10 @@ function renderPost(slug) {
   const post = getPostBySlug(slug);
   if (!post) return renderNotFound();
 
+  const lead = post.lead
+    ? `<p class="article-lead">${post.lead}</p>`
+    : "";
+
   return `
     <article class="article">
       <a href="#/" class="back-link" data-nav>← 返回列表</a>
@@ -61,13 +65,13 @@ function renderPost(slug) {
           <span>· ${post.readingMinutes} 分钟阅读</span>
         </div>
         <h1>${post.title}</h1>
-        <p class="article-lead">${post.lead}</p>
+        ${lead}
       </header>
       <div class="article-body">
         ${post.content}
       </div>
       <footer class="article-end">
-        <p class="article-end-note">—— 第一篇测试博文 · Weather Blog</p>
+        <p class="article-end-note">—— ${post.title} · Weather Blog</p>
         <a href="#/" class="back-link" data-nav style="margin:0;animation-delay:0.5s">← 回首页</a>
       </footer>
     </article>
