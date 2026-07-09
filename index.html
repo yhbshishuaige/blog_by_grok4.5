@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Blog · 天气博客</title>
+  <meta name="description" content="带天气与昼夜动画的丝滑博客" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/weather.css" />
+  <link rel="stylesheet" href="styles/transitions.css" />
+</head>
+<body>
+  <!-- Dynamic sky layers -->
+  <div id="sky" class="sky" aria-hidden="true">
+    <div class="sky-gradient"></div>
+    <div class="sky-glow"></div>
+    <div class="stars" id="stars"></div>
+    <div class="sun-orb" id="sunOrb"></div>
+    <div class="moon-orb" id="moonOrb"></div>
+  </div>
+
+  <!-- Weather particle canvas -->
+  <canvas id="weatherCanvas" class="weather-canvas" aria-hidden="true"></canvas>
+
+  <!-- Transition overlay -->
+  <div id="transitionOverlay" class="transition-overlay" aria-hidden="true">
+    <div class="transition-veil"></div>
+    <div class="transition-particles" id="transitionParticles"></div>
+    <div class="transition-label" id="transitionLabel"></div>
+  </div>
+
+  <!-- App shell -->
+  <div id="app" class="app">
+    <header class="site-header">
+      <a href="#/" class="logo" data-nav>
+        <span class="logo-mark"></span>
+        <span class="logo-text">Weather Blog</span>
+      </a>
+      <div class="header-meta">
+        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/雪/大风/雷电">
+          <span class="weather-icon" id="weatherIcon">☀️</span>
+          <span class="weather-text" id="weatherText">加载中…</span>
+        </div>
+        <div class="clock" id="clock">--:--</div>
+      </div>
+    </header>
+
+    <main id="main" class="main">
+      <!-- Views injected by router -->
+    </main>
+
+    <footer class="site-footer">
+      <p>背景随 24 小时天空流转 · 动画随天气变幻</p>
+    </footer>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

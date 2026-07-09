@@ -1,0 +1,239 @@
+/* Weather particle canvas — above sky, below app */
+.weather-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 1;
+}
+
+/* Global weather tint overlay via body pseudo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.1s ease, background 1.1s ease;
+  background: transparent;
+}
+
+/* ========== Sunny ========== */
+body.weather-sunny .sky-glow {
+  filter: blur(64px);
+  opacity: 0.38;
+}
+
+body.weather-sunny::before {
+  opacity: 1;
+  background: radial-gradient(
+    ellipse at 68% 12%,
+    rgba(255, 215, 140, 0.07) 0%,
+    transparent 48%
+  );
+}
+
+/* ========== Cloudy — soft pearl mist only; do not crush readability ========== */
+body.weather-cloudy .sky-glow {
+  opacity: 0.3;
+  filter: blur(68px);
+}
+
+body.weather-cloudy::before {
+  opacity: 1;
+  /* Subtle cool tint at the very top — not a full-screen dimmer */
+  background: linear-gradient(
+    180deg,
+    rgba(70, 85, 110, 0.05) 0%,
+    rgba(50, 65, 90, 0.02) 35%,
+    transparent 70%
+  );
+}
+
+body.weather-cloudy .sun-orb {
+  opacity: 0.42 !important;
+  filter: blur(3px);
+}
+
+/* ========== Rain family — shared dampening ========== */
+body.weather-is-rain .sky-glow {
+  opacity: 0.14;
+  filter: blur(80px);
+}
+
+body.weather-is-rain .sun-orb {
+  opacity: 0.08 !important;
+  filter: blur(10px);
+}
+
+body.weather-is-rain .site-header {
+  border-bottom-color: rgba(180, 210, 255, 0.14);
+}
+
+/* --- 小雨：轻、透、稀疏 --- */
+body.weather-rain-light::before {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(24, 48, 72, 0.2) 0%,
+    rgba(36, 60, 88, 0.1) 100%
+  );
+}
+
+/* --- 中雨：明显雨幕 --- */
+body.weather-rain-medium::before {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 28, 50, 0.42) 0%,
+    rgba(16, 36, 60, 0.28) 100%
+  );
+}
+
+body.weather-rain-medium .post-card {
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(180, 220, 255, 0.08);
+}
+
+/* --- 大雨：厚、暗、沉重 --- */
+body.weather-rain-heavy::before {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 12, 26, 0.62) 0%,
+    rgba(8, 20, 38, 0.42) 55%,
+    rgba(6, 14, 28, 0.5) 100%
+  );
+}
+
+body.weather-rain-heavy .post-card,
+body.weather-thunder .post-card {
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 rgba(200, 230, 255, 0.12);
+}
+
+body.weather-rain-heavy .hero-desc,
+body.weather-thunder .hero-desc {
+  color: rgba(220, 230, 245, 0.78);
+}
+
+/* ========== Snow ========== */
+body.weather-snowy .sky-glow {
+  opacity: 0.28;
+  filter: blur(70px);
+}
+
+body.weather-snowy::before {
+  opacity: 1;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(200, 220, 255, 0.1) 40%,
+    transparent 70%
+  );
+}
+
+body.weather-snowy .sun-orb {
+  opacity: 0.18 !important;
+  filter: blur(5px);
+}
+
+/* ========== Windy ========== */
+body.weather-windy .sky-glow {
+  opacity: 0.3;
+  filter: blur(60px);
+}
+
+body.weather-windy::before {
+  opacity: 1;
+  background: linear-gradient(
+    105deg,
+    rgba(170, 195, 220, 0.1) 0%,
+    transparent 38%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+}
+
+/* content gently leans into the wind */
+body.weather-windy .app {
+  animation: windSway 4.2s ease-in-out infinite;
+}
+
+@keyframes windSway {
+  0%, 100% { transform: translateX(0) skewX(0deg); }
+  35% { transform: translateX(3px) skewX(0.15deg); }
+  70% { transform: translateX(-2px) skewX(-0.1deg); }
+}
+
+body.weather-windy .post-card:hover {
+  transform: translateY(-4px) translateX(4px) scale(1.01);
+}
+
+body.weather-windy .site-header {
+  animation: windHeader 3.8s ease-in-out infinite;
+}
+
+@keyframes windHeader {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
+}
+
+/* ========== Thunder ========== */
+body.weather-thunder .sky-glow {
+  opacity: 0.1;
+  filter: blur(100px);
+}
+
+body.weather-thunder::before {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 6, 16, 0.7) 0%,
+    rgba(10, 14, 36, 0.5) 45%,
+    rgba(6, 10, 24, 0.58) 100%
+  );
+}
+
+body.weather-thunder .sun-orb {
+  opacity: 0 !important;
+}
+
+body.weather-thunder .stars {
+  opacity: 0.4;
+}
+
+/* Accent text by weather */
+body.weather-sunny .hero h1 em {
+  text-shadow: 0 0 28px rgba(255, 200, 100, 0.14);
+}
+
+body.weather-thunder .hero h1 em,
+body.weather-rain-heavy .hero h1 em {
+  background: linear-gradient(120deg, #b0c8ff, #e8f0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body.weather-snowy .hero h1 em {
+  background: linear-gradient(120deg, #fff, #c0d4f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+body.weather-windy .hero h1 em {
+  text-shadow: 2px 0 12px rgba(180, 210, 240, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.weather-windy .app,
+  body.weather-windy .site-header {
+    animation: none;
+  }
+}

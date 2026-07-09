@@ -1,0 +1,152 @@
+/* ========== Soft in-place route transitions ==========
+   Goal: content morphs continuously in the same frame.
+   No full-screen veil, no interstitial label page. */
+
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  display: none; /* permanently off — kept in DOM for layout stability */
+  opacity: 0;
+  visibility: hidden;
+}
+
+.transition-veil,
+.transition-particles,
+.transition-label {
+  display: none;
+}
+
+/* While navigating: header/footer stay put; only main content moves */
+body.is-navigating .site-header,
+body.is-navigating .site-footer {
+  /* keep chrome stable so swap feels local, not “new page loaded” */
+  transition: opacity 0.35s ease;
+}
+
+/* Page content — soft morph in place */
+.view-enter {
+  animation: viewEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.view-exit {
+  animation: viewExit 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes viewEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes viewExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-5px);
+    filter: blur(3px);
+  }
+}
+
+/* Weather change soft wash (manual badge cycle only) */
+.weather-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 28%,
+    rgba(255, 255, 255, 0.1),
+    transparent 62%
+  );
+  opacity: 0;
+  animation: weatherFlash 1s ease-out forwards;
+}
+
+.weather-flash[data-weather="thunder"] {
+  background: radial-gradient(
+    circle at 50% 18%,
+    rgba(200, 220, 255, 0.32),
+    transparent 55%
+  );
+}
+
+.weather-flash[data-weather="rain-heavy"] {
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(100, 150, 220, 0.22),
+    transparent 58%
+  );
+}
+
+.weather-flash[data-weather="rain-medium"] {
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(120, 160, 220, 0.14),
+    transparent 60%
+  );
+}
+
+.weather-flash[data-weather="rain-light"] {
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(150, 190, 230, 0.1),
+    transparent 62%
+  );
+}
+
+.weather-flash[data-weather="windy"] {
+  background: linear-gradient(
+    105deg,
+    rgba(200, 220, 240, 0.12),
+    transparent 50%,
+    rgba(255, 255, 255, 0.06)
+  );
+}
+
+.weather-flash[data-weather="snowy"] {
+  background: radial-gradient(
+    circle at 50% 20%,
+    rgba(255, 255, 255, 0.18),
+    transparent 58%
+  );
+}
+
+@keyframes weatherFlash {
+  0% { opacity: 0; }
+  16% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.post-card {
+  --stagger: 0;
+}
+
+.post-card.is-visible {
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+  transition-delay: calc(var(--stagger) * 70ms), calc(var(--stagger) * 70ms), 0s, 0s, 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-enter,
+  .view-exit {
+    animation-duration: 0.01ms !important;
+  }
+}
