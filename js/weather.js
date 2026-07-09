@@ -1,6 +1,7 @@
 /**
  * Weather system: Open-Meteo + canvas particles
- * Types: sunny | cloudy | rain-light | rain-medium | rain-heavy | snowy | windy | thunder
+ * Types: sunny | cloudy | rain-light | rain-medium | rain-heavy
+ *      | snow-light | snow-medium | snow-heavy | windy | thunder
  */
 
 export const WEATHER_TYPES = [
@@ -9,7 +10,9 @@ export const WEATHER_TYPES = [
   "rain-light",
   "rain-medium",
   "rain-heavy",
-  "snowy",
+  "snow-light",
+  "snow-medium",
+  "snow-heavy",
   "windy",
   "thunder",
 ];
@@ -20,7 +23,9 @@ export const WEATHER_META = {
   "rain-light": { icon: "🌦️", label: "小雨", transition: "细雨轻落" },
   "rain-medium": { icon: "🌧️", label: "中雨", transition: "雨幕低垂" },
   "rain-heavy": { icon: "🌧️", label: "大雨", transition: "骤雨倾泻" },
-  snowy: { icon: "❄️", label: "雪天", transition: "雪落无声" },
+  "snow-light": { icon: "🌨️", label: "小雪", transition: "细雪轻落" },
+  "snow-medium": { icon: "❄️", label: "中雪", transition: "雪幕轻垂" },
+  "snow-heavy": { icon: "❄️", label: "大雪", transition: "大雪纷飞" },
   windy: { icon: "💨", label: "大风", transition: "风过留痕" },
   thunder: { icon: "⛈️", label: "雷电", transition: "电光一闪" },
 };
@@ -51,10 +56,11 @@ function codeToWeather(code, windKmh = 0) {
   if (code === 65 || code === 67 || code === 82) {
     return "rain-heavy";
   }
-  // Snow
-  if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) {
-    return "snowy";
-  }
+  // Snow — light / moderate / heavy
+  if (code === 71 || code === 77 || code === 85) return "snow-light";
+  if (code === 73) return "snow-medium";
+  if (code === 75 || code === 86) return "snow-heavy";
+  if (code >= 71 && code <= 77) return "snow-medium";
   // Thunderstorm
   if (code >= 95 && code <= 99) {
     return "thunder";
@@ -74,6 +80,10 @@ function isRainType(t) {
     t === "rain-heavy" ||
     t === "thunder"
   );
+}
+
+function isSnowType(t) {
+  return t === "snow-light" || t === "snow-medium" || t === "snow-heavy";
 }
 
 /**
@@ -115,7 +125,11 @@ async function fetchWeather() {
     const m = new Date().getMonth();
     const h = new Date().getHours();
     let type = "sunny";
-    if (m === 11 || m === 0 || m === 1) type = h > 14 && h < 18 ? "snowy" : "cloudy";
+    if (m === 11 || m === 0 || m === 1) {
+      if (h > 14 && h < 16) type = "snow-light";
+      else if (h >= 16 && h < 18) type = "snow-medium";
+      else type = "cloudy";
+    }
     else if (m >= 5 && m <= 7) {
       if (h >= 14 && h <= 16) type = "rain-medium";
       else if (h >= 17 && h <= 18) type = "thunder";
@@ -190,6 +204,65 @@ const RAIN_PRESETS = {
   },
 };
 
+/**
+ * Snow intensity ladder — soft fluffs, not hard discs / gamey stars.
+ * Size is power-biased toward tiny flecks (real snowfall look).
+ * form: "dust" tiny pin · "fluff" multi-lobe soft blob · "near" soft incomplete crystal.
+ */
+const SNOW_PRESETS = {
+  "snow-light": {
+    count: 100,
+    sizeMin: 0.7,
+    sizeMax: 3.4,
+    sizePower: 2.6,
+    speed: [0.28, 0.95],
+    drift: [-0.28, 0.28],
+    swingAmp: [0.4, 1.0],
+    swingSpeed: [0.01, 0.024],
+    alpha: [0.22, 0.55],
+    fluffChance: 0.22,
+    nearChance: 0.04,
+    fogTop: 0.06,
+    fogBot: 0,
+    windBase: 0.05,
+    windGust: 0.25,
+  },
+  "snow-medium": {
+    count: 230,
+    sizeMin: 0.9,
+    sizeMax: 5.2,
+    sizePower: 2.2,
+    speed: [0.45, 1.75],
+    drift: [-0.55, 0.4],
+    swingAmp: [0.55, 1.35],
+    swingSpeed: [0.012, 0.03],
+    alpha: [0.3, 0.7],
+    fluffChance: 0.32,
+    nearChance: 0.1,
+    fogTop: 0.12,
+    fogBot: 0.035,
+    windBase: -0.12,
+    windGust: 0.45,
+  },
+  "snow-heavy": {
+    count: 420,
+    sizeMin: 1.0,
+    sizeMax: 6.5,
+    sizePower: 1.85,
+    speed: [0.75, 2.9],
+    drift: [-1.1, 0.35],
+    swingAmp: [0.7, 1.8],
+    swingSpeed: [0.014, 0.036],
+    alpha: [0.34, 0.82],
+    fluffChance: 0.4,
+    nearChance: 0.14,
+    fogTop: 0.18,
+    fogBot: 0.09,
+    windBase: -0.4,
+    windGust: 0.85,
+  },
+};
+
 class ParticleEngine {
   constructor(canvas) {
     this.canvas = canvas;
@@ -206,6 +279,8 @@ class ParticleEngine {
     this.lightningAlpha = 0;
     this.bolts = [];
     this.flashHold = 0;
+    /** shared wind field for snow (gusts feel natural) */
+    this.snowWind = 0;
     this.resize = this.resize.bind(this);
     this.frame = this.frame.bind(this);
   }
@@ -240,7 +315,7 @@ class ParticleEngine {
     let n = 40;
 
     if (RAIN_PRESETS[t]) n = RAIN_PRESETS[t].count;
-    else if (t === "snowy") n = 220;
+    else if (SNOW_PRESETS[t]) n = SNOW_PRESETS[t].count;
     else if (t === "cloudy") n = 7;
     else if (t === "windy") n = 90;
     else if (t === "sunny") n = 70;
@@ -275,19 +350,59 @@ class ParticleEngine {
       };
     }
 
-    if (t === "snowy") {
-      const size = 2.5 + Math.random() * 6.5;
+    if (SNOW_PRESETS[t]) {
+      const sp = SNOW_PRESETS[t];
+      // Power-law size: many dust flecks, few large near flakes
+      const u = Math.random();
+      const size =
+        sp.sizeMin +
+        Math.pow(u, sp.sizePower) * (sp.sizeMax - sp.sizeMin);
+      const depth = Math.min(
+        1,
+        (size - sp.sizeMin) / (sp.sizeMax - sp.sizeMin || 1)
+      );
+      // form selection — avoid geometric stars for distant flakes
+      let form = "dust";
+      if (size > 2.2 && Math.random() < sp.fluffChance) form = "fluff";
+      if (size > 3.4 && Math.random() < sp.nearChance) form = "near";
+      // irregular multi-lobe offsets for fluff / near
+      const lobes =
+        form === "dust"
+          ? 0
+          : 2 + Math.floor(Math.random() * (form === "near" ? 3 : 2));
+      const lobeOffsets = [];
+      for (let i = 0; i < lobes; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const dist = size * (0.25 + Math.random() * 0.55);
+        lobeOffsets.push({
+          ox: Math.cos(ang) * dist,
+          oy: Math.sin(ang) * dist * 0.7,
+          r: size * (0.35 + Math.random() * 0.45),
+        });
+      }
       return {
         kind: "snow",
         x: Math.random() * w,
-        y: randomY ? Math.random() * h : -16,
+        y: randomY ? Math.random() * h : -24 - Math.random() * 50,
         size,
-        speed: 0.7 + Math.random() * 2.2,
-        drift: -1.6 + Math.random() * 3.2,
+        speed: rnd(...sp.speed) * (0.82 + depth * 0.4),
+        drift: rnd(...sp.drift),
         swing: Math.random() * Math.PI * 2,
-        swingSpeed: 0.018 + Math.random() * 0.035,
-        alpha: 0.55 + Math.random() * 0.45,
-        soft: Math.random() > 0.45,
+        swing2: Math.random() * Math.PI * 2,
+        swingAmp: rnd(...sp.swingAmp) * (0.65 + depth * 0.55),
+        swingSpeed: rnd(...sp.swingSpeed) * (0.85 + Math.random() * 0.3),
+        alpha: rnd(...sp.alpha) * (0.7 + depth * 0.4),
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (-0.008 + Math.random() * 0.016) * (form === "near" ? 1.2 : 0.5),
+        form,
+        depth,
+        lobes: lobeOffsets,
+        // cool-white variance — snow is never pure #fff
+        tintR: 0.9 + Math.random() * 0.1,
+        tintG: 0.92 + Math.random() * 0.08,
+        tintB: 0.98 + Math.random() * 0.02,
+        // slight ellipse stretch for depth of field
+        aspect: 0.75 + Math.random() * 0.45,
       };
     }
 
@@ -358,7 +473,7 @@ class ParticleEngine {
 
     const t = this.type;
     if (RAIN_PRESETS[t]) this.drawRain(ctx, t);
-    else if (t === "snowy") this.drawSnow(ctx);
+    else if (SNOW_PRESETS[t]) this.drawSnow(ctx, t);
     else if (t === "cloudy") this.drawClouds(ctx);
     else if (t === "windy") this.drawWindy(ctx);
     else this.drawSunny(ctx);
@@ -439,40 +554,202 @@ class ParticleEngine {
     }
   }
 
-  drawSnow(ctx) {
-    const fog = ctx.createLinearGradient(0, 0, 0, this.h * 0.45);
-    fog.addColorStop(0, "rgba(255,255,255,0.18)");
-    fog.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = fog;
-    ctx.fillRect(0, 0, this.w, this.h * 0.45);
+  drawSnow(ctx, type) {
+    const preset = SNOW_PRESETS[type] || SNOW_PRESETS["snow-medium"];
+
+    // shared gust field — slow sine, shared by all flakes
+    const gust =
+      Math.sin(this.time * 0.00035) * preset.windGust +
+      Math.sin(this.time * 0.00011 + 1.7) * preset.windGust * 0.35;
+    this.snowWind = preset.windBase + gust;
+
+    // soft high veil — never a hard white sheet
+    if (preset.fogTop > 0) {
+      const fog = ctx.createLinearGradient(0, 0, 0, this.h * 0.42);
+      fog.addColorStop(0, `rgba(235, 245, 255, ${preset.fogTop})`);
+      fog.addColorStop(0.55, `rgba(220, 235, 255, ${preset.fogTop * 0.32})`);
+      fog.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = fog;
+      ctx.fillRect(0, 0, this.w, this.h * 0.42);
+    }
+
+    // ground bloom for heavier snow
+    if (preset.fogBot > 0) {
+      const ground = ctx.createLinearGradient(0, this.h * 0.72, 0, this.h);
+      ground.addColorStop(0, "rgba(230, 240, 255, 0)");
+      ground.addColorStop(1, `rgba(245, 250, 255, ${preset.fogBot})`);
+      ctx.fillStyle = ground;
+      ctx.fillRect(0, this.h * 0.72, this.w, this.h * 0.28);
+    }
 
     for (const p of this.particles) {
       p.swing += p.swingSpeed;
-      p.x += p.drift + Math.sin(p.swing) * 1.1;
-      p.y += p.speed;
-      if (p.y > this.h + 14) Object.assign(p, this.makeParticle(false));
-      if (p.x < -14) p.x = this.w + 10;
-      if (p.x > this.w + 14) p.x = -10;
+      p.swing2 += p.swingSpeed * 0.61;
+      p.rot += p.rotSpeed;
+      // natural flutter: dual-sine + shared wind
+      const sway =
+        Math.sin(p.swing) * p.swingAmp +
+        Math.sin(p.swing2) * p.swingAmp * 0.32;
+      const windInfluence = this.snowWind * (0.55 + p.depth * 0.55);
+      p.x += p.drift + sway * 0.38 + windInfluence;
+      p.y += p.speed * (0.9 + Math.sin(p.swing * 0.55) * 0.1);
 
-      if (p.soft) {
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.6);
-        g.addColorStop(0, `rgba(255,255,255,${p.alpha})`);
-        g.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = g;
+      if (p.y > this.h + 20) Object.assign(p, this.makeParticle(false));
+      if (p.x < -28) p.x = this.w + 16;
+      if (p.x > this.w + 28) p.x = -16;
+
+      if (p.form === "near") this.drawSnowflakeNear(ctx, p);
+      else if (p.form === "fluff") this.drawSnowflakeFluff(ctx, p);
+      else this.drawSnowflakeDust(ctx, p);
+    }
+  }
+
+  /** Tiny distant fleck — soft pin of light, no hard edge */
+  drawSnowflakeDust(ctx, p) {
+    const r = p.size * (1.4 + p.depth * 0.5);
+    const a = p.alpha * (0.85 + p.depth * 0.15);
+    const rC = Math.round(230 + p.tintR * 25);
+    const gC = Math.round(235 + p.tintG * 20);
+    const bC = Math.round(245 + p.tintB * 10);
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+    g.addColorStop(0, `rgba(${rC}, ${gC}, ${bC}, ${a})`);
+    g.addColorStop(0.4, `rgba(${rC - 10}, ${gC - 5}, ${bC}, ${a * 0.35})`);
+    g.addColorStop(1, `rgba(${rC - 20}, ${gC - 10}, 255, 0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, r, r * p.aspect, p.rot * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /** Mid-field cotton fluff — irregular multi-lobe soft blob */
+  drawSnowflakeFluff(ctx, p) {
+    const a = p.alpha;
+    const rC = Math.round(235 + p.tintR * 20);
+    const gC = Math.round(240 + p.tintG * 15);
+    const bC = 255;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * 0.4);
+
+    // outer haze
+    const outer = p.size * 2.2;
+    const haze = ctx.createRadialGradient(0, 0, 0, 0, 0, outer);
+    haze.addColorStop(0, `rgba(${rC}, ${gC}, ${bC}, ${a * 0.28})`);
+    haze.addColorStop(0.55, `rgba(${rC - 12}, ${gC - 6}, 250, ${a * 0.1})`);
+    haze.addColorStop(1, "rgba(220, 230, 255, 0)");
+    ctx.fillStyle = haze;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, outer, outer * p.aspect, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // center kernel
+    const core = p.size * 0.9;
+    const cg = ctx.createRadialGradient(0, 0, 0, 0, 0, core);
+    cg.addColorStop(0, `rgba(255, 255, 255, ${a * 0.75})`);
+    cg.addColorStop(0.5, `rgba(${rC}, ${gC}, ${bC}, ${a * 0.35})`);
+    cg.addColorStop(1, "rgba(230, 240, 255, 0)");
+    ctx.fillStyle = cg;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, core, core * 0.85, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // irregular lobes (cotton clumps)
+    for (const L of p.lobes || []) {
+      const lg = ctx.createRadialGradient(L.ox, L.oy, 0, L.ox, L.oy, L.r * 1.8);
+      lg.addColorStop(0, `rgba(255, 255, 255, ${a * 0.45})`);
+      lg.addColorStop(0.45, `rgba(${rC - 5}, ${gC}, ${bC}, ${a * 0.2})`);
+      lg.addColorStop(1, "rgba(220, 230, 255, 0)");
+      ctx.fillStyle = lg;
+      ctx.beginPath();
+      ctx.arc(L.ox, L.oy, L.r * 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /**
+   * Near-field flake — soft incomplete crystal suggestion.
+   * Arms are short, low-alpha, with heavy glow so they never look like clip-art ★.
+   */
+  drawSnowflakeNear(ctx, p) {
+    const arm = p.size * 1.05;
+    const a = p.alpha * 0.9;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.lineCap = "round";
+    ctx.globalCompositeOperation = "lighter";
+
+    // soft body first (most of the visual weight)
+    const body = ctx.createRadialGradient(0, 0, 0, 0, 0, arm * 1.6);
+    body.addColorStop(0, `rgba(255, 255, 255, ${a * 0.55})`);
+    body.addColorStop(0.4, `rgba(240, 248, 255, ${a * 0.22})`);
+    body.addColorStop(1, "rgba(220, 235, 255, 0)");
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.arc(0, 0, arm * 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 5–6 incomplete arms, slightly irregular lengths
+    const arms = 5 + (Math.floor(p.size * 10) % 2);
+    for (let i = 0; i < arms; i++) {
+      const ang = (i * Math.PI * 2) / arms + (p.depth - 0.5) * 0.08;
+      const len = arm * (0.72 + (i % 3) * 0.1);
+      const cos = Math.cos(ang);
+      const sin = Math.sin(ang);
+
+      // glow arm
+      ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.28})`;
+      ctx.lineWidth = Math.max(1.2, p.size * 0.22);
+      ctx.beginPath();
+      ctx.moveTo(cos * arm * 0.08, sin * arm * 0.08);
+      ctx.lineTo(cos * len, sin * len);
+      ctx.stroke();
+
+      // thin bright core
+      ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+      ctx.lineWidth = Math.max(0.4, p.size * 0.08);
+      ctx.beginPath();
+      ctx.moveTo(cos * arm * 0.1, sin * arm * 0.1);
+      ctx.lineTo(cos * len * 0.92, sin * len * 0.92);
+      ctx.stroke();
+
+      // one soft side prong (not perfect hexagonal)
+      if (i % 2 === 0) {
+        const bx = cos * len * 0.55;
+        const by = sin * len * 0.55;
+        const px = -sin * len * 0.22;
+        const py = cos * len * 0.22;
+        ctx.strokeStyle = `rgba(230, 242, 255, ${a * 0.35})`;
+        ctx.lineWidth = Math.max(0.35, p.size * 0.06);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 2.6, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        // tiny sparkle rim
-        ctx.strokeStyle = `rgba(220, 235, 255, ${p.alpha * 0.5})`;
-        ctx.lineWidth = 0.6;
+        ctx.moveTo(bx - px, by - py);
+        ctx.lineTo(bx + px, by + py);
         ctx.stroke();
       }
     }
+
+    // bright soft center
+    const pin = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size * 0.45);
+    pin.addColorStop(0, `rgba(255, 255, 255, ${a * 0.9})`);
+    pin.addColorStop(1, "rgba(255, 255, 255, 0)");
+    ctx.fillStyle = pin;
+    ctx.beginPath();
+    ctx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+
+    // multi-lobe cotton around crystal for organic feel
+    ctx.globalCompositeOperation = "source-over";
+    for (const L of p.lobes || []) {
+      const lg = ctx.createRadialGradient(L.ox * 0.6, L.oy * 0.6, 0, L.ox * 0.6, L.oy * 0.6, L.r * 1.4);
+      lg.addColorStop(0, `rgba(255, 255, 255, ${a * 0.2})`);
+      lg.addColorStop(1, "rgba(230, 240, 255, 0)");
+      ctx.fillStyle = lg;
+      ctx.beginPath();
+      ctx.arc(L.ox * 0.6, L.oy * 0.6, L.r * 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
   }
 
   drawClouds(ctx) {
@@ -738,6 +1015,7 @@ export function createWeather() {
     clearWeatherClasses();
     document.body.classList.add(`weather-${current}`);
     if (isRainType(current)) document.body.classList.add("weather-is-rain");
+    if (isSnowType(current)) document.body.classList.add("weather-is-snow");
 
     engine.setType(current);
 
@@ -797,7 +1075,7 @@ export function createWeather() {
   if (badge) {
     badge.addEventListener("click", cyclePreview);
     badge.title =
-      "点击切换天气预览：晴 / 阴 / 小雨 / 中雨 / 大雨 / 雪 / 大风 / 雷电";
+      "点击切换天气预览：晴 / 阴 / 小雨 / 中雨 / 大雨 / 小雪 / 中雪 / 大雪 / 大风 / 雷电";
   }
 
   return {

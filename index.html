@@ -40,7 +40,49 @@
         <span class="logo-text">Weather Blog</span>
       </a>
       <div class="header-meta">
-        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/雪/大风/雷电">
+        <div class="time-control" id="timeControl">
+          <button
+            type="button"
+            class="time-btn"
+            id="timeBtn"
+            aria-expanded="false"
+            aria-controls="timeDialPanel"
+            aria-pressed="false"
+            title="调节时间 · 拖动轮盘预览昼夜"
+          >
+            <span class="time-btn-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5" opacity="0.85"/>
+                <path d="M12 7.5v5l3.2 1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="time-btn-label">时间</span>
+          </button>
+          <div class="time-dial-panel" id="timeDialPanel" hidden role="dialog" aria-label="时间轮盘">
+            <div class="time-dial-head">
+              <span class="time-dial-title">流转时光</span>
+              <span class="time-dial-hint">拖动轮盘</span>
+            </div>
+            <div class="time-dial" id="timeDial">
+              <div class="time-dial-aura" aria-hidden="true"></div>
+              <div class="time-dial-ring" id="timeDialRing">
+                <div class="time-dial-ticks" id="timeDialTicks" aria-hidden="true"></div>
+                <div class="time-dial-marks" id="timeDialMarks"></div>
+                <div class="time-dial-hand" id="timeDialHand" aria-hidden="true">
+                  <span class="time-dial-hand-knob"></span>
+                </div>
+                <div class="time-dial-core">
+                  <span class="time-dial-display" id="timeDialDisplay">--:--</span>
+                  <span class="time-dial-phase" id="timeDialPhase">—</span>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="time-dial-live" id="timeDialLive" disabled>
+              回到实时
+            </button>
+          </div>
+        </div>
+        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/小雪/中雪/大雪/大风/雷电">
           <span class="weather-icon" id="weatherIcon">☀️</span>
           <span class="weather-text" id="weatherText">加载中…</span>
         </div>
