@@ -2,6 +2,7 @@
  * Weather Blog — entry
  */
 import { createTimeSky } from "./time-sky.js";
+import { createTimeDial } from "./time-dial.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
 import { createRouter } from "./router.js";
@@ -9,6 +10,8 @@ import { createRouter } from "./router.js";
 async function boot() {
   const timeSky = createTimeSky();
   timeSky.start();
+
+  const timeDial = createTimeDial(timeSky);
 
   const weather = createWeather();
   await weather.init();
@@ -24,12 +27,13 @@ async function boot() {
   window.WeatherBlog = {
     weather,
     timeSky,
+    timeDial,
     transitions,
     router,
   };
 
   console.log(
-    "%cWeather Blog ready %c· try WeatherBlog.weather.cyclePreview() or timeSky.setDebugHour(6.5)",
+    "%cWeather Blog ready %c· try WeatherBlog.weather.cyclePreview() or timeSky.setHour(6.5)",
     "color:#ffe6a8;font-weight:bold",
     "color:#889"
   );

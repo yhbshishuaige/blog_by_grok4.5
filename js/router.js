@@ -37,8 +37,7 @@ function renderHome() {
       <p class="hero-kicker">Weather · Time · Motion</p>
       <h1>写在<em>会呼吸</em>的天空下</h1>
       <p class="hero-desc">
-        背景随 24 小时流转，粒子跟随南京江宁的天气起舞。点开文章时，内容在同一片天空下轻轻换页。
-        右上角可循环预览：晴、阴、小雨、中雨、大雨、雪、大风、雷电。
+        光在变，风在写。字句栖在这片会呼吸的天空下，慢一点，也刚好。
       </p>
     </section>
     <section class="post-list" aria-label="文章列表">

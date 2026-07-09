@@ -1,5 +1,6 @@
 /**
  * 24-hour sky cycle: gradient, sun/moon position, day/night classes
+ * Supports manual hour override for the time dial UI.
  */
 
 /** Keyframes for sky colors through the day (hour 0–24). Glow kept soft so sun never blinds. */
@@ -25,6 +26,13 @@ const SKY_STOPS = [
   { h: 21, top: "#0a1028", mid: "#141e40", bot: "#1a2850", glow: "rgba(140,160,255,0.12)", phase: "night" },
   { h: 24, top: "#050814", mid: "#0a1228", bot: "#121c38", glow: "rgba(120,140,220,0.08)", phase: "night" },
 ];
+
+const PHASE_LABELS = {
+  night: "深夜",
+  dawn: "黎明",
+  day: "白昼",
+  dusk: "黄昏",
+};
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
@@ -90,7 +98,6 @@ function sampleSky(hour) {
 
 /** Sun arc: rises east (~10%) at dawn, high at noon, sets west (~90%) */
 function celestialPosition(hour, kind) {
-  // Approximate: day 6–19 for sun, night for moon
   if (kind === "sun") {
     const rise = 5.5;
     const set = 19.5;
@@ -99,24 +106,13 @@ function celestialPosition(hour, kind) {
     }
     const p = (hour - rise) / (set - rise);
     const x = 8 + p * 84;
-    // Parabolic arc: high at noon
     const y = 78 - Math.sin(p * Math.PI) * 62;
     return { x, y, visible: true };
   }
 
   // Moon: opposite side of day roughly
-  let mh = (hour + 12) % 24;
-  const rise = 5.5;
-  const set = 19.5;
-  // Map night hours onto arc
   const nightStart = 19.5;
-  const nightEnd = 5.5 + 24;
-  let nh = hour < 6 ? hour + 24 : hour;
-  if (nh < nightStart && hour >= 6) {
-    return { x: 50, y: 110, visible: false };
-  }
   if (hour >= 6 && hour <= 19) {
-    // faintly during day handled by CSS opacity
     const p = (hour - 6) / 13;
     return { x: 90 - p * 80, y: 90, visible: false };
   }
@@ -132,6 +128,25 @@ function pad(n) {
   return String(n).padStart(2, "0");
 }
 
+function normalizeHour(h) {
+  let x = h % 24;
+  if (x < 0) x += 24;
+  return x;
+}
+
+function hourToDate(hour) {
+  const d = new Date();
+  const h = normalizeHour(hour);
+  const hours = Math.floor(h);
+  const minutes = Math.round((h - hours) * 60) % 60;
+  d.setHours(hours, minutes, 0, 0);
+  return d;
+}
+
+function phaseLabel(phase) {
+  return PHASE_LABELS[phase] || phase;
+}
+
 export function createTimeSky(options = {}) {
   const root = options.root || document.documentElement;
   const body = options.body || document.body;
@@ -140,9 +155,29 @@ export function createTimeSky(options = {}) {
   const clockEl = document.getElementById("clock");
   let raf = 0;
   let lastMinute = -1;
+  /** @type {number | null} manual hour 0–24; null = live clock */
+  let overrideHour = null;
+  const listeners = new Set();
 
-  function apply(now = new Date()) {
-    const hour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  function emit(state) {
+    listeners.forEach((fn) => {
+      try {
+        fn(state);
+      } catch {
+        /* ignore */
+      }
+    });
+  }
+
+  function apply(now) {
+    const live = now instanceof Date ? now : new Date();
+    const source =
+      overrideHour != null ? hourToDate(overrideHour) : live;
+    const hour =
+      overrideHour != null
+        ? normalizeHour(overrideHour)
+        : live.getHours() + live.getMinutes() / 60 + live.getSeconds() / 3600;
+
     const sky = sampleSky(hour);
     const sun = celestialPosition(hour, "sun");
     const moon = celestialPosition(hour, "moon");
@@ -154,9 +189,9 @@ export function createTimeSky(options = {}) {
     root.style.setProperty("--glow-x", `${sun.visible ? sun.x : moon.x}%`);
     root.style.setProperty("--glow-y", `${(sun.visible ? sun.y : moon.y) + 5}%`);
 
-    // Phase classes
     body.classList.remove("is-day", "is-night", "is-dawn", "is-dusk");
     body.classList.add(`is-${sky.phase}`);
+    body.classList.toggle("is-time-override", overrideHour != null);
 
     if (sunOrb) {
       sunOrb.style.left = `${sun.x}%`;
@@ -169,19 +204,32 @@ export function createTimeSky(options = {}) {
     }
 
     if (clockEl) {
-      const m = now.getMinutes();
-      if (m !== lastMinute || clockEl.textContent === "--:--") {
-        lastMinute = m;
-        clockEl.textContent = `${pad(now.getHours())}:${pad(m)}`;
+      const hours = source.getHours();
+      const minutes = source.getMinutes();
+      if (minutes !== lastMinute || clockEl.textContent === "--:--" || overrideHour != null) {
+        lastMinute = minutes;
+        clockEl.textContent = `${pad(hours)}:${pad(minutes)}`;
+        clockEl.title = overrideHour != null ? "预览时间（可点时间轮盘返回实时）" : "本地时间";
+        clockEl.classList.toggle("is-preview", overrideHour != null);
       }
     }
 
-    return { hour, sky, sun, moon };
+    const state = {
+      hour,
+      sky,
+      sun,
+      moon,
+      phase: sky.phase,
+      phaseLabel: phaseLabel(sky.phase),
+      overridden: overrideHour != null,
+      display: `${pad(source.getHours())}:${pad(source.getMinutes())}`,
+    };
+    emit(state);
+    return state;
   }
 
   function tick() {
     apply();
-    // Update every second for smooth sun movement near transitions; sky CSS transitions handle smoothness
     raf = window.setTimeout(tick, 1000);
   }
 
@@ -194,13 +242,49 @@ export function createTimeSky(options = {}) {
     clearTimeout(raf);
   }
 
-  /** For testing: force a fake hour 0–24 */
-  function setDebugHour(h) {
-    const d = new Date();
-    const base = new Date(d);
-    base.setHours(Math.floor(h), Math.round((h % 1) * 60), 0, 0);
-    return apply(base);
+  /** Force a fake hour 0–24 (preview mode) */
+  function setHour(h) {
+    overrideHour = normalizeHour(h);
+    return apply();
   }
 
-  return { start, stop, apply, setDebugHour, sampleSky };
+  /** Alias kept for console playground */
+  function setDebugHour(h) {
+    return setHour(h);
+  }
+
+  function clearOverride() {
+    overrideHour = null;
+    lastMinute = -1;
+    return apply();
+  }
+
+  function getHour() {
+    if (overrideHour != null) return normalizeHour(overrideHour);
+    const d = new Date();
+    return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+  }
+
+  function isOverridden() {
+    return overrideHour != null;
+  }
+
+  function onChange(fn) {
+    listeners.add(fn);
+    return () => listeners.delete(fn);
+  }
+
+  return {
+    start,
+    stop,
+    apply,
+    setHour,
+    setDebugHour,
+    clearOverride,
+    getHour,
+    isOverridden,
+    onChange,
+    sampleSky,
+    phaseLabel,
+  };
 }

@@ -2,6 +2,18 @@
 
 - 每次更新要讲更新内容编辑到README.md中
 
+## 更新记录
+
+### 2026-07-09 · 雪天分层 / 时间轮盘 / 首页文案
+
+1. **雪天拆为小雪 / 中雪 / 大雪**（`snow-light` / `snow-medium` / `snow-heavy`）
+   - 粒子形态：`dust` 远景柔点、`fluff` 不规则多瓣絮团、`near` 近处软边晶枝（非 clip-art 六角星）。
+   - 尺寸幂分布（多数极小 fleck）、双正弦飘摆 + 共享阵风场；去掉硬圆盘与描边假雪花。
+   - 氛围罩层与密度按强度拉开；WMO 降雪码映射到三档。
+2. **时间轮盘**：右上角天气徽章**左侧**「时间」按钮；玻璃态 24h 轮盘，拖动指针 / 点「子夜·黎明·正午·黄昏」；「回到实时」恢复本地时钟。`js/time-dial.js` + `time-sky.js` hour override。
+3. **首页副文案**改为诗意感受向（`js/router.js` 的 `hero-desc`），不再写操作说明。
+
+---
 
 带**天气粒子**、**24 小时天空**和**丝滑页面转场**的静态博客。  
 技术栈：纯 HTML / CSS / ES Modules（构建脚本仅用 Node 内置模块，**无需 `npm install`**）。
@@ -15,7 +27,7 @@
 
 ### 2. 天气动画（需求 2）
 
-八种氛围，粒子密度与色调会明显拉开：
+十种氛围，粒子密度与色调会明显拉开：
 
 | 类型 | 图标 | 粒子 / 氛围 |
 |------|------|-------------|
@@ -24,7 +36,9 @@
 | 小雨 `rain-light` | 🌦️ | 稀疏细丝，偏透、偏慢 |
 | 中雨 `rain-medium` | 🌧️ | 中等密度雨幕 + 地面溅起 |
 | 大雨 `rain-heavy` | 🌧️ | 高密度斜雨、深色罩层、底部雾气 |
-| 雪天 `snowy` | ❄️ | 大片雪花轻晃下落 + 顶雾 |
+| 小雪 `snow-light` | 🌨️ | 稀疏 dust 柔点 + 轻顶雾 |
+| 中雪 `snow-medium` | ❄️ | 中等密度，fluff 絮团 + 少许 near 软晶 |
+| 大雪 `snow-heavy` | ❄️ | 高密度、共享阵风、厚顶雾与地面积雪感 |
 | 大风 `windy` | 💨 | 横向风丝 + 飞叶，内容轻微晃动 |
 | 雷电 `thunder` | ⛈️ | 暴雨粒子 + 不定期闪电（双闪） |
 
@@ -32,7 +46,7 @@
 坐标在 `js/weather.js` 的 `WEATHER_LOCATION`，换城市只改这一处。  
 **失败时**（无网络）：按月份与小时做本地预估，徽章会标「江宁预估」。
 
-**手动预览**：点右上角天气徽章，循环：`晴 → 阴 → 小雨 → 中雨 → 大雨 → 雪 → 大风 → 雷电`。徽章文案会标「预览」。
+**手动预览**：点右上角天气徽章，循环：`晴 → 阴 → 小雨 → 中雨 → 大雨 → 小雪 → 中雪 → 大雪 → 大风 → 雷电`。徽章文案会标「预览」。
 
 ### 3. 24 小时天空（需求 3）
 
@@ -41,8 +55,9 @@
 - 太阳与光晕刻意压低亮度（柔化圆盘、弱 box-shadow），避免刺眼抢戏。
 - 阶段 class：`is-dawn` / `is-day` / `is-dusk` / `is-night`，CSS 会跟着调星星、日月透明度。
 - 右上角时钟每分钟刷新；天空大约每秒重算一次位置（CSS transition 负责丝滑）。
+- **时间轮盘**（天气徽章左侧）：拖动 24h 环预览任意时刻；预览时时钟高亮，可点「回到实时」。
 
-想立刻看不同时段，不必改系统时间，用控制台即可（见下文「调试」）。
+也可用控制台：`WeatherBlog.timeSky.setHour(6.5)` / `clearOverride()`。
 
 ### 4. 第一篇博文 Hello World（需求 4）
 
@@ -114,8 +129,10 @@ img/
 
 
 - `WEATHER_LOCATION`：固定经纬度（默认南京江宁），**不用** `navigator.geolocation`。
-- `codeToWeather`：WMO `weather_code` + 风速 → 八种类型。  
-  雨量：毛毛雨/轻雨 → `rain-light`，中雨 → `rain-medium`，暴雨 → `rain-heavy`；雷暴 → `thunder`；强风可升为 `windy`。
+- `codeToWeather`：WMO `weather_code` + 风速 → 十种类型。  
+  雨量：毛毛雨/轻雨 → `rain-light`，中雨 → `rain-medium`，暴雨 → `rain-heavy`；  
+  降雪：轻雪/雪粒 → `snow-light`，中雪 → `snow-medium`，大雪/强阵雪 → `snow-heavy`；  
+  雷暴 → `thunder`；强风可升为 `windy`。
 
 ### 转场时长
 
@@ -124,8 +141,8 @@ img/
 
 ### 粒子数量
 
-`RAIN_PRESETS` 与 `spawnAll`：`rain-light≈70` / `rain-medium≈220` / `rain-heavy≈480` / `thunder≈400` / `snowy≈220` / `windy≈90+叶`。  
-机器卡的话优先把 `rain-heavy` 降到 280 左右。
+`RAIN_PRESETS` / `SNOW_PRESETS` 与 `spawnAll`：`rain-light≈70` / `rain-medium≈220` / `rain-heavy≈480` / `thunder≈400` / `snow-light≈100` / `snow-medium≈230` / `snow-heavy≈420` / `windy≈90+叶`。  
+机器卡的话优先把 `rain-heavy` / `snow-heavy` 降到 280 左右。
 
 ### 设计取舍
 
@@ -144,7 +161,7 @@ img/
 网络不通 Open-Meteo，或请求失败。不影响动画，可点徽章手动预览。换观测城市：改 `js/weather.js` 里 `WEATHER_LOCATION`。
 
 **天空不随系统时间变**  
-若之前调用过 `setDebugHour`，那只影响那一次 `apply`；要回到实时，刷新页面，或周期性调用 `WeatherBlog.timeSky.apply()`（`start()` 里已有每秒 tick）。
+若用过时间轮盘或 `setHour` / `setDebugHour`，会进入预览覆盖模式。点轮盘「回到实时」，或 `WeatherBlog.timeSky.clearOverride()`，或刷新页面。
 
 **动画卡顿**  
 - 系统设置里开「减少动态效果」  
@@ -154,17 +171,17 @@ img/
 ## 验收清单
 
 - [x] 跳转就地柔化（无全屏遮罩 / 无强制中间页）
-- [x] 动画与南京江宁天气相关（固定坐标，不用浏览器定位；可手动八种天气）
-- [x] 小雨 / 中雨 / 大雨分层；大风 + 雷电
+- [x] 动画与南京江宁天气相关（固定坐标，不用浏览器定位；可手动十种天气）
+- [x] 小雨 / 中雨 / 大雨分层；小雪 / 中雪 / 大雪分层；大风 + 雷电
 - [x] 阴天轻盈、不压暗正文
 - [x] 太阳柔和、不刺眼
-- [x] 背景随 24 小时变化
+- [x] 背景随 24 小时变化；时间轮盘可预览
 - [x] 第一篇 `Hello World` 可测全流程
 - [x] 无需自备服务器即可公开（见第九节：GitHub Pages / Cloudflare / Netlify / Vercel）
 
 ## 总结
 
 这不是「文章外面包一层装饰」，而是：**时间决定天空，天气决定粒子，跳转只换内容**——三者共用同一套氛围语言。  
-打开 http://127.0.0.1:3456 ，点进 Hello World，再戳右上角天气徽章，把八种天气（尤其阴天是否够轻、小/中/大雨与雷电）和昼夜都看一遍，就够验收了。  
+打开 http://127.0.0.1:3456 ，点进 Hello World，再戳右上角天气徽章与时间轮盘，把十种天气（尤其小/中/大雪与小/中/大雨）和昼夜都看一遍，就够验收了。  
 
 有想改的：文章只动 `posts/*.md` 与 `img/`，然后 `git push`（或本地 `npm start` / `npm run watch`）；观测城市 / 天空配色改 `js/weather.js`、`js/time-sky.js` 和 `styles/*`。一般不用装 npm 依赖（构建脚本是纯 Node 内置模块）。
