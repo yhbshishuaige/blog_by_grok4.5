@@ -8,9 +8,9 @@
     "build": "node scripts/build-posts.mjs",
     "watch": "node scripts/watch-posts.mjs",
     "predev": "node scripts/build-posts.mjs",
-    "dev": "python3 -m http.server 3456 --bind 127.0.0.1",
+    "dev": "node scripts/start-server.mjs",
     "prestart": "node scripts/build-posts.mjs",
-    "start": "python3 -m http.server 3456 --bind 127.0.0.1",
+    "start": "node scripts/start-server.mjs",
     "new": "node scripts/new-post.mjs",
     "hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'git hooks → .githooks (提交 posts 时自动 build)'"
   }

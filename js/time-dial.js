@@ -107,6 +107,11 @@ export function createTimeDial(timeSky) {
     if (display) display.textContent = state?.display || formatHour(hour);
     if (phaseEl) phaseEl.textContent = state?.phaseLabel || timeSky.phaseLabel?.(state?.phase) || "";
     root.classList.toggle("is-override", !!state?.overridden || timeSky.isOverridden());
+    const normalized = ((hour % 24) + 24) % 24;
+    const nearMidnight = Math.min(normalized, 24 - normalized) <= 0.42;
+    const nearPrism = Math.abs(normalized - (12 + 34 / 60)) <= 0.36;
+    root.classList.toggle("is-secret-near", timeSky.isOverridden() && (nearMidnight || nearPrism));
+    root.classList.toggle("is-secret-warm", timeSky.isOverridden() && nearPrism);
     btn.setAttribute("aria-pressed", timeSky.isOverridden() ? "true" : "false");
     if (liveBtn) {
       liveBtn.disabled = !timeSky.isOverridden();

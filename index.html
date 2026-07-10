@@ -11,8 +11,17 @@
   <link rel="stylesheet" href="styles/main.css" />
   <link rel="stylesheet" href="styles/weather.css" />
   <link rel="stylesheet" href="styles/transitions.css" />
+  <link rel="stylesheet" href="styles/secrets.css" />
 </head>
 <body>
+  <script>
+    try {
+      const savedBackground = localStorage.getItem("weather-blog-background");
+      document.body.dataset.background = savedBackground === "sky" ? "sky" : "mountain";
+    } catch {
+      document.body.dataset.background = "mountain";
+    }
+  </script>
   <!-- Dynamic sky layers -->
   <div id="sky" class="sky" aria-hidden="true">
     <div class="sky-gradient"></div>
@@ -20,10 +29,109 @@
     <div class="stars" id="stars"></div>
     <div class="sun-orb" id="sunOrb"></div>
     <div class="moon-orb" id="moonOrb"></div>
+    <div class="secret-sky" id="secretSky" aria-hidden="true">
+      <div class="aurora aurora-one"></div>
+      <div class="aurora aurora-two"></div>
+      <div class="milky-way"></div>
+      <div class="homeward-birds"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="meteor-field" id="meteorField"></div>
+      <div class="constellation-field" id="constellationField"></div>
+      <div class="rainbow-secret" id="rainbowSecret"></div>
+      <div class="sky-whale" id="skyWhale">
+        <span class="sky-whale-body"></span>
+        <span class="sky-whale-tail"></span>
+        <span class="sky-whale-fin"></span>
+        <span class="sky-whale-stars"><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+      <div class="background-breeze" id="backgroundBreeze"></div>
+      <div class="stardust-field" id="stardustField"></div>
+      <div class="seasonal-field" id="seasonalField"></div>
+    </div>
+    <div class="landscape" aria-hidden="true">
+      <div class="horizon-haze"></div>
+      <svg class="mountain-scene" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMax slice" role="presentation">
+        <defs>
+          <linearGradient id="peakFace" x1="0" y1="0" x2="0.92" y2="1">
+            <stop offset="0" stop-color="var(--peak-light)" />
+            <stop offset="0.52" stop-color="var(--peak-mid)" />
+            <stop offset="1" stop-color="var(--peak-deep)" />
+          </linearGradient>
+          <linearGradient id="peakShade" x1="0.15" y1="0" x2="0.85" y2="1">
+            <stop offset="0" stop-color="var(--peak-shade-light)" />
+            <stop offset="1" stop-color="var(--peak-shade-deep)" />
+          </linearGradient>
+          <linearGradient id="snowLight" x1="0" y1="0" x2="0.8" y2="1">
+            <stop offset="0" stop-color="var(--snow-bright)" />
+            <stop offset="1" stop-color="var(--snow-blue)" />
+          </linearGradient>
+          <linearGradient id="snowShade" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--snow-blue)" />
+            <stop offset="1" stop-color="var(--snow-shadow)" />
+          </linearGradient>
+          <linearGradient id="nearRidge" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--ridge-near-top)" />
+            <stop offset="1" stop-color="var(--ridge-near-bottom)" />
+          </linearGradient>
+          <linearGradient id="rockLight" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--rock-light)" />
+            <stop offset="1" stop-color="var(--rock-mid)" />
+          </linearGradient>
+          <linearGradient id="rockDark" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--rock-mid)" />
+            <stop offset="1" stop-color="var(--rock-dark)" />
+          </linearGradient>
+        </defs>
+
+        <path class="ridge ridge-far" d="M0 445 105 400 190 432 285 355 365 408 470 346 560 405 665 330 755 397 875 318 985 390 1095 350 1190 410 1300 342 1410 402 1515 350 1600 392V700H0Z" />
+        <path class="ridge ridge-mid" d="M0 520 120 462 225 500 350 430 455 486 575 418 690 480 790 405 930 493 1050 421 1170 488 1295 410 1410 476 1510 430 1600 465V700H0Z" />
+
+        <g class="main-peak">
+          <path class="shoulder-peak shoulder-left" d="M172 584c92-42 160-105 224-176l70-80 83 26 73 103 48 127Z" />
+          <path class="shoulder-peak shoulder-right" d="M1005 584c68-72 125-143 194-207l64 35 65 93 114 79Z" />
+          <path fill="url(#peakFace)" d="M80 585C260 535 415 465 545 350 655 254 727 170 800 104c80 75 151 166 260 260 120 105 270 166 460 225V700H80Z" />
+          <path fill="url(#peakShade)" d="m800 104 40 126 72 66 32 85 116-17c120 105 270 166 460 225V700H916l-38-168-82-94 42-94-34-103Z" opacity=".88" />
+          <path class="rock-plane rock-plane-left" fill="url(#rockLight)" d="m545 350 98-77 65-47-39 112-82 76-101 75 46-97Z" />
+          <path class="rock-plane rock-plane-center" fill="url(#rockDark)" d="m708 226 39-72 21 44-18 98-55 111-36 109 10-178Z" />
+          <path class="rock-plane rock-plane-right" fill="url(#rockDark)" d="m840 230 72 66 32 85 116-17-87 72-61-21-54-98Z" />
+          <path class="rock-plane rock-plane-lower" fill="url(#rockLight)" d="m486 489 101-75 72-76-18 118-79 82-154 63Z" opacity=".72" />
+          <path fill="url(#snowLight)" d="m800 104-53 50-40 72-54 38-35 84 87-52 48-61 28 58 28-52 32 76 49 39-15-97-35-29Z" />
+          <path fill="url(#snowShade)" d="m800 104 40 126 72 66-24 71-47-50-32-76-28 52-28-58-48 61 42-142Z" opacity=".9" />
+          <path class="snow-apron" d="m653 264 54-38 40-72 21 44-18 98-45 48-87 4Zm188-23 47 55 24 71-24 20-47-70-32-76Z" />
+          <path class="snow-patch" d="m601 372 58-34-18 76-55 38Zm-75 91 61-49-25 87-58 34Zm413-65 68-18 53-16-48 47-68 22Zm81 55 74-30 46 31-91 29Z" />
+          <path class="snow-rill snow-rill-wide" d="m748 154-19 91-48 77-32 102M805 144l18 82-8 93 52 96M769 198l-12 88-55 92M840 230l28 66 13 89" />
+          <path class="snow-rill snow-rill-soft" d="m724 248-29 68-18 86m154-99 18 65 36 69" />
+        </g>
+
+        <path class="ridge ridge-front" fill="url(#nearRidge)" d="M0 608 108 566 210 594 332 523 430 574 535 520 650 579 765 510 880 568 1000 498 1110 562 1225 506 1335 565 1460 492 1600 552V700H0Z" />
+        <path class="ridge-detail" d="m0 632 108-66 102 28 122-71 98 51 105-54 115 59 115-69 115 58 120-70 110 64 115-56 110 59 125-73 140 60" />
+      </svg>
+      <div class="mountain-mist mountain-mist-back"></div>
+      <button type="button" class="mountain-echo" id="mountainEcho" aria-label="雪山回声"></button>
+      <div class="firefly-field" id="fireflyField"></div>
+      <div class="distant-lights">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <button type="button" class="ridge-visitor" id="ridgeVisitor" aria-label="山脊上的访客">
+        <span class="ridge-visitor-ears"></span>
+        <span class="ridge-visitor-face"><i></i><i></i></span>
+      </button>
+
+      <div class="bird-flock bird-flock-one">
+        <i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="bird-flock bird-flock-two">
+        <i></i><i></i><i></i>
+      </div>
+      <div class="bird-flock bird-flock-three">
+        <i></i><i></i><i></i><i></i>
+      </div>
+    </div>
   </div>
 
   <!-- Weather particle canvas -->
   <canvas id="weatherCanvas" class="weather-canvas" aria-hidden="true"></canvas>
+  <div class="ground-secrets" id="groundSecrets" aria-hidden="true"></div>
+  <div class="secret-toast" id="secretToast" role="status" aria-live="polite"></div>
 
   <!-- Transition overlay -->
   <div id="transitionOverlay" class="transition-overlay" aria-hidden="true">
@@ -82,7 +190,47 @@
             </button>
           </div>
         </div>
-        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/小雪/中雪/大雪/大风/雷电">
+        <div class="background-control" id="backgroundControl">
+          <button
+            type="button"
+            class="background-btn"
+            id="backgroundBtn"
+            aria-expanded="false"
+            aria-controls="backgroundPanel"
+            title="选择背景"
+          >
+            <span class="background-btn-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <path d="M3.5 17.5 8.2 12l3.2 3.4 3.2-4.2 5.9 6.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="16.8" cy="7.2" r="2.2" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </span>
+            <span class="background-btn-label">背景</span>
+          </button>
+          <div class="background-panel" id="backgroundPanel" hidden role="dialog" aria-label="选择背景">
+            <div class="background-panel-head">
+              <span>选择景观</span>
+              <small>自动保存</small>
+            </div>
+            <button type="button" class="background-option" data-background="sky" aria-pressed="false">
+              <span class="background-option-preview preview-sky" aria-hidden="true"><i></i></span>
+              <span class="background-option-copy">
+                <strong>天空</strong>
+                <small>纯净天空与天气动画</small>
+              </span>
+              <span class="background-option-check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="background-option" data-background="mountain" aria-pressed="true">
+              <span class="background-option-preview preview-mountain" aria-hidden="true"><i></i></span>
+              <span class="background-option-copy">
+                <strong>雪山</strong>
+                <small>动态山景、飞鸟与薄雾</small>
+              </span>
+              <span class="background-option-check" aria-hidden="true">✓</span>
+            </button>
+          </div>
+        </div>
+        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/雷电/小雪/中雪/大雪/大风">
           <span class="weather-icon" id="weatherIcon">☀️</span>
           <span class="weather-text" id="weatherText">加载中…</span>
         </div>
@@ -96,6 +244,7 @@
 
     <footer class="site-footer">
       <p>背景随 24 小时天空流转 · 动画随天气变幻</p>
+      <p class="footer-whisper" id="footerWhisper" aria-live="polite"></p>
     </footer>
   </div>
 

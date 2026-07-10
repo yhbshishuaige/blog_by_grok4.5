@@ -3,6 +3,9 @@
  */
 import { createTimeSky } from "./time-sky.js";
 import { createTimeDial } from "./time-dial.js";
+import { createBackgroundControl } from "./background.js";
+import { createSecrets } from "./secrets.js";
+import { createCardMotion } from "./card-motion.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
 import { createRouter } from "./router.js";
@@ -12,14 +15,19 @@ async function boot() {
   timeSky.start();
 
   const timeDial = createTimeDial(timeSky);
+  const background = createBackgroundControl();
 
   const weather = createWeather();
-  await weather.init();
+  const weatherReady = weather.init();
+
+  const secrets = createSecrets({ timeSky, weather, background });
 
   const transitions = createTransitions();
+  const cardMotion = createCardMotion();
   const router = createRouter({
     transitions,
     getWeatherType: () => weather.getType(),
+    onRender: (main) => cardMotion.bind(main),
   });
   router.start();
 
@@ -28,14 +36,25 @@ async function boot() {
     weather,
     timeSky,
     timeDial,
+    background,
+    secrets,
+    cardMotion,
     transitions,
     router,
+    weatherReady,
   };
 
+  await weatherReady;
+
   console.log(
-    "%cWeather Blog ready %c· try WeatherBlog.weather.cyclePreview() or timeSky.setHour(6.5)",
+    "%cWeather Blog ready %c· WeatherBlog.weather.cyclePreview() · WeatherBlog.timeSky.setHour(6.5)",
     "color:#ffe6a8;font-weight:bold",
     "color:#889"
+  );
+  console.log(
+    "%cHidden scenes %c· WeatherBlog.secrets.list() · WeatherBlog.secrets.tour()",
+    "color:#bfe7ff;font-weight:bold",
+    "color:#789"
   );
 }
 

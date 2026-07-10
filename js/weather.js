@@ -1,7 +1,7 @@
 /**
  * Weather system: Open-Meteo + canvas particles
  * Types: sunny | cloudy | rain-light | rain-medium | rain-heavy
- *      | snow-light | snow-medium | snow-heavy | windy | thunder
+ *      | thunder | snow-light | snow-medium | snow-heavy | windy
  */
 
 export const WEATHER_TYPES = [
@@ -10,11 +10,11 @@ export const WEATHER_TYPES = [
   "rain-light",
   "rain-medium",
   "rain-heavy",
+  "thunder",
   "snow-light",
   "snow-medium",
   "snow-heavy",
   "windy",
-  "thunder",
 ];
 
 export const WEATHER_META = {
@@ -99,6 +99,8 @@ export const WEATHER_LOCATION = {
 };
 
 async function fetchWeather() {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 6500);
   try {
     const { latitude, longitude, timezone } = WEATHER_LOCATION;
     const url =
@@ -106,7 +108,7 @@ async function fetchWeather() {
       `&current=weather_code,temperature_2m,wind_speed_10m` +
       `&timezone=${encodeURIComponent(timezone)}&wind_speed_unit=kmh`;
 
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) throw new Error("weather api fail");
     const data = await res.json();
     const code = data?.current?.weather_code ?? 2;
@@ -144,6 +146,8 @@ async function fetchWeather() {
       source: "fallback",
       location: WEATHER_LOCATION.name,
     };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -316,7 +320,7 @@ class ParticleEngine {
 
     if (RAIN_PRESETS[t]) n = RAIN_PRESETS[t].count;
     else if (SNOW_PRESETS[t]) n = SNOW_PRESETS[t].count;
-    else if (t === "cloudy") n = 7;
+    else if (t === "cloudy") n = 12;
     else if (t === "windy") n = 90;
     else if (t === "sunny") n = 70;
     else n = 40;
@@ -407,16 +411,17 @@ class ParticleEngine {
     }
 
     if (t === "cloudy") {
+      const depth = Math.random();
       return {
         kind: "cloud",
-        x: Math.random() * (w + 280) - 120,
-        // Stay high in the sky — avoid covering reading area
-        y: 4 + Math.random() * h * 0.22,
-        r: 36 + Math.random() * 56,
-        speed: 0.12 + Math.random() * 0.28,
-        // Very light veil clouds
-        alpha: 0.018 + Math.random() * 0.032,
-        blobs: 2 + Math.floor(Math.random() * 2),
+        x: Math.random() * (w + 380) - 170,
+        y: -28 + Math.random() * h * 0.3,
+        r: 72 + depth * 72 + Math.random() * 28,
+        speed: 0.08 + (1 - depth) * 0.14 + Math.random() * 0.07,
+        alpha: 0.055 + depth * 0.045 + Math.random() * 0.025,
+        blobs: 4 + Math.floor(Math.random() * 3),
+        depth,
+        stretch: 1.45 + Math.random() * 0.75,
       };
     }
 
@@ -753,38 +758,71 @@ class ParticleEngine {
   }
 
   drawClouds(ctx) {
-    // Barely-there overcast haze — never a dark curtain over content
-    ctx.fillStyle = "rgba(55, 68, 90, 0.025)";
+    const sheet = ctx.createLinearGradient(0, 0, 0, this.h);
+    sheet.addColorStop(0, "rgba(168, 188, 207, 0.09)");
+    sheet.addColorStop(0.4, "rgba(192, 207, 220, 0.055)");
+    sheet.addColorStop(0.72, "rgba(175, 197, 214, 0.018)");
+    sheet.addColorStop(1, "rgba(150, 178, 199, 0)");
+    ctx.fillStyle = sheet;
     ctx.fillRect(0, 0, this.w, this.h);
 
     for (const p of this.particles) {
       p.x += p.speed;
-      if (p.x - p.r > this.w + 70) {
-        p.x = -p.r * 2.4;
-        p.y = 4 + Math.random() * this.h * 0.22;
+      if (p.x - p.r * 2 > this.w + 100) {
+        Object.assign(p, this.makeParticle(false), { x: -p.r * 2.5 });
       }
       for (let i = 0; i < p.blobs; i++) {
-        const ox = (i - 0.9) * p.r * 0.55;
-        const oy = Math.sin(i * 1.7 + p.r) * 6;
-        const rr = p.r * (0.45 + (i % 3) * 0.18);
+        const center = (p.blobs - 1) / 2;
+        const ox = (i - center) * p.r * 0.48;
+        const oy = Math.sin(i * 1.55 + p.r) * p.r * 0.1;
+        const rr = p.r * (0.48 + (i % 3) * 0.14);
         const g = ctx.createRadialGradient(
           p.x + ox,
           p.y + oy,
           0,
           p.x + ox,
           p.y + oy,
-          rr * 1.7
+          rr * 1.8
         );
-        // Soft pearl mist — high transparency, readable text first
-        g.addColorStop(0, `rgba(250, 252, 255, ${p.alpha * 0.95})`);
-        g.addColorStop(0.5, `rgba(210, 220, 235, ${p.alpha * 0.4})`);
-        g.addColorStop(1, "rgba(180, 195, 215, 0)");
+        const core = p.depth > 0.62 ? "198, 211, 222" : "224, 233, 239";
+        const rim = p.depth > 0.62 ? "157, 178, 198" : "184, 203, 218";
+        g.addColorStop(0, `rgba(${core}, ${p.alpha})`);
+        g.addColorStop(0.52, `rgba(${rim}, ${p.alpha * 0.72})`);
+        g.addColorStop(1, `rgba(142, 169, 192, 0)`);
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.ellipse(p.x + ox, p.y + oy, rr * 1.55, rr * 0.55, 0, 0, Math.PI * 2);
+        ctx.ellipse(
+          p.x + ox,
+          p.y + oy,
+          rr * p.stretch,
+          rr * (0.42 + p.depth * 0.1),
+          -0.025,
+          0,
+          Math.PI * 2
+        );
         ctx.fill();
       }
     }
+
+    ctx.save();
+    ctx.lineCap = "round";
+    for (let i = 0; i < 5; i++) {
+      const cycle = (this.time * (0.018 + i * 0.0025) + i * 260) % (this.w + 420);
+      const x = cycle - 210;
+      const y = this.h * (0.17 + i * 0.075) + Math.sin(this.time * 0.00035 + i) * 10;
+      const length = 72 + i * 19;
+      const breeze = ctx.createLinearGradient(x, y, x + length, y);
+      breeze.addColorStop(0, "rgba(225, 239, 247, 0)");
+      breeze.addColorStop(0.35, `rgba(225, 239, 247, ${0.055 - i * 0.006})`);
+      breeze.addColorStop(1, "rgba(225, 239, 247, 0)");
+      ctx.strokeStyle = breeze;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(x + length * 0.3, y - 4, x + length * 0.7, y + 4, x + length, y);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   drawWindy(ctx) {
@@ -1000,6 +1038,32 @@ export function createWeather() {
   let current = "sunny";
   let cycleIndex = 0;
   let manual = false;
+  let cameraTimer = 0;
+  let engineTimer = 0;
+  let textTimer = 0;
+
+  function runCameraTransition(prev, next, enabled) {
+    clearTimeout(cameraTimer);
+    document.body.classList.remove("camera-wind-away", "camera-mountain-return");
+    if (!enabled || document.body.dataset.background === "sky") return;
+
+    let className = "";
+    let duration = 0;
+    if (prev === "snow-heavy" && next === "windy") {
+      className = "camera-wind-away";
+      duration = 830;
+    } else if (prev === "windy" && next === "sunny") {
+      className = "camera-mountain-return";
+      duration = 1200;
+    }
+
+    if (!className) return;
+    void document.body.offsetWidth;
+    document.body.classList.add(className);
+    cameraTimer = window.setTimeout(() => {
+      document.body.classList.remove(className);
+    }, duration);
+  }
 
   function clearWeatherClasses() {
     const toRemove = [];
@@ -1009,7 +1073,7 @@ export function createWeather() {
     document.body.classList.remove(...toRemove);
   }
 
-  function applyWeather(type, { announce = true, extraLabel } = {}) {
+  function applyWeather(type, { announce = true, extraLabel, cameraTransition = false } = {}) {
     const prev = current;
     current = WEATHER_TYPES.includes(type) ? type : "sunny";
     clearWeatherClasses();
@@ -1017,7 +1081,16 @@ export function createWeather() {
     if (isRainType(current)) document.body.classList.add("weather-is-rain");
     if (isSnowType(current)) document.body.classList.add("weather-is-snow");
 
-    engine.setType(current);
+    clearTimeout(engineTimer);
+    if (cameraTransition && prev === "snow-heavy" && current === "windy") {
+      const targetType = current;
+      engineTimer = window.setTimeout(() => {
+        if (current === targetType) engine.setType(targetType);
+      }, 180);
+    } else {
+      engine.setType(current);
+    }
+    runCameraTransition(prev, current, cameraTransition);
 
     const meta = WEATHER_META[current];
     if (iconEl) {
@@ -1030,8 +1103,17 @@ export function createWeather() {
         }, 40);
       });
     }
-    if (textEl) {
+    if (textEl && !announce) {
+      clearTimeout(textTimer);
+      textEl.classList.remove("is-changing");
       textEl.textContent = extraLabel || meta.label;
+    } else if (textEl) {
+      clearTimeout(textTimer);
+      textEl.classList.add("is-changing");
+      textTimer = window.setTimeout(() => {
+        textEl.textContent = extraLabel || meta.label;
+        textEl.classList.remove("is-changing");
+      }, 150);
     }
 
     if (announce && prev !== current) {
@@ -1040,6 +1122,12 @@ export function createWeather() {
       flash.dataset.weather = current;
       document.body.appendChild(flash);
       flash.addEventListener("animationend", () => flash.remove());
+    }
+
+    if (prev !== current) {
+      window.dispatchEvent(new CustomEvent("weatherchange", {
+        detail: { previous: prev, current, manual },
+      }));
     }
 
     return current;
@@ -1069,13 +1157,16 @@ export function createWeather() {
     manual = true;
     cycleIndex = (cycleIndex + 1) % WEATHER_TYPES.length;
     const t = WEATHER_TYPES[cycleIndex];
-    applyWeather(t, { extraLabel: `${WEATHER_META[t].label} · 预览` });
+    applyWeather(t, {
+      extraLabel: `${WEATHER_META[t].label} · 预览`,
+      cameraTransition: true,
+    });
   }
 
   if (badge) {
     badge.addEventListener("click", cyclePreview);
     badge.title =
-      "点击切换天气预览：晴 / 阴 / 小雨 / 中雨 / 大雨 / 小雪 / 中雪 / 大雪 / 大风 / 雷电";
+      "点击切换天气预览：晴 / 阴 / 小雨 / 中雨 / 大雨 / 雷电 / 小雪 / 中雪 / 大雪 / 大风";
   }
 
   return {

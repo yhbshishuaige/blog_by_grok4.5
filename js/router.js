@@ -96,7 +96,7 @@ function revealCards(main) {
   });
 }
 
-export function createRouter({ transitions, getWeatherType }) {
+export function createRouter({ transitions, getWeatherType, onRender }) {
   const main = document.getElementById("main");
   let first = true;
 
@@ -128,6 +128,7 @@ export function createRouter({ transitions, getWeatherType }) {
     const apply = () => {
       main.innerHTML = html;
       if (route.name === "home") revealCards(main);
+      onRender?.(main, route);
       window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
     };
 

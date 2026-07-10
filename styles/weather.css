@@ -36,26 +36,50 @@ body.weather-sunny::before {
   );
 }
 
-/* ========== Cloudy — soft pearl mist only; do not crush readability ========== */
+/* ========== Cloudy — bright, cool and breathable ========== */
 body.weather-cloudy .sky-glow {
-  opacity: 0.3;
-  filter: blur(68px);
+  opacity: 0;
 }
 
 body.weather-cloudy::before {
   opacity: 1;
-  /* Subtle cool tint at the very top — not a full-screen dimmer */
-  background: linear-gradient(
-    180deg,
-    rgba(70, 85, 110, 0.05) 0%,
-    rgba(50, 65, 90, 0.02) 35%,
-    transparent 70%
-  );
+  background:
+    radial-gradient(ellipse at 24% 4%, rgba(226, 238, 245, 0.13), transparent 38%),
+    linear-gradient(180deg, rgba(151, 179, 201, 0.1) 0%, rgba(185, 205, 219, 0.045) 48%, transparent 82%);
 }
 
 body.weather-cloudy .sun-orb {
-  opacity: 0.42 !important;
-  filter: blur(3px);
+  opacity: 0 !important;
+}
+
+body.weather-cloudy .landscape {
+  opacity: 0.88;
+  filter: saturate(0.72) brightness(0.97) contrast(0.95);
+}
+
+body.weather-cloudy .horizon-haze {
+  opacity: 0.72;
+  filter: blur(25px);
+}
+
+body.weather-cloudy .mountain-mist {
+  opacity: 0.32;
+}
+
+body.weather-cloudy .bird-flock {
+  opacity: 0.58;
+}
+
+body.weather-cloudy .site-header {
+  background: linear-gradient(180deg, rgba(15, 27, 42, 0.25), rgba(15, 27, 42, 0.07));
+  border-bottom-color: rgba(218, 232, 241, 0.12);
+}
+
+/* ========== Windy — open sky only, mountain is outside the camera ========== */
+body.weather-windy .horizon-haze,
+body.weather-windy .mountain-mist,
+body.weather-windy .bird-flock {
+  opacity: 0;
 }
 
 /* ========== Rain family — shared dampening ========== */
@@ -67,6 +91,12 @@ body.weather-is-rain .sky-glow {
 body.weather-is-rain .sun-orb {
   opacity: 0.08 !important;
   filter: blur(10px);
+}
+
+body.weather-is-rain .landscape,
+body.weather-thunder .landscape {
+  opacity: 0.68;
+  filter: saturate(0.55) brightness(0.72) contrast(0.96);
 }
 
 body.weather-is-rain .site-header {
@@ -131,6 +161,15 @@ body.weather-is-snow .sky-glow {
 body.weather-is-snow .sun-orb {
   opacity: 0.18 !important;
   filter: blur(5px);
+}
+
+body.weather-is-snow .landscape {
+  opacity: 0.88;
+  filter: saturate(0.62) brightness(1.06);
+}
+
+body.weather-is-snow .snow-rill {
+  opacity: 0.94;
 }
 
 /* --- 小雪：轻、透、稀疏 --- */
