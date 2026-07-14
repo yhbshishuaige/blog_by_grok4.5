@@ -13,8 +13,8 @@ export const posts = [
     wordCount: 418,
     codeBlockCount: 5,
     toc: [{"id":"auth-json","level":2,"label":"auth.json"},{"id":"models-json","level":2,"label":"models.json"},{"id":"settings-json","level":2,"label":"settings.json"}],
-    excerpt: "",
-    lead: "",
+    excerpt: "PI + flash,体验腹泻式写代码",
+    lead: "自娱自乐,能看得仔细一些",
     content: `<p>pi的文件结构</p>
 <section class="code-block" data-language="shell">
 <div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">8 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
