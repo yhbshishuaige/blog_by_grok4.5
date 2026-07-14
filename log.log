@@ -2,6 +2,12 @@
 
 > `README.md` 只保留项目接手信息和精简更新摘要；本文件记录详细更新；彩蛋规则单独维护在 `docs/EASTER_EGGS.md`。更新按时间倒序排列。
 
+### 2026-07-14 · 字体对齐终端 Vim
+
+1. **读取实际终端设置**：当前终端版 Vim 继承 Windows Terminal 默认配置，字体为 Cascadia Code、字号 15、字重 semi-bold。
+2. **全站字体统一**：`styles/main.css` 使用 Cascadia Code 优先的中英文等宽字体栈，将根字号设为 15px、基础字重设为 600；文章正文固定为 1rem，标题与代码块同步使用相同字体和半粗字重。
+3. **移除远程字体**：`index.html` 删除 Outfit 与 Instrument Serif 的 Google Fonts 请求，避免字体加载失败、切换闪烁及本地 / 远程显示不一致。
+
 ### 2026-07-14 · 完整 Markdown 文章渲染
 
 1. **替换简化解析器**：`scripts/build-posts.mjs` 改用构建时 `marked` 解析 GFM Markdown，支持反引号 / 波浪线代码围栏、嵌套列表、任务列表、表格、删除线等常用语法。

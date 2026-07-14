@@ -1,7 +1,8 @@
 /* ========== Design tokens ========== */
 :root {
-  --font-sans: "Outfit", system-ui, sans-serif;
-  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-sans: "Cascadia Code", "Cascadia Mono", "Microsoft YaHei UI", "Noto Sans Mono CJK SC", Consolas, monospace;
+  --font-serif: var(--font-sans);
+  --font-mono: var(--font-sans);
 
   --text: #f4f1ea;
   --text-muted: rgba(244, 241, 234, 0.72);
@@ -56,6 +57,7 @@
 }
 
 html {
+  font-size: 15px;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgba(181, 207, 224, 0.62) rgba(7, 15, 27, 0.28);
@@ -91,6 +93,7 @@ html {
 body {
   min-height: 100vh;
   font-family: var(--font-sans);
+  font-weight: 600;
   color: var(--text);
   background: #050810;
   overflow-x: hidden;
@@ -1195,7 +1198,7 @@ body.camera-mountain-return .sky::after {
 .hero h1 {
   font-family: var(--font-serif);
   font-size: clamp(2.6rem, 7vw, 4.2rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
   margin-bottom: 1rem;
@@ -1332,7 +1335,7 @@ body.camera-mountain-return .sky::after {
 .post-card h2 {
   font-family: var(--font-serif);
   font-size: clamp(1.45rem, 3vw, 1.85rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.25;
   margin-bottom: 0.55rem;
   transition: color 0.3s ease;
@@ -1424,7 +1427,7 @@ body.camera-mountain-return .sky::after {
 .article h1 {
   font-family: var(--font-serif);
   font-size: clamp(2.2rem, 5.5vw, 3.4rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin-bottom: 1rem;
@@ -1437,7 +1440,7 @@ body.camera-mountain-return .sky::after {
 }
 
 .article-body {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.85;
   color: rgba(244, 241, 234, 0.9);
   opacity: 0;
@@ -1451,7 +1454,7 @@ body.camera-mountain-return .sky::after {
 .article-body h2 {
   font-family: var(--font-serif);
   font-size: 1.65rem;
-  font-weight: 400;
+  font-weight: 600;
   margin: 2.2rem 0 0.9rem;
   color: var(--text);
 }
@@ -1507,8 +1510,9 @@ body.camera-mountain-return .sky::after {
 }
 
 .article-body code {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.9em;
+  font-family: var(--font-mono);
+  font-size: 1em;
+  font-weight: 600;
   padding: 0.15em 0.4em;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.1);
