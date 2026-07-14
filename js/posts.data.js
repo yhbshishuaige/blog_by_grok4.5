@@ -5,6 +5,47 @@
  */
 export const posts = [
   {
+    slug: "post-2026-07-13",
+    title: "pi agent",
+    date: "2026-07-13",
+    tag: "随笔",
+    readingMinutes: 2,
+    excerpt: "",
+    lead: "",
+    content: `<p>pi的文件结构 ~~~shell $tree ~/.pi ~/.pi └── agent ├── auth.json ├── bin/ ├── models.json ├── sessions/ └── settings.json ~~~ 相比于其他的AI coding agent,结构简单很多,这也是pi的核心思想之一,轻量,完全可定制</p>
+<h2>auth.json</h2>
+<p>/login登录的信息, 不可删除! 里面的key需要有效, 不是单纯的记录文件或日志</p>
+<p>~~~json { &quot;deepseek&quot;: { &quot;type&quot;: &quot;api_key&quot;, &quot;key&quot;: &quot;sk-**********************&quot; } } ~~~</p>
+<p>/login会自动将登录信息保存到auth.json文件中, 这意味着一般不需要手动编辑auth.json文件</p>
+<ul><li>type有两种</li></ul>
+<p>~~~text Select authentication method:</p>
+<p>→ Use a subscription Use an API key ~~~</p>
+<h2>models.json</h2>
+<p>pi支持自建provider, 自建provider的信息放在models.json中</p>
+<ul><li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi</li></ul>
+<p>格式如下,举例: newapi+gpt</p>
+<p>~~~json { &quot;providers&quot;:{ &quot;first_procider&quot;: { &quot;baseUrl&quot;: &quot;https://api.example1.com/v1&quot;, &quot;api&quot;: &quot;openai-completions&quot;, &quot;apiKey&quot;: &quot;sk-**********************&quot;, &quot;reasoning&quot;: true, &quot;models&quot;: [ { &quot;id&quot;: &quot;gpt-5.6-sol&quot;, &quot;name&quot;: &quot;first_model&quot;, &quot;thinkingLevelMap&quot;: { &quot;minimal&quot;: null, &quot;low&quot;: &quot;low&quot;, &quot;medium&quot;: &quot;medium&quot;, &quot;high&quot;: &quot;high&quot;, &quot;xhigh&quot;: &quot;xhigh&quot;, &quot;max&quot;: &quot;max&quot; }, &quot;contextWindow&quot;: 128000,</p>
+<p>}, { &quot;id&quot;: &quot;gpt-5.5&quot; } ] }, &quot;second_provider&quot;: { &quot;baseUrl&quot;: &quot;https://api.example2.com/v1&quot;, &quot;api&quot;: &quot;openai-completions&quot;, &quot;apiKey&quot;: &quot;sk-**********************&quot;, &quot;models&quot;: [ { &quot;id&quot;: &quot;gpt-5.6-sol&quot; } , { &quot;id&quot;: &quot;got-5.5&quot; } ] } } } ~~~</p>
+<p>添加好之后直接可以使用/model进行切换, 不需要/login, 即不需要向auth.json中添加</p>
+<ul><li>如果auth.json中有相关信息, 需要保证auth.json和models</li></ul>
+<p>.json中的信息保持一致,否则无法正常使用</p>
+<p><strong>参数说明</strong></p>
+<ol><li>&quot;api&quot;: 选择api协议, 官方文档中提供了四个协议</li></ol>
+<p class="article-figure"><img src="img/pi_agent_apis.png" alt="a" loading="lazy" /></p>
+<p>- openai-completions是兼容性最高的, 一般选择这个</p>
+<p>- openai-responses openai推出的,一般用于gpt系列模型</p>
+<p>- anthropic-messages a社专属,一般用于claude系列模型</p>
+<p>- google-generative-ai google推出,一般用于gemini系列模型</p>
+<ol><li>&quot;reasoning&quot;: 思考深度开关,开启之后可以使用shift+tab进行思考深度切换</li></ol>
+<ol><li>&quot;models&quot;:</li></ol>
+<p>1. &quot;name&quot;: 使用/model显示的名称 2. &quot;thingLevelMap&quot;: 自定义各个模型的思考强度,如gpt系列有high,xhigh,max等等, 可以使用shift+tab进行切换 3. &quot;contextWindow&quot;: 上下文窗口</p>
+<h2>settings.json</h2>
+<p>pi agent的设置文件, /settings可以快速编辑</p>
+<p>~~~json { &quot;lastChangelogVersion&quot;: &quot;0.78.0&quot;, &quot;defaultProvider&quot;: &quot;first_provider&quot;, &quot;defaultModel&quot;: &quot;gpt-5.6-sol&quot;, &quot;defaultThinkingLevel&quot;: &quot;high&quot;, &quot;theme&quot;: &quot;dark&quot; } ~~~</p>
+<hr />
+<p>pi agent的官方文档<a href="https://pi.dev/docs/latest" target="<em>blank" rel="noopener">PI</em>Agent_DOCS</a></p>`,
+  },
+  {
     slug: "hello-world",
     title: "Hello World",
     date: "2026-07-09",
