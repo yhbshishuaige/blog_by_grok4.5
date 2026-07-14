@@ -8,11 +8,12 @@
  *   3. npm run build
  *   4. git commit && git push  → live site updates (CI also runs build)
  *
- * Zero npm dependencies — pure Node.
+ * Markdown is rendered at build time with marked; the published site stays static.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { Marked } from "marked";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -61,195 +62,62 @@ function parseFrontmatter(raw) {
   return { meta, body: m[2].trim() };
 }
 
-/** Normalize image/link paths so site-root relative img/ works everywhere */
-function normalizeAssetUrl(url) {
-  if (!url || /^(https?:|data:|mailto:|#)/i.test(url)) return url;
-  let u = url.replace(/^\.\//, "");
+/** Normalize local image/link paths and reject executable URL schemes. */
+function normalizeAssetUrl(url, { image = false } = {}) {
+  const value = String(url || "").trim();
+  if (!value) return image ? "" : "#";
+
+  const compact = value.replace(/[\u0000-\u0020\u007f]+/g, "");
+  const protocol = compact.match(/^([a-z][a-z\d+.-]*):/i)?.[1]?.toLowerCase();
+  const allowedProtocols = image
+    ? new Set(["http", "https", "data"])
+    : new Set(["http", "https", "mailto", "tel"]);
+
+  if (protocol) return allowedProtocols.has(protocol) ? value : image ? "" : "#";
+  if (value.startsWith("#") || value.startsWith("//")) return value;
+
+  let u = value.replace(/^\.\//, "");
   // posts/xxx.md often uses ../img/foo.jpg
-  u = u.replace(/^\.\.\//, "");
+  u = u.replace(/^(\.\.\/)+/, "");
   if (u.startsWith("/")) u = u.slice(1);
   return u;
 }
 
-function inlineMarkdown(text) {
-  let s = escapeHtml(text);
-  // images first: ![alt](url)
-  s = s.replace(
-    /!\[([^\]]*)\]\(([^)]+)\)/g,
-    (_, alt, url) =>
-      `<img src="${escapeHtml(normalizeAssetUrl(url))}" alt="${escapeHtml(alt)}" loading="lazy" />`
-  );
-  // links: [text](url)
-  s = s.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    (_, label, url) =>
-      `<a href="${escapeHtml(normalizeAssetUrl(url))}"${/^https?:/i.test(url) ? ' target="_blank" rel="noopener"' : ""}>${label}</a>`
-  );
-  // bold ** ** / __ __
-  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  s = s.replace(/__([^_]+)__/g, "<strong>$1</strong>");
-  // italic * * / _ _
-  s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  s = s.replace(/(^|[^a-zA-Z0-9_])_([^_]+)_/g, "$1<em>$2</em>");
-  // inline code
-  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
-  return s;
-}
+const markdown = new Marked({
+  async: false,
+  gfm: true,
+  breaks: false,
+  renderer: {
+    // Article source is treated as Markdown, not trusted executable HTML.
+    html({ text }) {
+      return escapeHtml(text);
+    },
+    heading({ tokens, depth }) {
+      // The article title is already h1; keep headings in the body semantic.
+      const level = depth === 1 ? 2 : depth;
+      return `<h${level}>${this.parser.parseInline(tokens)}</h${level}>\n`;
+    },
+    paragraph({ tokens }) {
+      const figure = tokens.length === 1 && tokens[0].type === "image";
+      return `<p${figure ? ' class="article-figure"' : ""}>${this.parser.parseInline(tokens)}</p>\n`;
+    },
+    link({ href, title, tokens }) {
+      const url = normalizeAssetUrl(href);
+      const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+      const external = /^(?:https?:)?\/\//i.test(url);
+      const externalAttrs = external ? ' target="_blank" rel="noopener noreferrer"' : "";
+      return `<a href="${escapeHtml(url)}"${titleAttr}${externalAttrs}>${this.parser.parseInline(tokens)}</a>`;
+    },
+    image({ href, title, text }) {
+      const url = normalizeAssetUrl(href, { image: true });
+      const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+      return `<img src="${escapeHtml(url)}" alt="${escapeHtml(text)}"${titleAttr} loading="lazy" decoding="async" />`;
+    },
+  },
+});
 
-/**
- * Small Markdown → HTML subset:
- * headings, paragraphs, lists, blockquotes, fenced code, hr, images, links, emphasis
- */
 function markdownToHtml(md) {
-  const lines = md.replace(/\r\n/g, "\n").split("\n");
-  const html = [];
-  let i = 0;
-  let inCode = false;
-  let codeLang = "";
-  let codeBuf = [];
-  let listType = null; // "ul" | "ol"
-  let listItems = [];
-  let quoteBuf = [];
-
-  const flushList = () => {
-    if (!listType) return;
-    const tag = listType;
-    const items = listItems.map((t) => `<li>${inlineMarkdown(t)}</li>`).join("");
-    html.push(`<${tag}>${items}</${tag}>`);
-    listType = null;
-    listItems = [];
-  };
-
-  const flushQuote = () => {
-    if (!quoteBuf.length) return;
-    const inner = quoteBuf.map((t) => inlineMarkdown(t)).join("<br />");
-    html.push(`<blockquote>${inner}</blockquote>`);
-    quoteBuf = [];
-  };
-
-  const flushPara = (buf) => {
-    if (!buf.length) return;
-    html.push(`<p>${inlineMarkdown(buf.join(" "))}</p>`);
-    buf.length = 0;
-  };
-
-  let para = [];
-
-  while (i < lines.length) {
-    const line = lines[i];
-
-    // fenced code
-    if (line.startsWith("```")) {
-      flushList();
-      flushQuote();
-      flushPara(para);
-      if (!inCode) {
-        inCode = true;
-        codeLang = line.slice(3).trim();
-        codeBuf = [];
-      } else {
-        html.push(
-          `<pre><code${codeLang ? ` class="language-${escapeHtml(codeLang)}"` : ""}>${escapeHtml(codeBuf.join("\n"))}</code></pre>`
-        );
-        inCode = false;
-        codeLang = "";
-        codeBuf = [];
-      }
-      i++;
-      continue;
-    }
-    if (inCode) {
-      codeBuf.push(line);
-      i++;
-      continue;
-    }
-
-    // hr
-    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
-      flushList();
-      flushQuote();
-      flushPara(para);
-      html.push("<hr />");
-      i++;
-      continue;
-    }
-
-    // headings
-    const hm = line.match(/^(#{1,6})\s+(.+)$/);
-    if (hm) {
-      flushList();
-      flushQuote();
-      flushPara(para);
-      const level = Math.min(hm[1].length, 3); // style supports h1–h3 in body as h2/h3; map h1→h2
-      const tag = level === 1 ? 2 : level;
-      html.push(`<h${tag}>${inlineMarkdown(hm[2].trim())}</h${tag}>`);
-      i++;
-      continue;
-    }
-
-    // blockquote
-    if (line.startsWith(">")) {
-      flushList();
-      flushPara(para);
-      quoteBuf.push(line.replace(/^>\s?/, ""));
-      i++;
-      // continue collecting
-      while (i < lines.length && lines[i].startsWith(">")) {
-        quoteBuf.push(lines[i].replace(/^>\s?/, ""));
-        i++;
-      }
-      flushQuote();
-      continue;
-    }
-
-    // lists
-    const ul = line.match(/^[-*+]\s+(.+)$/);
-    const ol = line.match(/^\d+\.\s+(.+)$/);
-    if (ul || ol) {
-      flushQuote();
-      flushPara(para);
-      const type = ul ? "ul" : "ol";
-      const text = (ul || ol)[1];
-      if (listType && listType !== type) flushList();
-      listType = type;
-      listItems.push(text);
-      i++;
-      continue;
-    }
-
-    // blank line
-    if (!line.trim()) {
-      flushList();
-      flushQuote();
-      flushPara(para);
-      i++;
-      continue;
-    }
-
-    // standalone image line → figure-friendly paragraph
-    if (/^!\[/.test(line.trim()) && !para.length) {
-      flushList();
-      flushQuote();
-      html.push(`<p class="article-figure">${inlineMarkdown(line.trim())}</p>`);
-      i++;
-      continue;
-    }
-
-    // paragraph text
-    flushList();
-    flushQuote();
-    para.push(line.trim());
-    i++;
-  }
-
-  flushList();
-  flushQuote();
-  flushPara(para);
-  if (inCode) {
-    html.push(`<pre><code>${escapeHtml(codeBuf.join("\n"))}</code></pre>`);
-  }
-
-  return html.join("\n");
+  return markdown.parse(md).trim();
 }
 
 function estimateReadingMinutes(mdBody) {
@@ -263,7 +131,7 @@ function estimateReadingMinutes(mdBody) {
 
 function excerptFromBody(mdBody, maxLen = 90) {
   const plain = mdBody
-    .replace(/```[\s\S]*?```/g, "")
+    .replace(/^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?^ {0,3}\1\s*$/gm, "")
     .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]+\)/g, "$1")
     .replace(/[#>*_`~\-]+/g, " ")

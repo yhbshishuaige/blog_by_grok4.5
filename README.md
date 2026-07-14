@@ -4,9 +4,10 @@
 
 ## 快速启动
 
-需要 Node.js 18+ 与 Python 3；没有第三方 npm 依赖，**无需 `npm install`**。
+需要 Node.js 18+ 与 Python 3。首次拉取项目后安装构建依赖并启动：
 
 ```bash
+npm install
 npm start
 ```
 
@@ -24,7 +25,7 @@ PORT=8080 npm start
 - 南京江宁实时天气；请求失败时使用本地预估。
 - 天气徽章依次切换：晴、阴、小雨、中雨、大雨、雷电、小雪、中雪、大雪、大风。
 - 右上角选择纯天空或动态雪山，选择保存在 `localStorage`。
-- Markdown 文章、Hash 路由、页面转场、卡片微交互和减少动态效果适配。
+- GFM Markdown 文章、Hash 路由、页面转场、卡片微交互和减少动态效果适配。
 - 彩蛋触发、效果与调试方法见 `docs/EASTER_EGGS.md`。
 
 ## 写文章
@@ -39,11 +40,13 @@ npm run watch              # 监听文章并自动构建
 
 图片路径写为 `![说明](img/photo.jpg)`。`js/posts.data.js` 是构建产物，**不要手动修改**；`npm run watch` 只构建文章，不启动网页服务。
 
+正文支持标题、粗体 / 斜体 / 删除线、链接、图片、引用、嵌套列表、任务列表、表格，以及反引号或波浪线代码围栏。原始 HTML 会按普通文本显示，避免文章内容执行脚本。
+
 ## 架构与数据流
 
 ```text
 posts/*.md + img/*
-  -> scripts/build-posts.mjs
+  -> scripts/build-posts.mjs + marked
   -> js/posts.data.js
   -> js/posts.js
   -> js/router.js
@@ -94,4 +97,5 @@ npm start
 
 ## 最近更新
 
+- 2026-07-14：改用标准 GFM Markdown 构建文章，修复波浪线代码块、嵌套列表和链接渲染，并补齐 Pages 依赖安装。
 - 2026-07-10：美化全局滚动条；重构接手文档；补全彩蛋手册；将 `log.log` 统一为倒序 Markdown 更新记录。

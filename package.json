@@ -13,5 +13,8 @@
     "start": "node scripts/start-server.mjs",
     "new": "node scripts/new-post.mjs",
     "hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'git hooks → .githooks (提交 posts 时自动 build)'"
+  },
+  "devDependencies": {
+    "marked": "15.0.12"
   }
 }

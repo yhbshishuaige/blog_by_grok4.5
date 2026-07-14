@@ -12,38 +12,120 @@ export const posts = [
     readingMinutes: 2,
     excerpt: "",
     lead: "",
-    content: `<p>pi的文件结构 ~~~shell $tree ~/.pi ~/.pi └── agent ├── auth.json ├── bin/ ├── models.json ├── sessions/ └── settings.json ~~~ 相比于其他的AI coding agent,结构简单很多,这也是pi的核心思想之一,轻量,完全可定制</p>
+    content: `<p>pi的文件结构</p>
+<pre><code class="language-shell">$tree ~/.pi
+~/.pi
+└── agent
+    ├── auth.json
+    ├── bin/
+    ├── models.json
+    ├── sessions/
+    └── settings.json
+</code></pre>
+<p>相比于其他的AI coding agent,结构简单很多,这也是pi的核心思想之一,轻量,完全可定制</p>
 <h2>auth.json</h2>
 <p>/login登录的信息, 不可删除! 里面的key需要有效, 不是单纯的记录文件或日志</p>
-<p>~~~json { &quot;deepseek&quot;: { &quot;type&quot;: &quot;api_key&quot;, &quot;key&quot;: &quot;sk-**********************&quot; } } ~~~</p>
+<pre><code class="language-json">{
+    &quot;deepseek&quot;: {
+        &quot;type&quot;: &quot;api_key&quot;,
+        &quot;key&quot;: &quot;sk-**********************&quot;
+    }
+}
+</code></pre>
 <p>/login会自动将登录信息保存到auth.json文件中, 这意味着一般不需要手动编辑auth.json文件</p>
-<ul><li>type有两种</li></ul>
-<p>~~~text Select authentication method:</p>
-<p>→ Use a subscription Use an API key ~~~</p>
+<ul>
+<li>type有两种</li>
+</ul>
+<pre><code class="language-text"> Select authentication method:
+
+ → Use a subscription
+   Use an API key
+</code></pre>
 <h2>models.json</h2>
 <p>pi支持自建provider, 自建provider的信息放在models.json中</p>
-<ul><li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi</li></ul>
+<ul>
+<li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi</li>
+</ul>
 <p>格式如下,举例: newapi+gpt</p>
-<p>~~~json { &quot;providers&quot;:{ &quot;first_procider&quot;: { &quot;baseUrl&quot;: &quot;https://api.example1.com/v1&quot;, &quot;api&quot;: &quot;openai-completions&quot;, &quot;apiKey&quot;: &quot;sk-**********************&quot;, &quot;reasoning&quot;: true, &quot;models&quot;: [ { &quot;id&quot;: &quot;gpt-5.6-sol&quot;, &quot;name&quot;: &quot;first_model&quot;, &quot;thinkingLevelMap&quot;: { &quot;minimal&quot;: null, &quot;low&quot;: &quot;low&quot;, &quot;medium&quot;: &quot;medium&quot;, &quot;high&quot;: &quot;high&quot;, &quot;xhigh&quot;: &quot;xhigh&quot;, &quot;max&quot;: &quot;max&quot; }, &quot;contextWindow&quot;: 128000,</p>
-<p>}, { &quot;id&quot;: &quot;gpt-5.5&quot; } ] }, &quot;second_provider&quot;: { &quot;baseUrl&quot;: &quot;https://api.example2.com/v1&quot;, &quot;api&quot;: &quot;openai-completions&quot;, &quot;apiKey&quot;: &quot;sk-**********************&quot;, &quot;models&quot;: [ { &quot;id&quot;: &quot;gpt-5.6-sol&quot; } , { &quot;id&quot;: &quot;got-5.5&quot; } ] } } } ~~~</p>
+<pre><code class="language-json">{
+    &quot;providers&quot;:{
+        &quot;first_procider&quot;: {
+            &quot;baseUrl&quot;: &quot;https://api.example1.com/v1&quot;,
+            &quot;api&quot;: &quot;openai-completions&quot;,
+            &quot;apiKey&quot;: &quot;sk-**********************&quot;,
+            &quot;reasoning&quot;: true,
+            &quot;models&quot;: [
+                {
+                    &quot;id&quot;: &quot;gpt-5.6-sol&quot;,
+                    &quot;name&quot;: &quot;first_model&quot;,
+                    &quot;thinkingLevelMap&quot;: {
+                        &quot;minimal&quot;: null,
+                        &quot;low&quot;: &quot;low&quot;,
+                        &quot;medium&quot;: &quot;medium&quot;,
+                        &quot;high&quot;: &quot;high&quot;,
+                        &quot;xhigh&quot;: &quot;xhigh&quot;,
+                        &quot;max&quot;: &quot;max&quot;
+                    },
+                    &quot;contextWindow&quot;: 128000,
+
+                },
+                { &quot;id&quot;: &quot;gpt-5.5&quot; }
+            ]
+        },
+        &quot;second_provider&quot;: {
+            &quot;baseUrl&quot;: &quot;https://api.example2.com/v1&quot;,
+            &quot;api&quot;: &quot;openai-completions&quot;,
+            &quot;apiKey&quot;: &quot;sk-**********************&quot;,
+            &quot;models&quot;: [
+                { &quot;id&quot;: &quot;gpt-5.6-sol&quot; } ,
+                { &quot;id&quot;: &quot;got-5.5&quot; }
+            ]
+        }
+    }
+}
+</code></pre>
 <p>添加好之后直接可以使用/model进行切换, 不需要/login, 即不需要向auth.json中添加</p>
-<ul><li>如果auth.json中有相关信息, 需要保证auth.json和models</li></ul>
-<p>.json中的信息保持一致,否则无法正常使用</p>
+<ul>
+<li>如果auth.json中有相关信息, 需要保证auth.json和models
+.json中的信息保持一致,否则无法正常使用</li>
+</ul>
 <p><strong>参数说明</strong></p>
-<ol><li>&quot;api&quot;: 选择api协议, 官方文档中提供了四个协议</li></ol>
-<p class="article-figure"><img src="img/pi_agent_apis.png" alt="a" loading="lazy" /></p>
-<p>- openai-completions是兼容性最高的, 一般选择这个</p>
-<p>- openai-responses openai推出的,一般用于gpt系列模型</p>
-<p>- anthropic-messages a社专属,一般用于claude系列模型</p>
-<p>- google-generative-ai google推出,一般用于gemini系列模型</p>
-<ol><li>&quot;reasoning&quot;: 思考深度开关,开启之后可以使用shift+tab进行思考深度切换</li></ol>
-<ol><li>&quot;models&quot;:</li></ol>
-<p>1. &quot;name&quot;: 使用/model显示的名称 2. &quot;thingLevelMap&quot;: 自定义各个模型的思考强度,如gpt系列有high,xhigh,max等等, 可以使用shift+tab进行切换 3. &quot;contextWindow&quot;: 上下文窗口</p>
+<ol>
+<li><p>&quot;api&quot;: 选择api协议, 官方文档中提供了四个协议
+<img src="img/pi_agent_apis.png" alt="a" loading="lazy" decoding="async" /></p>
+<ul>
+<li><p>openai-completions是兼容性最高的, 一般选择这个</p>
+</li>
+<li><p>openai-responses openai推出的,一般用于gpt系列模型</p>
+</li>
+<li><p>anthropic-messages a社专属,一般用于claude系列模型</p>
+</li>
+<li><p>google-generative-ai google推出,一般用于gemini系列模型</p>
+</li>
+</ul>
+</li>
+<li><p>&quot;reasoning&quot;: 思考深度开关,开启之后可以使用shift+tab进行思考深度切换</p>
+</li>
+<li><p>&quot;models&quot;:</p>
+<ol>
+<li>&quot;name&quot;: 使用/model显示的名称</li>
+<li>&quot;thingLevelMap&quot;: 自定义各个模型的思考强度,如gpt系列有high,xhigh,max等等, 可以使用shift+tab进行切换</li>
+<li>&quot;contextWindow&quot;: 上下文窗口</li>
+</ol>
+</li>
+</ol>
 <h2>settings.json</h2>
 <p>pi agent的设置文件, /settings可以快速编辑</p>
-<p>~~~json { &quot;lastChangelogVersion&quot;: &quot;0.78.0&quot;, &quot;defaultProvider&quot;: &quot;first_provider&quot;, &quot;defaultModel&quot;: &quot;gpt-5.6-sol&quot;, &quot;defaultThinkingLevel&quot;: &quot;high&quot;, &quot;theme&quot;: &quot;dark&quot; } ~~~</p>
-<hr />
-<p>pi agent的官方文档<a href="https://pi.dev/docs/latest" target="<em>blank" rel="noopener">PI</em>Agent_DOCS</a></p>`,
+<pre><code class="language-json">{
+  &quot;lastChangelogVersion&quot;: &quot;0.78.0&quot;,
+  &quot;defaultProvider&quot;: &quot;first_provider&quot;,
+  &quot;defaultModel&quot;: &quot;gpt-5.6-sol&quot;,
+  &quot;defaultThinkingLevel&quot;: &quot;high&quot;,
+  &quot;theme&quot;: &quot;dark&quot;
+}
+</code></pre>
+<hr>
+<p>pi agent的官方文档<a href="https://pi.dev/docs/latest" target="_blank" rel="noopener noreferrer">PI_Agent_DOCS</a></p>`,
   },
   {
     slug: "hello-world",
@@ -56,19 +138,33 @@ export const posts = [
     content: `<p>你好，世界。这是 <strong>Weather Blog</strong> 的第一篇文章——用来确认整站动画链路是否「丝滑流转」。</p>
 <h2>你会看到什么</h2>
 <p>这个博客把三件事叠在一起：</p>
-<ul><li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、小雪、中雪、大雪、大风、雷电，粒子密度与氛围色会明显变化；</li><li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；右上角时间轮盘可拖动预览任意时刻；</li><li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li></ul>
+<ul>
+<li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、小雪、中雪、大雪、大风、雷电，粒子密度与氛围色会明显变化；</li>
+<li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；右上角时间轮盘可拖动预览任意时刻；</li>
+<li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li>
+</ul>
 <h2>如何体验</h2>
-<ol><li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li><li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li><li>点天气徽章左侧的「时间」按钮，拖动轮盘预览昼夜，可随时「回到实时」；</li><li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li><li>阴天时云层应偏淡、靠上，不挡正文；雷电天气请多看几秒——会有闪电与雨粒子。</li></ol>
-<blockquote>「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」</blockquote>
+<ol>
+<li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
+<li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li>
+<li>点天气徽章左侧的「时间」按钮，拖动轮盘预览昼夜，可随时「回到实时」；</li>
+<li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li>
+<li>阴天时云层应偏淡、靠上，不挡正文；雷电天气请多看几秒——会有闪电与雨粒子。</li>
+</ol>
+<blockquote>
+<p>「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」</p>
+</blockquote>
 <h2>一段小代码</h2>
 <p>经典的问候当然少不了：</p>
-<pre><code class="language-js">console.log(&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;);</code></pre>
+<pre><code class="language-js">console.log(&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;);
+</code></pre>
 <h3>设计意图</h3>
 <p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
 <p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
 <p>那就这样——<em>Hello World</em>，我们下次见。</p>
 <h2>配图示例</h2>
 <p>把图片放进项目根目录的 <code>img/</code> 文件夹，在 Markdown 里这样写（路径相对站点根）：</p>
-<p>千山鸟飞绝,万径人踪灭 <img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" /></p>`,
+<p>千山鸟飞绝,万径人踪灭
+<img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" decoding="async" /></p>`,
   }
 ];

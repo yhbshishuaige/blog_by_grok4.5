@@ -55,8 +55,8 @@ title: ${title}
 date: ${date}
 tag: 随笔
 slug: ${safeSlug}
-excerpt: 
-lead: 
+excerpt:
+lead:
 ---
 
 在这里写正文。支持 Markdown。

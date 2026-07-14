@@ -1462,6 +1462,15 @@ body.camera-mountain-return .sky::after {
   margin: 1.8rem 0 0.7rem;
 }
 
+.article-body h4,
+.article-body h5,
+.article-body h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.55rem 0 0.65rem;
+  color: var(--text);
+}
+
 .article-body ul,
 .article-body ol {
   margin: 0 0 1.35rem 1.25rem;
@@ -1469,6 +1478,32 @@ body.camera-mountain-return .sky::after {
 
 .article-body li {
   margin-bottom: 0.4rem;
+}
+
+.article-body li > ul,
+.article-body li > ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.55rem;
+}
+
+.article-body li > p {
+  margin-bottom: 0.65rem;
+}
+
+.article-body li > p:last-child {
+  margin-bottom: 0;
+}
+
+.article-body .contains-task-list {
+  margin-left: 0;
+  list-style: none;
+}
+
+.article-body .task-list-item input {
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0 0.5rem 0 0;
+  accent-color: var(--accent);
 }
 
 .article-body code {
@@ -1505,6 +1540,40 @@ body.camera-mountain-return .sky::after {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   color: var(--text-muted);
   font-style: italic;
+}
+
+.article-body table {
+  display: block;
+  width: 100%;
+  margin: 0 0 1.5rem;
+  overflow-x: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-radius: var(--radius-sm);
+}
+
+.article-body th,
+.article-body td {
+  min-width: 7rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body th {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.article-body tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.article-body del {
+  color: var(--text-dim);
+  text-decoration-thickness: 1px;
 }
 
 .article-body a {
