@@ -10,80 +10,91 @@ export const posts = [
     date: "2026-07-13",
     tag: "随笔",
     readingMinutes: 2,
+    wordCount: 418,
+    codeBlockCount: 5,
+    toc: [{"id":"auth-json","level":2,"label":"auth.json"},{"id":"models-json","level":2,"label":"models.json"},{"id":"settings-json","level":2,"label":"settings.json"}],
     excerpt: "",
     lead: "",
     content: `<p>pi的文件结构</p>
-<pre><code class="language-shell">$tree ~/.pi
+<section class="code-block" data-language="shell">
+<div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">8 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="language-shell hljs"><span class="hljs-meta prompt_">$</span><span class="language-bash">tree ~/.pi</span>
 ~/.pi
 └── agent
     ├── auth.json
     ├── bin/
     ├── models.json
     ├── sessions/
-    └── settings.json
-</code></pre>
+    └── settings.json</code></pre>
+</section>
 <p>相比于其他的AI coding agent,结构简单很多,这也是pi的核心思想之一,轻量,完全可定制</p>
-<h2>auth.json</h2>
+<h2 id="auth-json">auth.json</h2>
 <p>/login登录的信息, 不可删除! 里面的key需要有效, 不是单纯的记录文件或日志</p>
-<pre><code class="language-json">{
-    &quot;deepseek&quot;: {
-        &quot;type&quot;: &quot;api_key&quot;,
-        &quot;key&quot;: &quot;sk-**********************&quot;
-    }
-}
-</code></pre>
+<section class="code-block" data-language="json">
+<div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">6 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;deepseek&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;api_key&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;key&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-**********************&quot;</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code></pre>
+</section>
 <p>/login会自动将登录信息保存到auth.json文件中, 这意味着一般不需要手动编辑auth.json文件</p>
 <ul>
 <li>type有两种</li>
 </ul>
-<pre><code class="language-text"> Select authentication method:
+<section class="code-block" data-language="text">
+<div class="code-toolbar"><span class="code-language">Text</span><span class="code-lines">4 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="hljs"> Select authentication method:
 
  → Use a subscription
-   Use an API key
-</code></pre>
-<h2>models.json</h2>
+   Use an API key</code></pre>
+</section>
+<h2 id="models-json">models.json</h2>
 <p>pi支持自建provider, 自建provider的信息放在models.json中</p>
 <ul>
 <li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi</li>
 </ul>
 <p>格式如下,举例: newapi+gpt</p>
-<pre><code class="language-json">{
-    &quot;providers&quot;:{
-        &quot;first_procider&quot;: {
-            &quot;baseUrl&quot;: &quot;https://api.example1.com/v1&quot;,
-            &quot;api&quot;: &quot;openai-completions&quot;,
-            &quot;apiKey&quot;: &quot;sk-**********************&quot;,
-            &quot;reasoning&quot;: true,
-            &quot;models&quot;: [
-                {
-                    &quot;id&quot;: &quot;gpt-5.6-sol&quot;,
-                    &quot;name&quot;: &quot;first_model&quot;,
-                    &quot;thinkingLevelMap&quot;: {
-                        &quot;minimal&quot;: null,
-                        &quot;low&quot;: &quot;low&quot;,
-                        &quot;medium&quot;: &quot;medium&quot;,
-                        &quot;high&quot;: &quot;high&quot;,
-                        &quot;xhigh&quot;: &quot;xhigh&quot;,
-                        &quot;max&quot;: &quot;max&quot;
-                    },
-                    &quot;contextWindow&quot;: 128000,
+<section class="code-block" data-language="json">
+<div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">36 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;providers&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;first_procider&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://api.example1.com/v1&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;api&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;openai-completions&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;apiKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-**********************&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;reasoning&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;models&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-5.6-sol&quot;</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;first_model&quot;</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">&quot;thinkingLevelMap&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                        <span class="hljs-attr">&quot;minimal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">null</span></span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;low&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;low&quot;</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;medium&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;medium&quot;</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;high&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;high&quot;</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;xhigh&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;xhigh&quot;</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;max&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;max&quot;</span>
+                    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">&quot;contextWindow&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">128000</span><span class="hljs-punctuation">,</span>
 
-                },
-                { &quot;id&quot;: &quot;gpt-5.5&quot; }
-            ]
-        },
-        &quot;second_provider&quot;: {
-            &quot;baseUrl&quot;: &quot;https://api.example2.com/v1&quot;,
-            &quot;api&quot;: &quot;openai-completions&quot;,
-            &quot;apiKey&quot;: &quot;sk-**********************&quot;,
-            &quot;models&quot;: [
-                { &quot;id&quot;: &quot;gpt-5.6-sol&quot; } ,
-                { &quot;id&quot;: &quot;got-5.5&quot; }
-            ]
-        }
-    }
-}
-</code></pre>
+                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-5.5&quot;</span> <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;second_provider&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://api.example2.com/v1&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;api&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;openai-completions&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;apiKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-**********************&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;models&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-5.6-sol&quot;</span> <span class="hljs-punctuation">}</span> <span class="hljs-punctuation">,</span>
+                <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;got-5.5&quot;</span> <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code></pre>
+</section>
 <p>添加好之后直接可以使用/model进行切换, 不需要/login, 即不需要向auth.json中添加</p>
 <ul>
 <li>如果auth.json中有相关信息, 需要保证auth.json和models
@@ -114,16 +125,18 @@ export const posts = [
 </ol>
 </li>
 </ol>
-<h2>settings.json</h2>
+<h2 id="settings-json">settings.json</h2>
 <p>pi agent的设置文件, /settings可以快速编辑</p>
-<pre><code class="language-json">{
-  &quot;lastChangelogVersion&quot;: &quot;0.78.0&quot;,
-  &quot;defaultProvider&quot;: &quot;first_provider&quot;,
-  &quot;defaultModel&quot;: &quot;gpt-5.6-sol&quot;,
-  &quot;defaultThinkingLevel&quot;: &quot;high&quot;,
-  &quot;theme&quot;: &quot;dark&quot;
-}
-</code></pre>
+<section class="code-block" data-language="json">
+<div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">7 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;lastChangelogVersion&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.78.0&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;defaultProvider&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;first_provider&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;defaultModel&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-5.6-sol&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;defaultThinkingLevel&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;high&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;theme&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;dark&quot;</span>
+<span class="hljs-punctuation">}</span></code></pre>
+</section>
 <hr>
 <p>pi agent的官方文档<a href="https://pi.dev/docs/latest" target="_blank" rel="noopener noreferrer">PI_Agent_DOCS</a></p>`,
   },
@@ -133,17 +146,20 @@ export const posts = [
     date: "2026-07-09",
     tag: "第一篇",
     readingMinutes: 3,
+    wordCount: 528,
+    codeBlockCount: 1,
+    toc: [{"id":"你会看到什么","level":2,"label":"你会看到什么"},{"id":"如何体验","level":2,"label":"如何体验"},{"id":"一段小代码","level":2,"label":"一段小代码"},{"id":"设计意图","level":3,"label":"设计意图"},{"id":"配图示例","level":2,"label":"配图示例"}],
     excerpt: "欢迎来到 Weather Blog。这是第一篇测试文章，用来验证天气动画、昼夜天空与丝滑页面转场是否工作正常。",
     lead: "从这一刻起，每一次点击、每一次日出日落，都应该感觉像风吹过页面一样自然。",
     content: `<p>你好，世界。这是 <strong>Weather Blog</strong> 的第一篇文章——用来确认整站动画链路是否「丝滑流转」。</p>
-<h2>你会看到什么</h2>
+<h2 id="你会看到什么">你会看到什么</h2>
 <p>这个博客把三件事叠在一起：</p>
 <ul>
 <li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、小雪、中雪、大雪、大风、雷电，粒子密度与氛围色会明显变化；</li>
 <li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；右上角时间轮盘可拖动预览任意时刻；</li>
 <li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li>
 </ul>
-<h2>如何体验</h2>
+<h2 id="如何体验">如何体验</h2>
 <ol>
 <li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
 <li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li>
@@ -154,15 +170,17 @@ export const posts = [
 <blockquote>
 <p>「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」</p>
 </blockquote>
-<h2>一段小代码</h2>
+<h2 id="一段小代码">一段小代码</h2>
 <p>经典的问候当然少不了：</p>
-<pre><code class="language-js">console.log(&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;);
-</code></pre>
-<h3>设计意图</h3>
+<section class="code-block" data-language="javascript">
+<div class="code-toolbar"><span class="code-language">JavaScript</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
+</section>
+<h3 id="设计意图">设计意图</h3>
 <p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
 <p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
 <p>那就这样——<em>Hello World</em>，我们下次见。</p>
-<h2>配图示例</h2>
+<h2 id="配图示例">配图示例</h2>
 <p>把图片放进项目根目录的 <code>img/</code> 文件夹，在 Markdown 里这样写（路径相对站点根）：</p>
 <p>千山鸟飞绝,万径人踪灭
 <img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" decoding="async" /></p>`,

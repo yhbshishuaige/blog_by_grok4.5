@@ -13,7 +13,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import hljs from "highlight.js/lib/core";
+import bash from "highlight.js/lib/languages/bash";
+import c from "highlight.js/lib/languages/c";
+import javascript from "highlight.js/lib/languages/javascript";
+import json from "highlight.js/lib/languages/json";
+import python from "highlight.js/lib/languages/python";
+import shell from "highlight.js/lib/languages/shell";
 import { Marked } from "marked";
+
+hljs.registerLanguage("bash", bash);
+hljs.registerLanguage("c", c);
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("json", json);
+hljs.registerLanguage("python", python);
+hljs.registerLanguage("shell", shell);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -83,6 +97,75 @@ function normalizeAssetUrl(url, { image = false } = {}) {
   return u;
 }
 
+const CODE_LANGUAGE_ALIASES = {
+  c: "c",
+  h: "c",
+  py: "python",
+  python: "python",
+  bash: "bash",
+  sh: "bash",
+  zsh: "bash",
+  shell: "shell",
+  console: "shell",
+  js: "javascript",
+  jsx: "javascript",
+  javascript: "javascript",
+  json: "json",
+  jsonc: "json",
+};
+
+const CODE_LANGUAGE_LABELS = {
+  c: "C",
+  python: "Python",
+  bash: "Shell",
+  shell: "Shell Session",
+  javascript: "JavaScript",
+  json: "JSON",
+  text: "Text",
+};
+
+let activeToc = [];
+let activeHeadingIds = new Map();
+let activeCodeBlockCount = 0;
+
+function plainHeadingText(text) {
+  return String(text)
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[`*_~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function headingId(text) {
+  const base = plainHeadingText(text)
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+    .replace(/^-+|-+$/g, "") || "section";
+  const count = activeHeadingIds.get(base) || 0;
+  activeHeadingIds.set(base, count + 1);
+  return count ? `${base}-${count + 1}` : base;
+}
+
+function renderCode(text, info) {
+  const requested = String(info || "").trim().split(/\s+/, 1)[0].toLowerCase();
+  const language = CODE_LANGUAGE_ALIASES[requested] || requested;
+  const known = language && hljs.getLanguage(language);
+  const highlighted = known
+    ? hljs.highlight(text, { language, ignoreIllegals: true }).value
+    : escapeHtml(text);
+  const label = CODE_LANGUAGE_LABELS[language] || requested || "Text";
+  const className = known ? ` language-${escapeHtml(language)} hljs` : " hljs";
+  const lines = Math.max(1, text.split("\n").length);
+
+  activeCodeBlockCount += 1;
+  return `<section class="code-block" data-language="${escapeHtml(language || "text")}">
+<div class="code-toolbar"><span class="code-language">${escapeHtml(label)}</span><span class="code-lines">${lines} 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><code class="${className.trim()}">${highlighted}</code></pre>
+</section>\n`;
+}
+
 const markdown = new Marked({
   async: false,
   gfm: true,
@@ -92,10 +175,16 @@ const markdown = new Marked({
     html({ text }) {
       return escapeHtml(text);
     },
-    heading({ tokens, depth }) {
+    heading({ tokens, depth, text }) {
       // The article title is already h1; keep headings in the body semantic.
       const level = depth === 1 ? 2 : depth;
-      return `<h${level}>${this.parser.parseInline(tokens)}</h${level}>\n`;
+      const id = headingId(text);
+      const label = plainHeadingText(text);
+      if (level <= 3) activeToc.push({ id, level, label });
+      return `<h${level} id="${escapeHtml(id)}">${this.parser.parseInline(tokens)}</h${level}>\n`;
+    },
+    code({ text, lang }) {
+      return renderCode(text, lang);
     },
     paragraph({ tokens }) {
       const figure = tokens.length === 1 && tokens[0].type === "image";
@@ -117,16 +206,31 @@ const markdown = new Marked({
 });
 
 function markdownToHtml(md) {
-  return markdown.parse(md).trim();
+  activeToc = [];
+  activeHeadingIds = new Map();
+  activeCodeBlockCount = 0;
+  const content = markdown.parse(md).trim();
+  return {
+    content,
+    toc: activeToc,
+    codeBlockCount: activeCodeBlockCount,
+  };
 }
 
-function estimateReadingMinutes(mdBody) {
-  // rough CJK + Latin word count
-  const cjk = (mdBody.match(/[\u4e00-\u9fff]/g) || []).join("").length;
-  const latin = (mdBody.replace(/[\u4e00-\u9fff]/g, " ").match(/[a-zA-Z0-9]+/g) || [])
+function articleStats(mdBody) {
+  const prose = mdBody
+    .replace(/^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?^ {0,3}\1\s*$/gm, "")
+    .replace(/`[^`]*`/g, "")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/<[^>]*>/g, " ");
+  const cjk = (prose.match(/[\u3400-\u9fff]/g) || []).length;
+  const latin = (prose.replace(/[\u3400-\u9fff]/g, " ").match(/[a-zA-Z0-9]+/g) || [])
     .length;
-  const words = cjk / 400 + latin / 200; // minutes-ish
-  return Math.max(1, Math.ceil(words));
+  return {
+    wordCount: cjk + latin,
+    readingMinutes: Math.max(1, Math.ceil(cjk / 400 + latin / 200)),
+  };
 }
 
 function excerptFromBody(mdBody, maxLen = 90) {
@@ -174,12 +278,13 @@ function loadPosts() {
     const lead = meta.lead != null ? String(meta.lead) : "";
     const excerpt =
       meta.excerpt != null ? String(meta.excerpt) : excerptFromBody(body);
+    const stats = articleStats(body);
     const readingMinutes =
       meta.readingMinutes != null
         ? Number(meta.readingMinutes)
-        : estimateReadingMinutes(body);
+        : stats.readingMinutes;
 
-    const content = markdownToHtml(body);
+    const { content, toc, codeBlockCount } = markdownToHtml(body);
 
     posts.push({
       slug,
@@ -187,6 +292,9 @@ function loadPosts() {
       date,
       tag,
       readingMinutes,
+      wordCount: stats.wordCount,
+      codeBlockCount,
+      toc,
       excerpt,
       lead,
       content,
@@ -212,6 +320,9 @@ function writeOutput(posts) {
     date: ${JSON.stringify(p.date)},
     tag: ${JSON.stringify(p.tag)},
     readingMinutes: ${p.readingMinutes},
+    wordCount: ${p.wordCount},
+    codeBlockCount: ${p.codeBlockCount},
+    toc: ${JSON.stringify(p.toc)},
     excerpt: ${JSON.stringify(p.excerpt)},
     lead: ${JSON.stringify(p.lead)},
     content: \`${escapeJs(p.content)}\`,

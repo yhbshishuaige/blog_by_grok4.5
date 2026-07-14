@@ -140,10 +140,16 @@
   <!-- App shell -->
   <div id="app" class="app">
     <header class="site-header">
-      <a href="#/" class="logo" data-nav>
-        <span class="logo-mark"></span>
-        <span class="logo-text">Weather Blog</span>
-      </a>
+      <div class="header-brand">
+        <a href="#/" class="logo" data-nav>
+          <span class="logo-mark"></span>
+          <span class="logo-text">Weather Blog</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a href="#/" class="site-nav-home" data-nav>文章</a>
+          <a href="#/friends" data-nav>友链</a>
+        </nav>
+      </div>
       <div class="header-meta">
         <div class="time-control" id="timeControl">
           <button
@@ -241,6 +247,7 @@
 
     <footer class="site-footer">
       <p>背景随 24 小时天空流转 · 动画随天气变幻</p>
+      <p><a href="#/friends" data-nav>友链</a></p>
       <p class="footer-whisper" id="footerWhisper" aria-live="polite"></p>
     </footer>
   </div>

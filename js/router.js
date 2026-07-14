@@ -2,6 +2,28 @@
  * Hash router with weather-aware transitions
  */
 import { posts, getPostBySlug, formatDate } from "./posts.js";
+import { friends } from "./friends.js";
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value));
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "#";
+  } catch {
+    return "#";
+  }
+}
+
+function formatCount(value) {
+  return Number(value || 0).toLocaleString("zh-CN");
+}
 
 function parseRoute() {
   const raw = location.hash.replace(/^#/, "") || "/";
@@ -9,6 +31,7 @@ function parseRoute() {
   const parts = path.split("/").filter(Boolean);
 
   if (parts.length === 0) return { name: "home" };
+  if (parts[0] === "friends") return { name: "friends" };
   if (parts[0] === "post" && parts[1]) {
     return { name: "post", slug: decodeURIComponent(parts[1]) };
   }
@@ -23,6 +46,7 @@ function renderHome() {
       <div class="post-card-meta">
         <span class="post-card-tag">${p.tag}</span>
         <time datetime="${p.date}">${formatDate(p.date)}</time>
+        <span>· ${formatCount(p.wordCount)} 字</span>
         <span>· ${p.readingMinutes} 分钟阅读</span>
       </div>
       <h2>${p.title}</h2>
@@ -46,6 +70,24 @@ function renderHome() {
   `;
 }
 
+function renderToc(post) {
+  if (!post.toc?.length) return "";
+  const links = post.toc
+    .map(
+      (item) => `
+        <button type="button" class="toc-link toc-level-${item.level}" data-target="${escapeHtml(item.id)}">
+          ${escapeHtml(item.label)}
+        </button>`
+    )
+    .join("");
+
+  return `
+    <details class="article-toc" open>
+      <summary>本文目录 <span>${post.toc.length} 节</span></summary>
+      <nav class="toc-list" aria-label="本文目录">${links}</nav>
+    </details>`;
+}
+
 function renderPost(slug) {
   const post = getPostBySlug(slug);
   if (!post) return renderNotFound();
@@ -55,13 +97,16 @@ function renderPost(slug) {
     : "";
 
   return `
-    <article class="article">
+    <div class="article-layout">
+      <article class="article">
       <a href="#/" class="back-link" data-nav>← 返回列表</a>
       <header class="article-header">
         <div class="article-meta">
           <span class="post-card-tag">${post.tag}</span>
           <time datetime="${post.date}">${formatDate(post.date)}</time>
+          <span>· ${formatCount(post.wordCount)} 字</span>
           <span>· ${post.readingMinutes} 分钟阅读</span>
+          ${post.codeBlockCount ? `<span>· ${post.codeBlockCount} 个代码块</span>` : ""}
         </div>
         <h1>${post.title}</h1>
         ${lead}
@@ -73,8 +118,37 @@ function renderPost(slug) {
         <p class="article-end-note">—— ${post.title} · Weather Blog</p>
         <a href="#/" class="back-link" data-nav style="margin:0;animation-delay:0.5s">← 回首页</a>
       </footer>
-    </article>
+      </article>
+      ${renderToc(post)}
+    </div>
   `;
+}
+
+function renderFriends() {
+  const cards = friends
+    .map(
+      (friend) => `
+        <a class="friend-card" href="${escapeHtml(safeExternalUrl(friend.url))}" target="_blank" rel="noopener noreferrer">
+          <span class="friend-badge" aria-hidden="true">${escapeHtml(friend.badge || friend.name.slice(0, 2))}</span>
+          <span class="friend-copy">
+            <strong>${escapeHtml(friend.name)}</strong>
+            <small>${escapeHtml(friend.description)}</small>
+          </span>
+          <span class="friend-arrow" aria-hidden="true">↗</span>
+        </a>`
+    )
+    .join("");
+
+  return `
+    <section class="friends-page">
+      <a href="#/" class="back-link" data-nav>← 返回文章</a>
+      <header class="friends-header">
+        <p class="hero-kicker">Links · Neighbors</p>
+        <h1>友链</h1>
+        <p>在各自的小小角落写字，也在彼此的世界留下入口。</p>
+      </header>
+      <div class="friends-grid">${cards}</div>
+    </section>`;
 }
 
 function renderNotFound() {
@@ -109,6 +183,10 @@ export function createRouter({ transitions, getWeatherType, onRender }) {
     if (route.name === "home") {
       html = renderHome();
       message = undefined; // content-only morph; no interstitial caption
+    } else if (route.name === "friends") {
+      html = renderFriends();
+      title = "友链 · Weather Blog";
+      message = undefined;
     } else if (route.name === "post") {
       html = renderPost(route.slug);
       const post = getPostBySlug(route.slug);
@@ -127,6 +205,7 @@ export function createRouter({ transitions, getWeatherType, onRender }) {
     // so we don't double-trigger view-enter.
     const apply = () => {
       main.innerHTML = html;
+      main.dataset.route = route.name;
       if (route.name === "home") revealCards(main);
       onRender?.(main, route);
       window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });

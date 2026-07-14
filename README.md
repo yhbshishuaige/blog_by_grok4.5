@@ -25,7 +25,7 @@ PORT=8080 npm start
 - 南京江宁实时天气；请求失败时使用本地预估。
 - 天气徽章依次切换：晴、阴、小雨、中雨、大雨、雷电、小雪、中雪、大雪、大风。
 - 右上角选择纯天空或动态雪山，选择保存在 `localStorage`。
-- GFM Markdown 文章、Hash 路由、页面转场、卡片微交互和减少动态效果适配。
+- GFM Markdown 文章、代码高亮 / 折叠 / 复制、浮动目录、字数统计、友链、Hash 路由和页面转场。
 - 彩蛋触发、效果与调试方法见 `docs/EASTER_EGGS.md`。
 
 ## 写文章
@@ -42,11 +42,15 @@ npm run watch              # 监听文章并自动构建
 
 正文支持标题、粗体 / 斜体 / 删除线、链接、图片、引用、嵌套列表、任务列表、表格，以及反引号或波浪线代码围栏。原始 HTML 会按普通文本显示，避免文章内容执行脚本。
 
+代码围栏标注 `c`、`python` / `py`、`shell` / `bash` / `sh`、`json` 或 `javascript` / `js` 会自动高亮。二、三级标题自动进入文章目录；字数、阅读时间与代码块数量会在构建时计算。
+
+友链配置位于 `js/friends.js`，按现有对象格式增加名称、地址、说明和缩写即可。
+
 ## 架构与数据流
 
 ```text
 posts/*.md + img/*
-  -> scripts/build-posts.mjs + marked
+  -> scripts/build-posts.mjs + marked + highlight.js
   -> js/posts.data.js
   -> js/posts.js
   -> js/router.js
@@ -56,7 +60,9 @@ posts/*.md + img/*
 |---|---|
 | `index.html` | 页面骨架与背景图层 |
 | `js/main.js` | 创建模块并暴露 `window.WeatherBlog` |
-| `js/router.js` | 首页 / 文章 Hash 路由与渲染 |
+| `js/router.js` | 首页 / 文章 / 友链 Hash 路由与渲染 |
+| `js/article-tools.js` | 文章目录、代码折叠与复制交互 |
+| `js/friends.js` | 友链数据配置 |
 | `js/time-sky.js`、`js/time-dial.js` | 24 小时天空和时间轮盘 |
 | `js/weather.js` | 天气 API、类型映射、手动切换与粒子 |
 | `js/background.js` | 天空 / 雪山选择及持久化 |
@@ -74,7 +80,8 @@ posts/*.md + img/*
 - 改雨雪密度：`js/weather.js` 的 `RAIN_PRESETS`、`SNOW_PRESETS`。
 - 改页面或雪山：`styles/main.css`；改天气和转场时同步检查对应拆分样式。
 - 改彩蛋：同时核对 `js/secrets.js`、`styles/secrets.css` 和 `docs/EASTER_EGGS.md`。
-- 改文章解析：检查 `scripts/build-posts.mjs`、`js/posts.js` 和 `js/router.js` 的完整数据链。
+- 改文章解析：检查 `scripts/build-posts.mjs`、`js/posts.js`、`js/article-tools.js` 和 `js/router.js` 的完整数据链。
+- 改友链：编辑 `js/friends.js`，无需修改路由模板。
 
 ## 验收
 
@@ -86,7 +93,7 @@ git diff --check
 npm start
 ```
 
-浏览器至少检查：首页、文章页、天气循环、时间预览与恢复、两种背景、滚动条、移动端布局；启动验证后用 `Ctrl+C` 关闭服务。
+浏览器至少检查：首页、文章目录、代码高亮 / 折叠 / 复制、友链页、天气循环、时间预览与恢复、两种背景、滚动条、移动端布局；启动验证后用 `Ctrl+C` 关闭服务。
 
 ## 维护规则
 
@@ -97,6 +104,7 @@ npm start
 
 ## 最近更新
 
+- 2026-07-14：文章增强：17px 字体、常用语言代码高亮、折叠 / 复制、浮动目录、字数与代码块统计，并新增友链页面。
 - 2026-07-14：全站字体对齐终端 Vim，改用 Cascadia Code、15px 基础字号和半粗字重，并移除远程 Google Fonts。
 - 2026-07-14：改用标准 GFM Markdown 构建文章，修复波浪线代码块、嵌套列表和链接渲染，并补齐 Pages 依赖安装。
 - 2026-07-10：美化全局滚动条；重构接手文档；补全彩蛋手册；将 `log.log` 统一为倒序 Markdown 更新记录。

@@ -28,6 +28,8 @@ lead: 文章标题下的导语（可省略）
 console.log("代码块");
 ```
 
+代码围栏可标注 `c`、`python`、`shell`、`json` 或 `js`，页面会自动高亮并提供折叠与复制按钮。
+
 图片请放到项目根目录 `img/` 下，然后引用：
 
 ![图片说明](img/your-photo.jpg)

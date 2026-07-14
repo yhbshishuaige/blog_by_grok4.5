@@ -15,6 +15,7 @@
     "hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'git hooks → .githooks (提交 posts 时自动 build)'"
   },
   "devDependencies": {
+    "highlight.js": "11.11.1",
     "marked": "15.0.12"
   }
 }

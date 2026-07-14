@@ -6,6 +6,7 @@ import { createTimeDial } from "./time-dial.js";
 import { createBackgroundControl } from "./background.js";
 import { createSecrets } from "./secrets.js";
 import { createCardMotion } from "./card-motion.js";
+import { createArticleTools } from "./article-tools.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
 import { createRouter } from "./router.js";
@@ -24,10 +25,14 @@ async function boot() {
 
   const transitions = createTransitions();
   const cardMotion = createCardMotion();
+  const articleTools = createArticleTools();
   const router = createRouter({
     transitions,
     getWeatherType: () => weather.getType(),
-    onRender: (main) => cardMotion.bind(main),
+    onRender: (main, route) => {
+      cardMotion.bind(main);
+      articleTools.bind(main, route);
+    },
   });
   router.start();
 
@@ -39,6 +44,7 @@ async function boot() {
     background,
     secrets,
     cardMotion,
+    articleTools,
     transitions,
     router,
     weatherReady,
