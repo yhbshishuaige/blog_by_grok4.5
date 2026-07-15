@@ -158,11 +158,15 @@ function renderCode(text, info) {
   const label = CODE_LANGUAGE_LABELS[language] || requested || "Text";
   const className = known ? ` language-${escapeHtml(language)} hljs` : " hljs";
   const lines = Math.max(1, text.split("\n").length);
+  const lineNumbers = Array.from(
+    { length: lines },
+    (_, index) => `<span>${index + 1}</span>`,
+  ).join("");
 
   activeCodeBlockCount += 1;
   return `<section class="code-block" data-language="${escapeHtml(language || "text")}">
 <div class="code-toolbar"><span class="code-language">${escapeHtml(label)}</span><span class="code-lines">${lines} 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="${className.trim()}">${highlighted}</code></pre>
+<pre><span class="code-line-numbers" aria-hidden="true">${lineNumbers}</span><code class="${className.trim()}">${highlighted}</code></pre>
 </section>\n`;
 }
 

@@ -18,7 +18,7 @@ export const posts = [
     content: `<p>pi的文件结构</p>
 <section class="code-block" data-language="shell">
 <div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">8 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="language-shell hljs"><span class="hljs-meta prompt_">$</span><span class="language-bash">tree ~/.pi</span>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></span><code class="language-shell hljs"><span class="hljs-meta prompt_">$</span><span class="language-bash">tree ~/.pi</span>
 ~/.pi
 └── agent
     ├── auth.json
@@ -32,7 +32,7 @@ export const posts = [
 <p>/login登录的信息, 不可删除! 里面的key需要有效, 不是单纯的记录文件或日志</p>
 <section class="code-block" data-language="json">
 <div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">6 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></span><code class="language-json hljs"><span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;deepseek&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
         <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;api_key&quot;</span><span class="hljs-punctuation">,</span>
         <span class="hljs-attr">&quot;key&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-**********************&quot;</span>
@@ -45,7 +45,7 @@ export const posts = [
 </ul>
 <section class="code-block" data-language="text">
 <div class="code-toolbar"><span class="code-language">Text</span><span class="code-lines">4 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="hljs"> Select authentication method:
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span></span><code class="hljs"> Select authentication method:
 
  → Use a subscription
    Use an API key</code></pre>
@@ -58,7 +58,7 @@ export const posts = [
 <p>格式如下,举例: newapi+gpt</p>
 <section class="code-block" data-language="json">
 <div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">36 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span>32</span><span>33</span><span>34</span><span>35</span><span>36</span></span><code class="language-json hljs"><span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;providers&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">{</span>
         <span class="hljs-attr">&quot;first_procider&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
             <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://api.example1.com/v1&quot;</span><span class="hljs-punctuation">,</span>
@@ -129,7 +129,7 @@ export const posts = [
 <p>pi agent的设置文件, /settings可以快速编辑</p>
 <section class="code-block" data-language="json">
 <div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">7 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></span><code class="language-json hljs"><span class="hljs-punctuation">{</span>
   <span class="hljs-attr">&quot;lastChangelogVersion&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.78.0&quot;</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;defaultProvider&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;first_provider&quot;</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;defaultModel&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpt-5.6-sol&quot;</span><span class="hljs-punctuation">,</span>
@@ -174,7 +174,7 @@ export const posts = [
 <p>经典的问候当然少不了：</p>
 <section class="code-block" data-language="javascript">
 <div class="code-toolbar"><span class="code-language">JavaScript</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
 </section>
 <h3 id="设计意图">设计意图</h3>
 <p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
