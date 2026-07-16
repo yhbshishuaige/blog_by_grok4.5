@@ -7,6 +7,9 @@ import { createBackgroundControl } from "./background.js";
 import { createSecrets } from "./secrets.js";
 import { createCardMotion } from "./card-motion.js";
 import { createArticleTools } from "./article-tools.js";
+import { createHomeDeck } from "./home-deck.js";
+import { createHomeLayout } from "./home-layout.js";
+import { createScrollAtmosphere } from "./scroll-atmosphere.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
 import { createRouter } from "./router.js";
@@ -26,12 +29,20 @@ async function boot() {
   const transitions = createTransitions();
   const cardMotion = createCardMotion();
   const articleTools = createArticleTools();
+  const homeDeck = createHomeDeck();
+  const homeLayout = createHomeLayout();
+  const scrollAtmosphere = createScrollAtmosphere({
+    getWeatherType: () => weather.getType(),
+  });
   const router = createRouter({
     transitions,
     getWeatherType: () => weather.getType(),
     onRender: (main, route) => {
       cardMotion.bind(main);
       articleTools.bind(main, route);
+      homeLayout.bind(main, route);
+      homeDeck.bind(main, route);
+      scrollAtmosphere.bind(main, route);
     },
   });
   router.start();
@@ -45,6 +56,9 @@ async function boot() {
     secrets,
     cardMotion,
     articleTools,
+    homeDeck,
+    homeLayout,
+    scrollAtmosphere,
     transitions,
     router,
     weatherReady,

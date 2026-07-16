@@ -8,7 +8,9 @@
   <meta name="theme-color" content="#09172f" />
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/home-deck.css" />
   <link rel="stylesheet" href="styles/weather.css" />
+  <link rel="stylesheet" href="styles/scroll-atmosphere.css" />
   <link rel="stylesheet" href="styles/transitions.css" />
   <link rel="stylesheet" href="styles/secrets.css" />
 </head>
@@ -16,9 +18,12 @@
   <script>
     try {
       const savedBackground = localStorage.getItem("weather-blog-background");
+      const savedHomeLayout = localStorage.getItem("weather-blog-home-layout");
       document.body.dataset.background = savedBackground === "sky" ? "sky" : "mountain";
+      document.body.dataset.homeLayout = savedHomeLayout === "classic" ? "classic" : "deck";
     } catch {
       document.body.dataset.background = "mountain";
+      document.body.dataset.homeLayout = "deck";
     }
   </script>
   <!-- Dynamic sky layers -->
@@ -153,6 +158,19 @@
         </nav>
       </div>
       <div class="header-meta">
+        <div class="home-layout-control" id="homeLayoutControl">
+          <button
+            type="button"
+            class="home-layout-btn"
+            id="homeLayoutBtn"
+            aria-pressed="false"
+            aria-label="切换为经典列表首页"
+            title="切换为经典纵向列表"
+          >
+            <span class="home-layout-glyph" id="homeLayoutGlyph" aria-hidden="true">☷</span>
+            <span class="home-layout-label" id="homeLayoutLabel">经典</span>
+          </button>
+        </div>
         <div class="time-control" id="timeControl">
           <button
             type="button"

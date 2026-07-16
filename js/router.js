@@ -42,7 +42,17 @@ function renderHome() {
   const cards = posts
     .map(
       (p, i) => `
-    <a href="#/post/${p.slug}" class="post-card" data-nav style="--stagger:${i}">
+    <a
+      href="#/post/${p.slug}"
+      class="post-card post-deck-card"
+      data-nav
+      data-deck-card
+      data-deck-index="${i}"
+      data-deck-state="${i === 0 ? "active" : i === 1 ? "next" : "far"}"
+      aria-label="打开文章：${escapeHtml(p.title)}"
+      style="--deck-hue:${205 + (i * 47) % 135}"
+    >
+      <span class="post-deck-number" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
       <div class="post-card-meta">
         <span class="post-card-tag">${p.tag}</span>
         <time datetime="${p.date}">${formatDate(p.date)}</time>
@@ -51,22 +61,77 @@ function renderHome() {
       </div>
       <h2>${p.title}</h2>
       <p>${p.excerpt}</p>
-      <span class="post-card-arrow" aria-hidden="true">→</span>
+      <span class="post-deck-open">阅读文章 <i aria-hidden="true">↗</i></span>
     </a>`
     )
     .join("");
 
+  const dots = posts
+    .map(
+      (p, i) => `
+        <button
+          type="button"
+          class="post-deck-dot"
+          data-deck-dot="${i}"
+          aria-label="查看第 ${i + 1} 篇：${escapeHtml(p.title)}"
+          ${i === 0 ? 'aria-current="true"' : ""}
+        ><span></span></button>`
+    )
+    .join("");
+
+  const classicCards = posts
+    .map(
+      (p, i) => `
+        <a href="#/post/${p.slug}" class="post-card home-classic-card" data-nav style="--stagger:${i}">
+          <div class="post-card-meta">
+            <span class="post-card-tag">${p.tag}</span>
+            <time datetime="${p.date}">${formatDate(p.date)}</time>
+            <span>· ${formatCount(p.wordCount)} 字</span>
+            <span>· ${p.readingMinutes} 分钟阅读</span>
+          </div>
+          <h2>${p.title}</h2>
+          <p>${p.excerpt}</p>
+          <span class="post-card-arrow" aria-hidden="true">→</span>
+        </a>`
+    )
+    .join("");
+
   return `
-    <section class="hero">
-      <p class="hero-kicker">Weather · Time · Motion</p>
-      <h1>写在<em>会呼吸</em>的天空下</h1>
-      <p class="hero-desc">
-        光在变，风在写。字句栖在这片会呼吸的天空下，慢一点，也刚好。
-      </p>
+    <section class="home-deck-stage" data-home-deck aria-label="文章翻阅器">
+      <header class="home-deck-intro">
+        <p class="hero-kicker">Weather · Time · Motion</p>
+        <h1>写在<em>会呼吸</em>的天空下</h1>
+        <p class="hero-desc">光在变，风在写。滚动翻阅，让下一篇文章从天气里浮现。</p>
+        <div class="home-deck-position" aria-hidden="true">
+          <span data-deck-current>01</span>
+          <i></i>
+          <span>${String(posts.length).padStart(2, "0")}</span>
+        </div>
+      </header>
+
+      <div class="post-deck-shell">
+        <div class="post-deck-viewport">
+          <div class="post-deck" data-post-deck>${cards}</div>
+        </div>
+
+        <nav class="post-deck-controls" aria-label="文章切换">
+          <button type="button" class="post-deck-control" data-deck-prev aria-label="上一篇文章">↑</button>
+          <div class="post-deck-dots">${dots}</div>
+          <button type="button" class="post-deck-control" data-deck-next aria-label="下一篇文章">↓</button>
+        </nav>
+        <p class="post-deck-hint"><span aria-hidden="true">↕</span> 滚轮 / 方向键翻阅</p>
+        <p class="home-deck-live" data-deck-live aria-live="polite"></p>
+      </div>
     </section>
-    <section class="post-list" aria-label="文章列表">
-      ${cards}
-    </section>
+
+    <div class="home-classic" data-home-classic hidden>
+      <section class="hero">
+        <p class="hero-kicker">Weather · Time · Motion</p>
+        <h1>写在<em>会呼吸</em>的天空下</h1>
+        <p class="hero-desc">光在变，风在写。字句栖在这片会呼吸的天空下，慢一点，也刚好。</p>
+      </section>
+      <section class="post-list" aria-label="文章列表">${classicCards}</section>
+    </div>
   `;
 }
 
@@ -162,7 +227,7 @@ function renderNotFound() {
 }
 
 function revealCards(main) {
-  const cards = main.querySelectorAll(".post-card");
+  const cards = main.querySelectorAll(".post-card:not(.post-deck-card)");
   requestAnimationFrame(() => {
     cards.forEach((card, i) => {
       setTimeout(() => card.classList.add("is-visible"), 40 + i * 70);
@@ -206,6 +271,7 @@ export function createRouter({ transitions, getWeatherType, onRender }) {
     const apply = () => {
       main.innerHTML = html;
       main.dataset.route = route.name;
+      document.body.dataset.route = route.name;
       if (route.name === "home") revealCards(main);
       onRender?.(main, route);
       window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });

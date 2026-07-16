@@ -1,0 +1,254 @@
+/* Wheel input adds atmosphere without changing native document scrolling. */
+.scroll-atmosphere {
+  --scroll-response-color: rgba(255, 230, 168, 0.62);
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  contain: strict;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.34s ease-out;
+}
+
+.scroll-atmosphere.is-active {
+  opacity: var(--scroll-response-opacity, 0.22);
+  transition-duration: 0.09s;
+}
+
+.scroll-currents,
+.scroll-response-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.scroll-currents i {
+  position: absolute;
+  top: var(--current-y);
+  left: -32vw;
+  width: clamp(180px, 28vw, 520px);
+  height: 1px;
+  border-radius: 999px;
+  opacity: 0.52;
+  background: linear-gradient(90deg, transparent, var(--scroll-response-color) 58%, transparent);
+  filter: blur(0.25px);
+  animation-delay: var(--current-delay);
+  animation-duration: var(--current-duration);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+.scroll-atmosphere.is-active .scroll-currents i {
+  animation-play-state: running;
+}
+
+.scroll-atmosphere[data-direction="down"] .scroll-currents i {
+  animation-name: scrollCurrentForward;
+}
+
+.scroll-atmosphere[data-direction="up"] .scroll-currents i {
+  animation-name: scrollCurrentReverse;
+}
+
+@keyframes scrollCurrentForward {
+  from { transform: translate3d(0, 8px, 0) scaleX(var(--current-scale)); }
+  to { transform: translate3d(164vw, -8px, 0) scaleX(var(--current-scale)); }
+}
+
+@keyframes scrollCurrentReverse {
+  from { transform: translate3d(164vw, -8px, 0) scaleX(var(--current-scale)); }
+  to { transform: translate3d(0, 8px, 0) scaleX(var(--current-scale)); }
+}
+
+.scroll-response-particles i {
+  position: absolute;
+  left: var(--particle-x);
+  top: var(--particle-y);
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 50%;
+  opacity: 0;
+  background: var(--scroll-response-color);
+  box-shadow: 0 0 10px var(--scroll-response-color);
+  animation-delay: var(--particle-delay);
+  animation-duration: var(--particle-duration);
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+.scroll-atmosphere.is-active .scroll-response-particles i {
+  animation-play-state: running;
+}
+
+.scroll-atmosphere[data-direction="down"] .scroll-response-particles i {
+  animation-name: scrollMoteUp;
+}
+
+.scroll-atmosphere[data-direction="up"] .scroll-response-particles i {
+  animation-name: scrollMoteDown;
+}
+
+@keyframes scrollMoteUp {
+  0% { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.72); }
+  24% { opacity: 0.78; }
+  100% { opacity: 0; transform: translate3d(var(--particle-drift), -74px, 0) scale(1.06); }
+}
+
+@keyframes scrollMoteDown {
+  0% { opacity: 0; transform: translate3d(var(--particle-drift), -18px, 0) scale(0.72); }
+  24% { opacity: 0.78; }
+  100% { opacity: 0; transform: translate3d(0, 74px, 0) scale(1.06); }
+}
+
+.scroll-atmosphere[data-weather="cloud"] {
+  --scroll-response-color: rgba(218, 234, 244, 0.5);
+}
+
+.scroll-atmosphere[data-weather="rain"] {
+  --scroll-response-color: rgba(174, 211, 249, 0.62);
+}
+
+.scroll-atmosphere[data-weather="rain"] .scroll-currents i {
+  opacity: 0.24;
+}
+
+.scroll-atmosphere[data-weather="rain"] .scroll-response-particles i {
+  width: 1px;
+  height: var(--particle-length);
+  border-radius: 999px;
+  box-shadow: 0 0 5px rgba(174, 211, 249, 0.34);
+  animation-timing-function: linear;
+}
+
+.scroll-atmosphere[data-weather="rain"][data-direction="down"] .scroll-response-particles i {
+  animation-name: scrollRainRight;
+}
+
+.scroll-atmosphere[data-weather="rain"][data-direction="up"] .scroll-response-particles i {
+  animation-name: scrollRainLeft;
+}
+
+@keyframes scrollRainRight {
+  0% { opacity: 0; transform: translate3d(-12px, -14vh, 0) rotate(-13deg); }
+  20% { opacity: 0.78; }
+  100% { opacity: 0; transform: translate3d(16px, 34vh, 0) rotate(-13deg); }
+}
+
+@keyframes scrollRainLeft {
+  0% { opacity: 0; transform: translate3d(12px, -14vh, 0) rotate(13deg); }
+  20% { opacity: 0.78; }
+  100% { opacity: 0; transform: translate3d(-16px, 34vh, 0) rotate(13deg); }
+}
+
+.scroll-atmosphere[data-weather="snow"] {
+  --scroll-response-color: rgba(239, 248, 255, 0.72);
+}
+
+.scroll-atmosphere[data-weather="snow"] .scroll-currents i {
+  opacity: 0.32;
+}
+
+.scroll-atmosphere[data-weather="snow"] .scroll-response-particles i {
+  filter: blur(0.4px);
+  animation-timing-function: ease-in-out;
+}
+
+.scroll-atmosphere[data-weather="wind"] {
+  --scroll-response-color: rgba(211, 231, 244, 0.58);
+}
+
+.scroll-atmosphere[data-weather="wind"] .scroll-currents i {
+  height: 2px;
+  opacity: 0.72;
+  filter: blur(0.6px);
+}
+
+.scroll-atmosphere[data-weather="wind"] .scroll-response-particles i {
+  width: var(--particle-length);
+  height: 1px;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.scroll-atmosphere[data-weather="wind"][data-direction="down"] .scroll-response-particles i {
+  animation-name: scrollWindRight;
+}
+
+.scroll-atmosphere[data-weather="wind"][data-direction="up"] .scroll-response-particles i {
+  animation-name: scrollWindLeft;
+}
+
+@keyframes scrollWindRight {
+  from { opacity: 0; transform: translate3d(-22vw, 7px, 0); }
+  28% { opacity: 0.72; }
+  to { opacity: 0; transform: translate3d(34vw, -7px, 0); }
+}
+
+@keyframes scrollWindLeft {
+  from { opacity: 0; transform: translate3d(22vw, -7px, 0); }
+  28% { opacity: 0.72; }
+  to { opacity: 0; transform: translate3d(-34vw, 7px, 0); }
+}
+
+.article-body h2[id],
+.article-body h3[id] {
+  position: relative;
+}
+
+.article-body h2[id]::after,
+.article-body h3[id]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.32rem;
+  width: min(15rem, 58%);
+  height: 1px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent), rgba(143, 203, 255, 0.48), transparent);
+  pointer-events: none;
+}
+
+.article-body h2[id].is-scroll-arrival::after,
+.article-body h3[id].is-scroll-arrival::after {
+  animation: chapterArrival 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.toc-link.is-scroll-arrival {
+  animation: tocArrival 0.9s ease-out both;
+}
+
+@keyframes chapterArrival {
+  0% { opacity: 0; transform: scaleX(0); filter: blur(2px); }
+  30% { opacity: 0.85; }
+  70% { opacity: 0.55; transform: scaleX(1); filter: blur(0); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+
+@keyframes tocArrival {
+  0%, 100% { box-shadow: none; }
+  38% { box-shadow: inset 3px 0 rgba(255, 230, 168, 0.58), 0 0 16px rgba(255, 230, 168, 0.08); }
+}
+
+@media (max-width: 600px) {
+  .scroll-response-particles i:nth-child(n + 9),
+  .scroll-currents i:nth-child(n + 5) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-atmosphere {
+    display: none;
+  }
+
+  .article-body h2[id]::after,
+  .article-body h3[id]::after,
+  .toc-link.is-scroll-arrival {
+    animation: none !important;
+  }
+}

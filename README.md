@@ -24,6 +24,8 @@ PORT=8080 npm start
 - 24 小时天空、日月星空和实时 / 手动时间轮盘。
 - 南京江宁实时天气；请求失败时使用本地预估。
 - 天气徽章依次切换：晴、阴、小雨、中雨、大雨、雷电、小雪、中雪、大雪、大风。
+- 首页可在右上角切换一屏式 3D 翻卡与经典纵向列表；选择会自动记忆。
+- 鼠标滚轮会唤起随方向、速度和天气变化的环境风迹，文章章节进入阅读区时同步回应。
 - 右上角选择纯天空或动态雪山，选择保存在 `localStorage`。
 - GFM Markdown 文章、代码高亮 / 折叠 / 复制、浮动目录、字数统计、友链、Hash 路由和页面转场。
 - 彩蛋触发、效果与调试方法见 `docs/EASTER_EGGS.md`。
@@ -62,14 +64,19 @@ posts/*.md + img/*
 | `js/main.js` | 创建模块并暴露 `window.WeatherBlog` |
 | `js/router.js` | 首页 / 文章 / 友链 Hash 路由与渲染 |
 | `js/article-tools.js` | 文章目录、代码折叠与复制交互 |
+| `js/home-deck.js` | 首页文章卡片的滚轮、键盘、按钮与触屏切换 |
+| `js/home-layout.js` | 首页翻卡 / 经典布局切换与本地记忆 |
+| `js/scroll-atmosphere.js` | 滚轮风感、天气反馈与章节进入效果 |
 | `js/friends.js` | 友链数据配置 |
 | `js/time-sky.js`、`js/time-dial.js` | 24 小时天空和时间轮盘 |
 | `js/weather.js` | 天气 API、类型映射、手动切换与粒子 |
 | `js/background.js` | 天空 / 雪山选择及持久化 |
 | `js/secrets.js` | 彩蛋触发、收集状态和自动环境场景 |
 | `styles/main.css` | 页面、玻璃卡片、雪山与全局样式 |
+| `styles/home-deck.css` | 首页全视口卡片舞台、景深与响应式布局 |
 | `styles/weather.css` | 天气粒子与天气状态 |
 | `styles/transitions.css` | 路由、天气和背景转场 |
+| `styles/scroll-atmosphere.css` | 滚轮环境反馈与章节光迹 |
 | `styles/secrets.css` | 彩蛋视觉效果 |
 | `scripts/` | 文章构建、新建、监听和本地服务器 |
 
@@ -79,6 +86,7 @@ posts/*.md + img/*
 - 改天气地点：`js/weather.js` 的 `WEATHER_LOCATION`。
 - 改雨雪密度：`js/weather.js` 的 `RAIN_PRESETS`、`SNOW_PRESETS`。
 - 改页面或雪山：`styles/main.css`；改天气和转场时同步检查对应拆分样式。
+- 改首页翻卡：同步检查 `js/router.js`、`js/home-deck.js` 和 `styles/home-deck.css`。
 - 改彩蛋：同时核对 `js/secrets.js`、`styles/secrets.css` 和 `docs/EASTER_EGGS.md`。
 - 改文章解析：检查 `scripts/build-posts.mjs`、`js/posts.js`、`js/article-tools.js` 和 `js/router.js` 的完整数据链。
 - 改友链：编辑 `js/friends.js`，无需修改路由模板。
@@ -93,7 +101,7 @@ git diff --check
 npm start
 ```
 
-浏览器至少检查：首页、文章目录、代码高亮 / 折叠 / 复制、友链页、天气循环、时间预览与恢复、两种背景、滚动条、移动端布局；启动验证后用 `Ctrl+C` 关闭服务。
+浏览器至少检查：首页滚轮 / 键盘 / 触屏翻卡、文章目录、代码高亮 / 折叠 / 复制、友链页、天气循环、时间预览与恢复、两种背景、滚动条、移动端布局；启动验证后用 `Ctrl+C` 关闭服务。
 
 ## 维护规则
 
@@ -104,6 +112,9 @@ npm start
 
 ## 最近更新
 
+- 2026-07-15：保留经典纵向文章列表，在首页右上角新增“经典 / 翻卡”即时切换并记忆选择。
+- 2026-07-15：首页改为固定一屏的 3D 文章卡片舞台，以滚轮、键盘、按钮或触屏滑动逐篇翻阅，并在返回首页时保留当前位置。
+- 2026-07-15：新增不接管原生滚动的滚轮环境反馈，按天气呈现光尘、雨丝、雪粒或风纹，并为章节进入阅读区增加轻量光迹。
 - 2026-07-15：文章正文改为固定在页面中心轴，目录独立右移并换成透明灰色磨砂效果；代码段新增行号。
 - 2026-07-14：新增天气、昼夜与雪山主题的 SVG 站点标志，同时用于浏览器标签页和顶栏品牌图标。
 - 2026-07-14：文章增强：17px 字体、常用语言代码高亮、折叠 / 复制、浮动目录、字数与代码块统计，并新增友链页面。

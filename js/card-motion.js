@@ -4,7 +4,7 @@ export function createCardMotion() {
 
   function bind(root = document) {
     if (reduceMotion.matches || !finePointer.matches) return;
-    root.querySelectorAll(".post-card:not([data-card-motion])").forEach((card) => {
+    root.querySelectorAll(".post-card:not(.post-deck-card):not([data-card-motion])").forEach((card) => {
       card.dataset.cardMotion = "true";
       let raf = 0;
 
