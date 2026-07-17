@@ -1,7 +1,7 @@
 ---
-title: coc超级女巫
+title: coc流派分析--超级女巫
 date: 2026-07-15
-tag: 随笔
+tag: coc , 超级女巫 , 十六本
 slug: coc-2
 excerpt: coc太好玩了, 谁说不是呢
 lead: 纪念那段在十二本当大佬的时光

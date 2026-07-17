@@ -6,9 +6,9 @@
 export const posts = [
   {
     slug: "coc",
-    title: "COC流派分析",
+    title: "COC流派分析--狗球",
     date: "2026-07-15",
-    tag: "随笔",
+    tag: "coc , 狗球 , 十六本",
     readingMinutes: 3,
     wordCount: 815,
     codeBlockCount: 0,
@@ -85,9 +85,9 @@ export const posts = [
   },
   {
     slug: "coc-2",
-    title: "coc超级女巫",
+    title: "coc流派分析--超级女巫",
     date: "2026-07-15",
-    tag: "随笔",
+    tag: "coc , 超级女巫 , 十六本",
     readingMinutes: 2,
     wordCount: 515,
     codeBlockCount: 0,

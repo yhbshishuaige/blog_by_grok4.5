@@ -1,7 +1,7 @@
 ---
-title: COC流派分析
+title: COC流派分析--狗球
 date: 2026-07-15
-tag: 随笔
+tag: coc , 狗球 , 十六本
 slug: coc
 excerpt: coc太好玩了,谁说不是呢 
 lead: Ek佬的狗球,太强了!
