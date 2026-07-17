@@ -4,7 +4,7 @@
 
 ## 快速启动
 
-需要 Node.js 18+ 与 Python 3。首次拉取项目后安装构建依赖并启动：
+需要 Node.js 20+ 与 Python 3。首次拉取项目后安装构建依赖并启动：
 
 ```bash
 npm install
@@ -33,15 +33,18 @@ PORT=8080 npm start
 
 ## 写文章
 
-文章放在 `posts/*.md`，图片放在 `img/`，模板为 `posts/_template.md`。
+文章放在 `posts/*.md`，模板为 `posts/_template.md`。文章图片推荐直接上传到 Cloudflare R2：
 
 ```bash
 npm run new -- "文章标题"  # 新建文章
+npm run images -- ~/Pictures/photo.jpg # 上传 R2，生成并复制 Markdown
 npm run build              # 生成文章数据
 npm run watch              # 监听文章并自动构建
 ```
 
-图片路径写为 `![说明](img/photo.jpg)`。`js/posts.data.js` 是构建产物，**不要手动修改**；`npm run watch` 只构建文章，不启动网页服务。
+首次上传前复制 `.env.r2.example` 为 `.env.r2`，填入 R2 的 API 凭据、bucket 和公开域名；该文件已被 Git 忽略。上传命令支持单张、多张或一个目录，图片会按内容哈希命名并获得长缓存地址，成功后同时输出图片直链与 `![说明](https://...)`，并尽量把 Markdown 复制到系统剪贴板。`images` 后用于分隔 npm 参数的 `--` 不能省略，相对图片路径按执行命令时所在目录解析。可先执行 `npm run images -- --dry-run img/a.jpg` 预览；本地 `img/` 路径仍兼容。单数命令 `npm run image` 保留为兼容别名。
+
+`js/posts.data.js` 是构建产物，**不要手动修改**；`npm run watch` 只构建文章，不启动网页服务。
 
 多个标签写在 frontmatter 的同一行，用英文逗号或中文逗号分隔，例如 `tag: coc, 狗球, 十六本`；构建后会显示为三个独立标签。
 
@@ -54,7 +57,7 @@ npm run watch              # 监听文章并自动构建
 ## 架构与数据流
 
 ```text
-posts/*.md + img/*
+posts/*.md + R2 图片（或 img/*）
   -> scripts/build-posts.mjs + marked + highlight.js
   -> js/posts.data.js
   -> js/posts.js
@@ -81,7 +84,7 @@ posts/*.md + img/*
 | `styles/transitions.css` | 路由、天气和背景转场 |
 | `styles/scroll-atmosphere.css` | 滚轮环境反馈与章节光迹 |
 | `styles/secrets.css` | 彩蛋视觉效果 |
-| `scripts/` | 文章构建、新建、监听和本地服务器 |
+| `scripts/` | 文章构建、新建、R2 图片上传、监听和本地服务器 |
 
 ## 接手修改
 
@@ -115,6 +118,7 @@ npm start
 
 ## 最近更新
 
+- 2026-07-17：新增 Cloudflare R2 图片上传命令，自动哈希命名、输出 Markdown 并复制到剪贴板；本地密钥不会进入 Git。
 - 2026-07-17：首页改为旧文章优先；文章标签支持中英文逗号分隔并独立显示；顶栏换用 256×256 矢量 Logo；翻卡滚轮支持单次连续翻阅多张卡片。
 - 2026-07-15：保留经典纵向文章列表，在首页右上角新增“经典 / 翻卡”即时切换并记忆选择。
 - 2026-07-15：首页改为固定一屏的 3D 文章卡片舞台，以滚轮、键盘、按钮或触屏滑动逐篇翻阅，并在返回首页时保留当前位置。

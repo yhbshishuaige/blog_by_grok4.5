@@ -31,6 +31,12 @@ console.log("代码块");
 
 代码围栏可标注 `c`、`python`、`shell`、`json` 或 `js`，页面会自动高亮并提供折叠与复制按钮。
 
-图片请放到项目根目录 `img/` 下，然后引用：
+推荐上传到 R2，命令会返回并复制下面这种 Markdown：
 
-![图片说明](img/your-photo.jpg)
+```bash
+npm run images -- ~/Pictures/your-photo.jpg
+```
+
+![图片说明](https://img.example.com/blog/your-photo.jpg)
+
+已有的站内图片仍可写成 `![图片说明](img/your-photo.jpg)`。

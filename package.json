@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "description": "A silky-smooth blog with weather-aware animations and 24h sky cycle",
   "scripts": {
     "build": "node scripts/build-posts.mjs",
@@ -12,9 +15,12 @@
     "prestart": "node scripts/build-posts.mjs",
     "start": "node scripts/start-server.mjs",
     "new": "node scripts/new-post.mjs",
+    "image": "node scripts/upload-image.mjs",
+    "images": "node scripts/upload-image.mjs",
     "hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'git hooks → .githooks (提交 posts 时自动 build)'"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.1089.0",
     "highlight.js": "11.11.1",
     "marked": "15.0.12"
   }

@@ -8,10 +8,13 @@ Thumbs.db
 .vscode/
 *.code-workspace
 
-# Node (本项目构建脚本零依赖，一般无 node_modules)
+# Node dependencies
 node_modules/
 npm-debug.log*
 .npm/
+
+# Local R2 credentials (copy values from .env.r2.example)
+.env.r2
 
 # Local-only notes (optional personal archive)
 # .MY_README.md

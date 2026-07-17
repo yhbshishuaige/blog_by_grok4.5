@@ -68,7 +68,7 @@ lead:
 - 列表一项
 - 列表二项
 
-![说明文字](img/your-image.jpg)
+![说明文字](https://img.example.com/blog/your-image.jpg)
 
 \`\`\`js
 console.log("hello");
@@ -80,8 +80,8 @@ console.log(`已创建 posts/${safeSlug}.md`);
 console.log(``);
 console.log(`写作流程：`);
 console.log(`  1. 编辑 posts/${safeSlug}.md`);
-console.log(`  2. 图片放 img/ ，md 里写 ![说明](img/文件名.jpg)`);
+console.log(`  2. 上传图片: npm run images -- ~/Pictures/图片.jpg（会生成并复制 Markdown）`);
 console.log(`  3. 本地预览: npm start`);
-console.log(`  4. 发布: git add posts/ img/ && git commit && git push`);
+console.log(`  4. 发布: git add posts/ && git commit && git push`);
 console.log(``);
 console.log(`预览地址: http://127.0.0.1:3456/#/post/${safeSlug}`);
