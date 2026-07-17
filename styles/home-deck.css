@@ -210,7 +210,7 @@ body[data-route="home"] .home-layout-control {
   pointer-events: none;
   will-change: transform, opacity;
   transition:
-    transform 0.68s cubic-bezier(0.2, 0.78, 0.24, 1),
+    transform 0.54s cubic-bezier(0.2, 0.78, 0.24, 1),
     opacity 0.42s ease-out,
     border-color 0.35s ease,
     box-shadow 0.45s ease;
@@ -243,6 +243,34 @@ body[data-route="home"] .home-layout-control {
     inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
+.home-deck-stage.is-wheel-moving .post-deck-card[data-deck-state="active"]:hover {
+  transform: translate(-50%, -50%) translate3d(0, 0, 0) rotateX(0) scale(1);
+  border-color: hsla(var(--deck-hue), 68%, 82%, 0.2);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.home-deck-stage.is-wheel-moving .post-deck-card {
+  pointer-events: none;
+  transition: none;
+}
+
+.home-deck-stage.is-wheel-moving .post-deck-card::after {
+  opacity: 0.62;
+  transition: none;
+}
+
+.home-deck-stage.is-wheel-moving .post-deck-card h2 {
+  color: var(--text);
+  transition: none;
+}
+
+.home-deck-stage.is-wheel-moving .post-deck-open i {
+  transform: none;
+  transition: none;
+}
+
 .post-deck-card[data-deck-state="previous"] {
   z-index: 2;
   opacity: 0.16;
@@ -255,7 +283,13 @@ body[data-route="home"] .home-layout-control {
   transform: translate(-50%, -50%) translate3d(0, 22%, -175px) rotateX(12deg) scale(0.89);
 }
 
-.post-deck-card[data-deck-state="far"] {
+.post-deck-card[data-deck-state="past"] {
+  z-index: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%) translate3d(0, -34%, -420px) rotateX(-16deg) scale(0.72);
+}
+
+.post-deck-card[data-deck-state="future"] {
   z-index: 1;
   opacity: 0;
   transform: translate(-50%, -50%) translate3d(0, 32%, -420px) rotateX(16deg) scale(0.72);
@@ -597,7 +631,8 @@ body[data-route="home"] .home-layout-control {
 
   .post-deck-card[data-deck-state="previous"],
   .post-deck-card[data-deck-state="next"],
-  .post-deck-card[data-deck-state="far"] {
+  .post-deck-card[data-deck-state="past"],
+  .post-deck-card[data-deck-state="future"] {
     opacity: 0;
   }
 }

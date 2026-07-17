@@ -5,171 +5,58 @@
  */
 export const posts = [
   {
-    slug: "coc",
-    title: "COC流派分析--狗球",
-    date: "2026-07-15",
-    tag: "coc , 狗球 , 十六本",
+    slug: "hello-world",
+    title: "Hello World",
+    date: "2026-07-09",
+    tags: ["第一篇"],
     readingMinutes: 3,
-    wordCount: 815,
-    codeBlockCount: 0,
-    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
-    excerpt: "coc太好玩了,谁说不是呢",
-    lead: "Ek佬的狗球,太强了!",
-    content: `<h2 id="特色">特色</h2>
-<p><strong>推进快</strong>, 吃操作, 伤害高, 血量少, 全本可玩</p>
+    wordCount: 528,
+    codeBlockCount: 1,
+    toc: [{"id":"你会看到什么","level":2,"label":"你会看到什么"},{"id":"如何体验","level":2,"label":"如何体验"},{"id":"一段小代码","level":2,"label":"一段小代码"},{"id":"设计意图","level":3,"label":"设计意图"},{"id":"配图示例","level":2,"label":"配图示例"}],
+    excerpt: "欢迎来到 Weather Blog。这是第一篇测试文章，用来验证天气动画、昼夜天空与丝滑页面转场是否工作正常。",
+    lead: "从这一刻起，每一次点击、每一次日出日落，都应该感觉像风吹过页面一样自然。",
+    content: `<p>你好，世界。这是 <strong>Weather Blog</strong> 的第一篇文章——用来确认整站动画链路是否「丝滑流转」。</p>
+<h2 id="你会看到什么">你会看到什么</h2>
+<p>这个博客把三件事叠在一起：</p>
+<ul>
+<li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、小雪、中雪、大雪、大风、雷电，粒子密度与氛围色会明显变化；</li>
+<li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；右上角时间轮盘可拖动预览任意时刻；</li>
+<li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li>
+</ul>
+<h2 id="如何体验">如何体验</h2>
+<ol>
+<li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
+<li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li>
+<li>点天气徽章左侧的「时间」按钮，拖动轮盘预览昼夜，可随时「回到实时」；</li>
+<li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li>
+<li>阴天时云层应偏淡、靠上，不挡正文；雷电天气请多看几秒——会有闪电与雨粒子。</li>
+</ol>
 <blockquote>
-<p>推进快是狗球最大的魅力, 也是最吸引我的地方</p>
+<p>「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」</p>
 </blockquote>
-<blockquote>
-<p>永远不会削弱的流派</p>
-</blockquote>
-<p>狗球广为人知, 但是却少有人玩, 在过去,狗球一直是高手和操作的代名词</p>
-<p>我却一直不知道这个流派强在哪里🥹, 尝试练过, 没有体验到狗球的强势(在我刚刚入坑部落冲突的时候)</p>
-<p>直到看了<a href="https://www.bilibili.com/video/BV1YAN86nEnp/?spm_id_from=333.1391.0.0&amp;vd_source=0db60fe40c2ea9a780f177153aeb1378" target="_blank" rel="noopener noreferrer">Ek佬的狗球</a>, 太神奇了, 前戏用龙王打了一分钟, 丢了大部分的法术, 却每次都能在两分钟内结束战斗!!!(那我天女超弓大火球和天女超巫大火球每次都要打三分钟算什么)</p>
-<p>马上安排了一把狗球, 哦哦哦, 先下狗在下球，哦哦哦, 先这样再那样, 哦哦哦, 怎么就三了 ???🤲🤲🤲</p>
-<p class="article-figure"><img src="img/狗球.jpg" alt="狗球" loading="lazy" decoding="async" /></p>
-<h2 id="配兵">配兵</h2>
-<p>大部队:</p>
-<ul>
-<li>一火狗, 一冰狗, 气球20个, 小咏王一个, 飞龙四条, 地狱龙两条, 剩下的带小苍蝇</li>
-</ul>
-<p>英雄及装备:</p>
-<ul>
-<li><p><em><strong>永王</strong></em>: 金身 + 生命宝石</p>
-</li>
-<li><p>亡灵王子: 分身 + 魔球</p>
-</li>
-<li><p>龙爵: 烈焰之星 + 火箭背包</p>
-</li>
-<li><p>女王: 巨人 + 魔镜</p>
-</li>
-</ul>
-<p>法术:</p>
-<ul>
-<li>两图腾, 一骷髅, 一隐身, 一冰冻, 一极速, 一毒药, 一蔓生, 一复活, 一治疗</li>
-</ul>
-<p>工程机器: </p>
-<ul>
-<li>训练营</li>
-</ul>
-<p>援军:</p>
-<ul>
-<li>火炉, 废墟女巫</li>
-</ul>
-<blockquote>
-<p>主要是两条狗, 气球, 咏王. 剩下的都是看情况随便带</p>
-</blockquote>
-<h2 id="操作">操作</h2>
-<p>将阵容划分为九宫格<img src="img/狗球_阵容分析.png" alt="阵容分析" loading="lazy" decoding="async" /></p>
-<p>龙王 + 训练营 起手, 打掉九宫格中的两个格子, 从有缺口的格子旁边开始大部队, 狗球分两拨, 看着给金身和法术即可</p>
-<p><em><strong>细节</strong></em></p>
-<ul>
-<li><p>前戏如果只打掉一格也没问题, 主要目的是为了将路线打出来, 不需要省法术, 路线没出来之前, 保证龙爵不要死</p>
-</li>
-<li><p>不从龙爵的对面下大部队就可以, 龙局打掉两个之后一般影响三条边, 分别剩下一 二 三个格子, 最常见的是从剩下两格的那一边下大部队, 不绝对, 尽量避开吹风机</p>
-</li>
-<li><p>第一波大部队火狗起手, 然后依次是飞龙, 三王, 地狱龙, 小苍蝇, 最后是10个气球</p>
-</li>
-<li><p>第二波大部队放在大部队的侧面(第一波从两格开始进攻, 冰狗就下到侧面; 第一波从三格开始进攻, 就下到同一边的第三格. 本质上还是一字划, 让大部队按照规划的路线走), 冰狗起手, 然后下10个气球</p>
-</li>
-<li><p>金身早开, 开金身的时候不要放急速法术, 金身效果最大化, 一般是天鹰火炮第一次砸到大部队的时候</p>
-</li>
-<li><p>蔓生蔓掉大部队前进方向的对面的中间一格, 时间不要太晚, 也不要太早, 一般在大部队向前推进一个格子的宽度之后, 太早会导致没有效果, 太晚会拖节奏</p>
-</li>
-<li><p>治疗法术主要是防止气球全死在大本那里, 所以大本即将爆炸的时候下治疗法术</p>
-</li>
-</ul>
-<h2 id="实战">实战</h2>
-<p>临时打了一把, 对面防御比较低</p>
-<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/狗球_实战.webp" alt="实战" loading="lazy" decoding="async" /></p>`,
-  },
-  {
-    slug: "coc-2",
-    title: "coc流派分析--超级女巫",
-    date: "2026-07-15",
-    tag: "coc , 超级女巫 , 十六本",
-    readingMinutes: 2,
-    wordCount: 515,
-    codeBlockCount: 0,
-    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
-    excerpt: "coc太好玩了, 谁说不是呢",
-    lead: "纪念那段在十二本当大佬的时光",
-    content: `<p class="article-figure"><img src="img/超巫_纪念.png" alt="1" loading="lazy" decoding="async" /></p>
-<p class="article-figure"><img src="img/超巫_副首领0.png" alt="0" loading="lazy" decoding="async" /></p>
-<p class="article-figure"><img src="img/超巫_副首领1.png" alt="1" loading="lazy" decoding="async" /></p>
-<p class="article-figure"><img src="img/超巫_副首领2.png" alt="2" loading="lazy" decoding="async" /></p>
-<p class="article-figure"><img src="img/超巫_副首领3.png" alt="3" loading="lazy" decoding="async" /></p>
-<p class="article-figure"><img src="img/超巫.jpg" alt="4" loading="lazy" decoding="async" /></p>
-<h2 id="特色">特色</h2>
-<p>大火球 天女 超巫 陆军 滚木车</p>
-<p>这个流派是我从十二本的天女超弓大火球继承过来的, 打法思路没有变化, 把超弓换成超巫就是了</p>
-<blockquote>
-<p>超弓太脆了, 即使有生命宝石, 天鹰火炮下去不死即残, 超巫的容错更高, 而且还能源源不断召唤大宝宝, 是超弓的完美上位替代</p>
-</blockquote>
-<h2 id="配兵">配兵</h2>
-<p>大部队:</p>
-<ul>
-<li>天使5个, 超级女巫三个, 戈仑石人一个, 冰人一个, 气球四个, 龙宝一个, 炸弹人七个, 小咏王一个, 英雄猎手两个</li>
-</ul>
-<p>英雄:</p>
-<ul>
-<li><p>咏王: 狂暴光环 + 大火球</p>
-</li>
-<li><p>女王: 巨人 + 魔镜</p>
-</li>
-<li><p>蛮王: 灵蛇手镯 + 足球</p>
-</li>
-<li><p>龙爵: 烈焰之心 + 火箭背包</p>
-</li>
-</ul>
-<p>法术: </p>
-<ul>
-<li>三隐身, 两地震, 一治疗, 两图腾, 一复活, 一冰冻, 一毒药</li>
-</ul>
-<p>工程机器:</p>
-<ul>
-<li>滚木车</li>
-</ul>
-<p>援军:</p>
-<ul>
-<li>格鲁鲁, 火炉</li>
-</ul>
-<h2 id="操作">操作</h2>
-<p>九宫格 , 天永 + 大火球打掉一个格子, 下大部队 + 滚木车沿对角线推进, 龙王 + 蛮王各处理一格(远离咏王方向), 适当给法术</p>
-<p><em><strong>细节</strong></em>:</p>
-<ul>
-<li><p>前戏不要给天永太大压力, 不要省法术, 天永活着最重要</p>
-</li>
-<li><p>下天使之前使用气球探雷</p>
-</li>
-<li><p>前戏一般四五十秒, 目标是把路线打出来</p>
-</li>
-<li><p>前戏只用天永, 保证天永不歪, 适当使用龙宝断边</p>
-</li>
-<li><p>使用女王或大部队可以将天永拉回来</p>
-</li>
-<li><p>下大部队之前, 下龙爵和蛮王, 防止走歪, 龙爵远离吹风机和火箭, 蛮王下另一格</p>
-</li>
-<li><p>大部队顺序, 石头人, 冰人, 女巫, 小咏王, 女王, 滚木车, 炸弹人</p>
-</li>
-<li><p>炸弹人在滚木车前开墙, 防止大部队走歪, 送大部队进入核心</p>
-</li>
-<li><p>治疗法术在爆本时使用, 防止天使死光光</p>
-</li>
-<li><p>复活给龙王, 龙王一般下了之后就不用管了, 残血会用火箭背包自己飞走</p>
-</li>
-</ul>
-<h2 id="实战">实战</h2>
-<p>不知道啥时候补上, 近期迷恋狗球🥹🥹🥹🥹</p>`,
+<h2 id="一段小代码">一段小代码</h2>
+<p>经典的问候当然少不了：</p>
+<section class="code-block" data-language="javascript">
+<div class="code-toolbar"><span class="code-language">JavaScript</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
+</section>
+<h3 id="设计意图">设计意图</h3>
+<p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
+<p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
+<p>那就这样——<em>Hello World</em>，我们下次见。</p>
+<h2 id="配图示例">配图示例</h2>
+<p>把图片放进项目根目录的 <code>img/</code> 文件夹，在 Markdown 里这样写（路径相对站点根）：</p>
+<p>千山鸟飞绝,万径人踪灭
+<img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" decoding="async" /></p>`,
   },
   {
     slug: "post-2026-07-13",
     title: "pi agent",
     date: "2026-07-13",
-    tag: "随笔",
+    tags: ["随笔"],
     readingMinutes: 2,
-    wordCount: 418,
-    codeBlockCount: 5,
+    wordCount: 438,
+    codeBlockCount: 6,
     toc: [{"id":"auth-json","level":2,"label":"auth.json"},{"id":"models-json","level":2,"label":"models.json"},{"id":"settings-json","level":2,"label":"settings.json"}],
     excerpt: "PI + flash,体验腹泻式写代码",
     lead: "自娱自乐,能看得仔细一些",
@@ -211,8 +98,15 @@ export const posts = [
 <h2 id="models-json">models.json</h2>
 <p>pi支持自建provider, 自建provider的信息放在models.json中</p>
 <ul>
-<li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi</li>
+<li>也就是兼容大部分第三方api平台, 少部分限制了客户端, 无法使用pi<ul>
+<li>但也可以通过添加&quot;Header&quot;来伪造, 比如可以伪造codex cli</li>
 </ul>
+</li>
+</ul>
+<section class="code-block" data-language="json">
+<div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-json hljs"><span class="hljs-attr">&quot;headers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;User-Agent&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;codex_cli_rs/0.144.0&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span></code></pre>
+</section>
 <p>格式如下,举例: newapi+gpt</p>
 <section class="code-block" data-language="json">
 <div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">36 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
@@ -299,48 +193,161 @@ export const posts = [
 <p>pi agent的官方文档<a href="https://pi.dev/docs/latest" target="_blank" rel="noopener noreferrer">PI_Agent_DOCS</a></p>`,
   },
   {
-    slug: "hello-world",
-    title: "Hello World",
-    date: "2026-07-09",
-    tag: "第一篇",
+    slug: "coc",
+    title: "COC流派分析--狗球",
+    date: "2026-07-15",
+    tags: ["coc","狗球","十六本"],
     readingMinutes: 3,
-    wordCount: 528,
-    codeBlockCount: 1,
-    toc: [{"id":"你会看到什么","level":2,"label":"你会看到什么"},{"id":"如何体验","level":2,"label":"如何体验"},{"id":"一段小代码","level":2,"label":"一段小代码"},{"id":"设计意图","level":3,"label":"设计意图"},{"id":"配图示例","level":2,"label":"配图示例"}],
-    excerpt: "欢迎来到 Weather Blog。这是第一篇测试文章，用来验证天气动画、昼夜天空与丝滑页面转场是否工作正常。",
-    lead: "从这一刻起，每一次点击、每一次日出日落，都应该感觉像风吹过页面一样自然。",
-    content: `<p>你好，世界。这是 <strong>Weather Blog</strong> 的第一篇文章——用来确认整站动画链路是否「丝滑流转」。</p>
-<h2 id="你会看到什么">你会看到什么</h2>
-<p>这个博客把三件事叠在一起：</p>
-<ul>
-<li><strong>天气粒子</strong>：晴、阴、小雨、中雨、大雨、小雪、中雪、大雪、大风、雷电，粒子密度与氛围色会明显变化；</li>
-<li><strong>24 小时天空</strong>：从黎明到午夜，渐变色、柔和的太阳/月亮会随本地时间移动；右上角时间轮盘可拖动预览任意时刻；</li>
-<li><strong>路由转场</strong>：列表与文章之间只换主内容区，淡出淡入就地完成；顶栏、天空与天气动画始终在，没有强制中间页。</li>
-</ul>
-<h2 id="如何体验">如何体验</h2>
-<ol>
-<li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
-<li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li>
-<li>点天气徽章左侧的「时间」按钮，拖动轮盘预览昼夜，可随时「回到实时」；</li>
-<li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li>
-<li>阴天时云层应偏淡、靠上，不挡正文；雷电天气请多看几秒——会有闪电与雨粒子。</li>
-</ol>
+    wordCount: 815,
+    codeBlockCount: 0,
+    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
+    excerpt: "coc太好玩了,谁说不是呢",
+    lead: "Ek佬的狗球,太强了!",
+    content: `<h2 id="特色">特色</h2>
+<p><strong>推进快</strong>, 吃操作, 伤害高, 血量少, 全本可玩</p>
 <blockquote>
-<p>「好的转场不是装饰，而是告诉读者：你还在同一个世界里。」</p>
+<p>推进快是狗球最大的魅力, 也是最吸引我的地方</p>
 </blockquote>
-<h2 id="一段小代码">一段小代码</h2>
-<p>经典的问候当然少不了：</p>
-<section class="code-block" data-language="javascript">
-<div class="code-toolbar"><span class="code-language">JavaScript</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
-<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
-</section>
-<h3 id="设计意图">设计意图</h3>
-<p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
-<p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
-<p>那就这样——<em>Hello World</em>，我们下次见。</p>
-<h2 id="配图示例">配图示例</h2>
-<p>把图片放进项目根目录的 <code>img/</code> 文件夹，在 Markdown 里这样写（路径相对站点根）：</p>
-<p>千山鸟飞绝,万径人踪灭
-<img src="img/a.jpg" alt="千山鸟飞绝,万径人踪灭" loading="lazy" decoding="async" /></p>`,
+<blockquote>
+<p>永远不会削弱的流派</p>
+</blockquote>
+<p>狗球广为人知, 但是却少有人玩, 在过去,狗球一直是高手和操作的代名词</p>
+<p>我却一直不知道这个流派强在哪里🥹, 尝试练过, 没有体验到狗球的强势(在我刚刚入坑部落冲突的时候)</p>
+<p>直到看了<a href="https://www.bilibili.com/video/BV1YAN86nEnp/?spm_id_from=333.1391.0.0&amp;vd_source=0db60fe40c2ea9a780f177153aeb1378" target="_blank" rel="noopener noreferrer">Ek佬的狗球</a>, 太神奇了, 前戏用龙王打了一分钟, 丢了大部分的法术, 却每次都能在两分钟内结束战斗!!!(那我天女超弓大火球和天女超巫大火球每次都要打三分钟算什么)</p>
+<p>马上安排了一把狗球, 哦哦哦, 先下狗在下球，哦哦哦, 先这样再那样, 哦哦哦, 怎么就三了 ???🤲🤲🤲</p>
+<p class="article-figure"><img src="img/狗球.jpg" alt="狗球" loading="lazy" decoding="async" /></p>
+<h2 id="配兵">配兵</h2>
+<p>大部队:</p>
+<ul>
+<li>一火狗, 一冰狗, 气球20个, 小咏王一个, 飞龙四条, 地狱龙两条, 剩下的带小苍蝇</li>
+</ul>
+<p>英雄及装备:</p>
+<ul>
+<li><p><em><strong>永王</strong></em>: 金身 + 生命宝石</p>
+</li>
+<li><p>亡灵王子: 分身 + 魔球</p>
+</li>
+<li><p>龙爵: 烈焰之星 + 火箭背包</p>
+</li>
+<li><p>女王: 巨人 + 魔镜</p>
+</li>
+</ul>
+<p>法术:</p>
+<ul>
+<li>两图腾, 一骷髅, 一隐身, 一冰冻, 一极速, 一毒药, 一蔓生, 一复活, 一治疗</li>
+</ul>
+<p>工程机器: </p>
+<ul>
+<li>训练营</li>
+</ul>
+<p>援军:</p>
+<ul>
+<li>火炉, 废墟女巫</li>
+</ul>
+<blockquote>
+<p>主要是两条狗, 气球, 咏王. 剩下的都是看情况随便带</p>
+</blockquote>
+<h2 id="操作">操作</h2>
+<p>将阵容划分为九宫格<img src="img/狗球_阵容分析.png" alt="阵容分析" loading="lazy" decoding="async" /></p>
+<p>龙王 + 训练营 起手, 打掉九宫格中的两个格子, 从有缺口的格子旁边开始大部队, 狗球分两拨, 看着给金身和法术即可</p>
+<p><em><strong>细节</strong></em></p>
+<ul>
+<li><p>前戏如果只打掉一格也没问题, 主要目的是为了将路线打出来, 不需要省法术, 路线没出来之前, 保证龙爵不要死</p>
+</li>
+<li><p>不从龙爵的对面下大部队就可以, 龙局打掉两个之后一般影响三条边, 分别剩下一 二 三个格子, 最常见的是从剩下两格的那一边下大部队, 不绝对, 尽量避开吹风机</p>
+</li>
+<li><p>第一波大部队火狗起手, 然后依次是飞龙, 三王, 地狱龙, 小苍蝇, 最后是10个气球</p>
+</li>
+<li><p>第二波大部队放在大部队的侧面(第一波从两格开始进攻, 冰狗就下到侧面; 第一波从三格开始进攻, 就下到同一边的第三格. 本质上还是一字划, 让大部队按照规划的路线走), 冰狗起手, 然后下10个气球</p>
+</li>
+<li><p>金身早开, 开金身的时候不要放急速法术, 金身效果最大化, 一般是天鹰火炮第一次砸到大部队的时候</p>
+</li>
+<li><p>蔓生蔓掉大部队前进方向的对面的中间一格, 时间不要太晚, 也不要太早, 一般在大部队向前推进一个格子的宽度之后, 太早会导致没有效果, 太晚会拖节奏</p>
+</li>
+<li><p>治疗法术主要是防止气球全死在大本那里, 所以大本即将爆炸的时候下治疗法术</p>
+</li>
+</ul>
+<h2 id="实战">实战</h2>
+<p>临时打了一把, 对面防御比较低</p>
+<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/狗球_实战.webp" alt="实战" loading="lazy" decoding="async" /></p>`,
+  },
+  {
+    slug: "coc-2",
+    title: "coc流派分析--超级女巫",
+    date: "2026-07-15",
+    tags: ["coc","超级女巫","十六本"],
+    readingMinutes: 2,
+    wordCount: 515,
+    codeBlockCount: 0,
+    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
+    excerpt: "coc太好玩了, 谁说不是呢",
+    lead: "纪念那段在十二本当大佬的时光",
+    content: `<p class="article-figure"><img src="img/超巫_纪念.png" alt="1" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫_副首领0.png" alt="0" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫_副首领1.png" alt="1" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫_副首领2.png" alt="2" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫_副首领3.png" alt="3" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫_十六本.png" alt="4" loading="lazy" decoding="async" /></p>
+<h2 id="特色">特色</h2>
+<p>大火球 天女 超巫 陆军 滚木车</p>
+<p>这个流派是我从十二本的天女超弓大火球继承过来的, 打法思路没有变化, 把超弓换成超巫就是了</p>
+<blockquote>
+<p>超弓太脆了, 即使有生命宝石, 天鹰火炮下去不死即残, 超巫的容错更高, 而且还能源源不断召唤大宝宝, 是超弓的完美上位替代</p>
+</blockquote>
+<h2 id="配兵">配兵</h2>
+<p>大部队:</p>
+<ul>
+<li>天使5个, 超级女巫三个, 戈仑石人一个, 冰人一个, 气球四个, 龙宝一个, 炸弹人七个, 小咏王一个, 英雄猎手两个</li>
+</ul>
+<p>英雄:</p>
+<ul>
+<li><p>咏王: 狂暴光环 + 大火球</p>
+</li>
+<li><p>女王: 巨人 + 魔镜</p>
+</li>
+<li><p>蛮王: 灵蛇手镯 + 足球</p>
+</li>
+<li><p>龙爵: 烈焰之心 + 火箭背包</p>
+</li>
+</ul>
+<p>法术: </p>
+<ul>
+<li>三隐身, 两地震, 一治疗, 两图腾, 一复活, 一冰冻, 一毒药</li>
+</ul>
+<p>工程机器:</p>
+<ul>
+<li>滚木车</li>
+</ul>
+<p>援军:</p>
+<ul>
+<li>格鲁鲁, 火炉</li>
+</ul>
+<h2 id="操作">操作</h2>
+<p>九宫格 , 天永 + 大火球打掉一个格子, 下大部队 + 滚木车沿对角线推进, 龙王 + 蛮王各处理一格(远离咏王方向), 适当给法术</p>
+<p><em><strong>细节</strong></em>:</p>
+<ul>
+<li><p>前戏不要给天永太大压力, 不要省法术, 天永活着最重要</p>
+</li>
+<li><p>下天使之前使用气球探雷</p>
+</li>
+<li><p>前戏一般四五十秒, 目标是把路线打出来</p>
+</li>
+<li><p>前戏只用天永, 保证天永不歪, 适当使用龙宝断边</p>
+</li>
+<li><p>使用女王或大部队可以将天永拉回来</p>
+</li>
+<li><p>下大部队之前, 下龙爵和蛮王, 防止走歪, 龙爵远离吹风机和火箭, 蛮王下另一格</p>
+</li>
+<li><p>大部队顺序, 石头人, 冰人, 女巫, 小咏王, 女王, 滚木车, 炸弹人</p>
+</li>
+<li><p>炸弹人在滚木车前开墙, 防止大部队走歪, 送大部队进入核心</p>
+</li>
+<li><p>治疗法术在爆本时使用, 防止天使死光光</p>
+</li>
+<li><p>复活给龙王, 龙王一般下了之后就不用管了, 残血会用火箭背包自己飞走</p>
+</li>
+</ul>
+<h2 id="实战">实战</h2>
+<p>不知道啥时候补上, 近期迷恋狗球🥹🥹🥹🥹</p>`,
   }
 ];

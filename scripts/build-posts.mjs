@@ -253,6 +253,14 @@ function slugFromFilename(name) {
   return name.replace(/\.md$/i, "").toLowerCase().replace(/\s+/g, "-");
 }
 
+function parseTags(value) {
+  const tags = String(value || "随笔")
+    .split(/[,，]/u)
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+  return [...new Set(tags.length ? tags : ["随笔"])];
+}
+
 function loadPosts() {
   if (!fs.existsSync(POSTS_DIR)) {
     fs.mkdirSync(POSTS_DIR, { recursive: true });
@@ -278,7 +286,7 @@ function loadPosts() {
     const slug = String(meta.slug || slugFromFilename(file));
     const title = String(meta.title || slug);
     const date = String(meta.date || new Date().toISOString().slice(0, 10));
-    const tag = String(meta.tag || "随笔");
+    const tags = parseTags(meta.tags ?? meta.tag);
     const lead = meta.lead != null ? String(meta.lead) : "";
     const excerpt =
       meta.excerpt != null ? String(meta.excerpt) : excerptFromBody(body);
@@ -294,7 +302,7 @@ function loadPosts() {
       slug,
       title,
       date,
-      tag,
+      tags,
       readingMinutes,
       wordCount: stats.wordCount,
       codeBlockCount,
@@ -306,9 +314,9 @@ function loadPosts() {
     });
   }
 
-  // newest first (date desc, then slug)
+  // oldest first (date asc, then slug)
   posts.sort((a, b) => {
-    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1;
     return a.slug < b.slug ? -1 : 1;
   });
 
@@ -322,7 +330,7 @@ function writeOutput(posts) {
     slug: ${JSON.stringify(p.slug)},
     title: ${JSON.stringify(p.title)},
     date: ${JSON.stringify(p.date)},
-    tag: ${JSON.stringify(p.tag)},
+    tags: ${JSON.stringify(p.tags)},
     readingMinutes: ${p.readingMinutes},
     wordCount: ${p.wordCount},
     codeBlockCount: ${p.codeBlockCount},

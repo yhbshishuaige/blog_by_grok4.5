@@ -25,6 +25,15 @@ function formatCount(value) {
   return Number(value || 0).toLocaleString("zh-CN");
 }
 
+function renderPostTags(post) {
+  const tags = Array.isArray(post.tags) && post.tags.length
+    ? post.tags
+    : [post.tag || "随笔"];
+  return tags
+    .map((tag) => `<span class="post-card-tag">${escapeHtml(tag)}</span>`)
+    .join("");
+}
+
 function parseRoute() {
   const raw = location.hash.replace(/^#/, "") || "/";
   const path = raw.startsWith("/") ? raw : `/${raw}`;
@@ -48,13 +57,13 @@ function renderHome() {
       data-nav
       data-deck-card
       data-deck-index="${i}"
-      data-deck-state="${i === 0 ? "active" : i === 1 ? "next" : "far"}"
+      data-deck-state="${i === 0 ? "active" : i === 1 ? "next" : "future"}"
       aria-label="打开文章：${escapeHtml(p.title)}"
       style="--deck-hue:${205 + (i * 47) % 135}"
     >
       <span class="post-deck-number" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
       <div class="post-card-meta">
-        <span class="post-card-tag">${p.tag}</span>
+        ${renderPostTags(p)}
         <time datetime="${p.date}">${formatDate(p.date)}</time>
         <span>· ${formatCount(p.wordCount)} 字</span>
         <span>· ${p.readingMinutes} 分钟阅读</span>
@@ -84,7 +93,7 @@ function renderHome() {
       (p, i) => `
         <a href="#/post/${p.slug}" class="post-card home-classic-card" data-nav style="--stagger:${i}">
           <div class="post-card-meta">
-            <span class="post-card-tag">${p.tag}</span>
+            ${renderPostTags(p)}
             <time datetime="${p.date}">${formatDate(p.date)}</time>
             <span>· ${formatCount(p.wordCount)} 字</span>
             <span>· ${p.readingMinutes} 分钟阅读</span>
@@ -167,7 +176,7 @@ function renderPost(slug) {
       <a href="#/" class="back-link" data-nav>← 返回列表</a>
       <header class="article-header">
         <div class="article-meta">
-          <span class="post-card-tag">${post.tag}</span>
+          ${renderPostTags(post)}
           <time datetime="${post.date}">${formatDate(post.date)}</time>
           <span>· ${formatCount(post.wordCount)} 字</span>
           <span>· ${post.readingMinutes} 分钟阅读</span>

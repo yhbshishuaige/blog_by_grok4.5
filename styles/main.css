@@ -640,18 +640,31 @@ body.camera-mountain-return .sky::after {
 }
 
 .logo-mark {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
-  border-radius: 8px;
-  background: url("../img/favicon.svg") center / cover no-repeat;
-  box-shadow: 0 0 16px rgba(255, 200, 100, 0.5);
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 9px;
+  box-shadow:
+    0 0 0 1px rgba(217, 237, 255, 0.18),
+    0 5px 12px rgba(3, 12, 28, 0.32),
+    0 0 7px rgba(255, 200, 100, 0.28);
   animation: logoPulse 4s ease-in-out infinite;
 }
 
 @keyframes logoPulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(255, 200, 100, 0.4); }
-  50% { box-shadow: 0 0 22px rgba(255, 200, 100, 0.7); }
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(217, 237, 255, 0.18),
+      0 5px 12px rgba(3, 12, 28, 0.32),
+      0 0 7px rgba(255, 200, 100, 0.28);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(217, 237, 255, 0.28),
+      0 5px 12px rgba(3, 12, 28, 0.32),
+      0 0 11px rgba(255, 200, 100, 0.42);
+  }
 }
 
 .header-meta {
