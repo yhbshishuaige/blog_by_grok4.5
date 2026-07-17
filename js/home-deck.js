@@ -3,8 +3,8 @@ const WHEEL_VISUAL_SETTLE_MS = 620;
 const WHEEL_SPRING = 90;
 const WHEEL_DAMPING = 19;
 const WHEEL_MAX_SPEED = 6.25;
-const WHEEL_SETTLE_DISTANCE = 0.0015;
-const WHEEL_SETTLE_VELOCITY = 0.02;
+const WHEEL_SETTLE_DISTANCE = 0.006;
+const WHEEL_SETTLE_VELOCITY = 0.045;
 const TRANSITION_LOCK_MS = 560;
 
 const DECK_POSES = [
@@ -369,7 +369,10 @@ export function createHomeDeck() {
       const delta = normalizeWheelDelta(event);
       if (!delta) return;
       event.preventDefault();
-      pendingWheelDelta += delta;
+      // One physical mouse-wheel notch is commonly reported as ~100px. Cap
+      // each event to one threshold so a single notch always advances exactly
+      // one card; rapid gestures still accumulate through multiple events.
+      pendingWheelDelta += Math.sign(delta) * Math.min(Math.abs(delta), WHEEL_THRESHOLD);
       if (!wheelInputFrame) wheelInputFrame = window.requestAnimationFrame(flushWheelInput);
     }
 
