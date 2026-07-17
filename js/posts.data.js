@@ -89,7 +89,7 @@ export const posts = [
     date: "2026-07-15",
     tag: "随笔",
     readingMinutes: 2,
-    wordCount: 514,
+    wordCount: 515,
     codeBlockCount: 0,
     toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
     excerpt: "coc太好玩了, 谁说不是呢",
@@ -99,6 +99,7 @@ export const posts = [
 <p class="article-figure"><img src="img/超巫_副首领1.png" alt="1" loading="lazy" decoding="async" /></p>
 <p class="article-figure"><img src="img/超巫_副首领2.png" alt="2" loading="lazy" decoding="async" /></p>
 <p class="article-figure"><img src="img/超巫_副首领3.png" alt="3" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="img/超巫.jpg" alt="4" loading="lazy" decoding="async" /></p>
 <h2 id="特色">特色</h2>
 <p>大火球 天女 超巫 陆军 滚木车</p>
 <p>这个流派是我从十二本的天女超弓大火球继承过来的, 打法思路没有变化, 把超弓换成超巫就是了</p>
