@@ -55,7 +55,7 @@ export const posts = [
     date: "2026-07-13",
     tags: ["随笔"],
     readingMinutes: 2,
-    wordCount: 438,
+    wordCount: 503,
     codeBlockCount: 6,
     toc: [{"id":"auth-json","level":2,"label":"auth.json"},{"id":"models-json","level":2,"label":"models.json"},{"id":"settings-json","level":2,"label":"settings.json"}],
     excerpt: "PI + flash,体验腹泻式写代码",
@@ -73,6 +73,9 @@ export const posts = [
     └── settings.json</code></pre>
 </section>
 <p>相比于其他的AI coding agent,结构简单很多,这也是pi的核心思想之一,轻量,完全可定制</p>
+<blockquote>
+<p>一个命令行 AI 编程工具(≈ codex cli),npm 装一下、配个 models.json,就能拿它当统一入口去调各种大模型;换模型一个 /model搞定,不用反复登录;而且因为内核很轻,所以启动快、省 token。</p>
+</blockquote>
 <h2 id="auth-json">auth.json</h2>
 <p>/login登录的信息, 不可删除! 里面的key需要有效, 不是单纯的记录文件或日志</p>
 <section class="code-block" data-language="json">
