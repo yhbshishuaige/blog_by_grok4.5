@@ -198,9 +198,9 @@ export const posts = [
     date: "2026-07-15",
     tags: ["coc","狗球","十六本"],
     readingMinutes: 3,
-    wordCount: 815,
+    wordCount: 847,
     codeBlockCount: 0,
-    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"}],
+    toc: [{"id":"特色","level":2,"label":"特色"},{"id":"配兵","level":2,"label":"配兵"},{"id":"操作","level":2,"label":"操作"},{"id":"实战","level":2,"label":"实战"},{"id":"后续","level":2,"label":"后续"}],
     excerpt: "coc太好玩了,谁说不是呢",
     lead: "Ek佬的狗球,太强了!",
     content: `<h2 id="特色">特色</h2>
@@ -269,7 +269,9 @@ export const posts = [
 </ul>
 <h2 id="实战">实战</h2>
 <p>临时打了一把, 对面防御比较低</p>
-<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/狗球_实战.webp" alt="实战" loading="lazy" decoding="async" /></p>`,
+<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/狗球_实战.webp" alt="实战" loading="lazy" decoding="async" /></p>
+<h2 id="后续">后续</h2>
+<p>感觉有点难受, 联赛前三天用狗球只有一个三星, 剩下一个两星一个一星</p>`,
   },
   {
     slug: "coc-2",
