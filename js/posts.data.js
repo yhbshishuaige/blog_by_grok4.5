@@ -354,5 +354,67 @@ export const posts = [
 </ul>
 <h2 id="实战">实战</h2>
 <p>不知道啥时候补上, 近期迷恋狗球🥹🥹🥹🥹</p>`,
+  },
+  {
+    slug: "vps",
+    title: "vps",
+    date: "2026-07-22",
+    tags: ["随笔"],
+    readingMinutes: 1,
+    wordCount: 94,
+    codeBlockCount: 4,
+    toc: [],
+    excerpt: "vps",
+    lead: "服务器",
+    content: `<p>下载pi agent</p>
+<section class="code-block" data-language="shell">
+<div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">3 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span></span><code class="language-shell hljs">apt update
+apt install npm
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent</code></pre>
+</section>
+<ul>
+<li>如果遇到node版本低,更新后重新安装pi</li>
+</ul>
+<p><strong>方案一</strong></p>
+<section class="code-block" data-language="shell">
+<div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">8 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></span><code class="language-shell hljs">node -v
+curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+apt-get install -y nodejs
+hash -r
+node -v
+npm -v
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent@latest
+pi --version</code></pre>
+</section>
+<p><strong>方案二</strong></p>
+<section class="code-block" data-language="shell">
+<div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">2 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span></span><code class="language-shell hljs">apt-get purge -y libnode-dev &amp;&amp; dpkg --configure -a &amp;&amp; apt-get install --reinstall -y nodejs &amp;&amp; hash -r &amp;&amp; node -v
+ &amp;&amp; npm -v &amp;&amp; npm install -g --ignore-scripts @earendil-works/pi-coding-agent@latest &amp;&amp; pi --version</code></pre>
+</section>
+<p>之后配置models.json文件</p>
+<section class="code-block" data-language="json">
+<div class="code-toolbar"><span class="code-language">JSON</span><span class="code-lines">15 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span></span><code class="language-json hljs"><span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;providers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                <span class="hljs-attr">&quot;lucky_grok&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                      <span class="hljs-attr">&quot;_commit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;的士交易&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://luckyg.131518.xyz/v1&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;api&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;openai-responses&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;apiKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-kbPrrOMY81ci2epGXGlPAznJYVeSfah96FjMvgIqy6zpLIeA&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;models&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
+                        <span class="hljs-attr">&quot;id&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;grok-4.5&quot;</span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;reasoning&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+                        <span class="hljs-attr">&quot;contextWindow&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1000000</span>
+                                <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
+                <span class="hljs-punctuation">}</span>  
+        <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></code></pre>
+</section>
+<p>配置好之后直接告诉pi: 帮我配置一个openclaw ai助手, 使用~/.pi/agent/models.json中的XXX模型</p>
+<p>微型扫描连接成功</p>
+<p>体验不好, 不稳定, 总是掉线, 占资源, 没啥用感觉, 已删</p>`,
   }
 ];
