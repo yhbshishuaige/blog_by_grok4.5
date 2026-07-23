@@ -31,7 +31,7 @@ export const WEATHER_META = {
 };
 
 /** WMO weather code → type (optionally wind-boosted) */
-function codeToWeather(code, windKmh = 0) {
+export function codeToWeather(code, windKmh = 0) {
   if (code === 0 || code === 1) {
     return windKmh >= 35 ? "windy" : "sunny";
   }
@@ -98,6 +98,85 @@ export const WEATHER_LOCATION = {
   timezone: "Asia/Shanghai",
 };
 
+const WEATHER_REFRESH_MS = 10 * 60 * 1000;
+
+const WEATHER_RANK = {
+  sunny: 0,
+  cloudy: 0,
+  windy: 1,
+  "rain-light": 2,
+  "rain-medium": 3,
+  "rain-heavy": 4,
+  thunder: 5,
+  "snow-light": 2,
+  "snow-medium": 3,
+  "snow-heavy": 4,
+};
+
+function finiteNumber(value) {
+  return Number.isFinite(Number(value)) ? Number(value) : 0;
+}
+
+/** Convert Open-Meteo precipitation in mm to the visual rain ladder. */
+function precipitationToWeather(precipitation) {
+  const amount = finiteNumber(precipitation);
+  if (amount >= 4) return "rain-heavy";
+  if (amount >= 1) return "rain-medium";
+  if (amount >= 0.05) return "rain-light";
+  return null;
+}
+
+function strongerWeather(current, candidate) {
+  if (!candidate || WEATHER_RANK[candidate] <= WEATHER_RANK[current]) return current;
+  return candidate;
+}
+
+function currentHourIndex(data) {
+  const currentTime = String(data?.current?.time || "");
+  const hour = currentTime.slice(0, 13);
+  const times = data?.hourly?.time;
+  if (!hour || !Array.isArray(times)) return -1;
+  return times.findIndex((time) => String(time).slice(0, 13) === hour);
+}
+
+/**
+ * Current weather is a model value and can lag a local shower. The current
+ * precipitation fields and the matching hourly slot are stronger signals
+ * than a cloudy code on its own, so use them to avoid hiding active rain.
+ */
+export function deriveWeatherType(data) {
+  const current = data?.current || {};
+  const wind = finiteNumber(current.wind_speed_10m);
+  let type = codeToWeather(finiteNumber(current.weather_code), wind);
+
+  const currentPrecipitation = Math.max(
+    finiteNumber(current.precipitation),
+    finiteNumber(current.rain),
+    finiteNumber(current.showers)
+  );
+  type = strongerWeather(type, precipitationToWeather(currentPrecipitation));
+
+  const index = currentHourIndex(data);
+  const hourly = data?.hourly;
+  if (index >= 0 && hourly) {
+    const hourlyCode = finiteNumber(hourly.weather_code?.[index]);
+    const hourlyType = codeToWeather(hourlyCode, wind);
+    const hourlyPrecipitation = Math.max(
+      finiteNumber(hourly.precipitation?.[index]),
+      finiteNumber(hourly.rain?.[index]),
+      finiteNumber(hourly.showers?.[index])
+    );
+    const hourlyRain = precipitationToWeather(hourlyPrecipitation);
+
+    // A matching-hour rain code/amount corrects a stale cloudy current code.
+    if (isRainType(hourlyType) || hourlyRain) {
+      type = strongerWeather(type, hourlyRain || hourlyType);
+    }
+  }
+
+  return type;
+}
+
 async function fetchWeather() {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 6500);
@@ -105,8 +184,9 @@ async function fetchWeather() {
     const { latitude, longitude, timezone } = WEATHER_LOCATION;
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
-      `&current=weather_code,temperature_2m,wind_speed_10m` +
-      `&timezone=${encodeURIComponent(timezone)}&wind_speed_unit=kmh`;
+      `&current=weather_code,temperature_2m,wind_speed_10m,precipitation,rain,showers` +
+      `&hourly=weather_code,precipitation,rain,showers` +
+      `&timezone=${encodeURIComponent(timezone)}&forecast_days=1&wind_speed_unit=kmh`;
 
     const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) throw new Error("weather api fail");
@@ -115,7 +195,7 @@ async function fetchWeather() {
     const temp = data?.current?.temperature_2m;
     const wind = data?.current?.wind_speed_10m ?? 0;
     return {
-      type: codeToWeather(code, wind),
+      type: deriveWeatherType(data),
       temp,
       wind,
       source: "live",
@@ -1041,6 +1121,8 @@ export function createWeather() {
   let cameraTimer = 0;
   let engineTimer = 0;
   let textTimer = 0;
+  let refreshTimer = 0;
+  let refreshInFlight = false;
 
   function runCameraTransition(prev, next, enabled) {
     clearTimeout(cameraTimer);
@@ -1133,10 +1215,13 @@ export function createWeather() {
     return current;
   }
 
-  async function init() {
-    engine.start();
-    const info = await fetchWeather();
-    if (!manual) {
+  async function refreshWeather() {
+    if (refreshInFlight || manual) return;
+    refreshInFlight = true;
+    try {
+      const info = await fetchWeather();
+      if (manual) return;
+
       applyWeather(info.type, { announce: false });
       if (textEl) {
         const base = WEATHER_META[info.type].label;
@@ -1149,9 +1234,34 @@ export function createWeather() {
           textEl.textContent = `${base} · ${place}`;
         }
       }
+      cycleIndex = Math.max(0, WEATHER_TYPES.indexOf(current));
+    } finally {
+      refreshInFlight = false;
     }
-    cycleIndex = Math.max(0, WEATHER_TYPES.indexOf(current));
   }
+
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    if (!manual) {
+      refreshTimer = window.setTimeout(async () => {
+        await refreshWeather();
+        scheduleRefresh();
+      }, WEATHER_REFRESH_MS);
+    }
+  }
+
+  async function init() {
+    engine.start();
+    await refreshWeather();
+    scheduleRefresh();
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      void refreshWeather();
+      scheduleRefresh();
+    }
+  });
 
   function cyclePreview() {
     manual = true;
