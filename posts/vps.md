@@ -44,9 +44,9 @@ apt-get purge -y libnode-dev && dpkg --configure -a && apt-get install --reinsta
         "providers": {
                 "lucky_grok": {
                       "_commit": "的士交易",
-                      "baseUrl": "https://luckyg.131518.xyz/v1",
+                      "baseUrl": "https://example.com/v1",
                       "api": "openai-responses",
-                      "apiKey": "sk-kbPrrOMY81ci2epGXGlPAznJYVeSfah96FjMvgIqy6zpLIeA",
+                      "apiKey": "sk-***************************",
                       "models": [{
                         "id" : "grok-4.5",
                         "reasoning": true,

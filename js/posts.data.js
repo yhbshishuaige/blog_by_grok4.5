@@ -401,9 +401,9 @@ pi --version</code></pre>
         <span class="hljs-attr">&quot;providers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
                 <span class="hljs-attr">&quot;lucky_grok&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
                       <span class="hljs-attr">&quot;_commit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;的士交易&quot;</span><span class="hljs-punctuation">,</span>
-                      <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://luckyg.131518.xyz/v1&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;baseUrl&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://example.com/v1&quot;</span><span class="hljs-punctuation">,</span>
                       <span class="hljs-attr">&quot;api&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;openai-responses&quot;</span><span class="hljs-punctuation">,</span>
-                      <span class="hljs-attr">&quot;apiKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-kbPrrOMY81ci2epGXGlPAznJYVeSfah96FjMvgIqy6zpLIeA&quot;</span><span class="hljs-punctuation">,</span>
+                      <span class="hljs-attr">&quot;apiKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;sk-***************************&quot;</span><span class="hljs-punctuation">,</span>
                       <span class="hljs-attr">&quot;models&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
                         <span class="hljs-attr">&quot;id&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;grok-4.5&quot;</span><span class="hljs-punctuation">,</span>
                         <span class="hljs-attr">&quot;reasoning&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
