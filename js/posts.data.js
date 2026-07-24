@@ -416,5 +416,295 @@ pi --version</code></pre>
 <p>配置好之后直接告诉pi: 帮我配置一个openclaw ai助手, 使用~/.pi/agent/models.json中的XXX模型</p>
 <p>微型扫描连接成功</p>
 <p>体验不好, 不稳定, 总是掉线, 占资源, 没啥用感觉, 已删</p>`,
+  },
+  {
+    slug: "pi-grok45",
+    title: "grok4.5调用pi工具的问题",
+    date: "2026-07-24",
+    tags: ["随笔"],
+    readingMinutes: 1,
+    wordCount: 188,
+    codeBlockCount: 5,
+    toc: [{"id":"现象","level":2,"label":"现象"},{"id":"自测","level":2,"label":"自测"},{"id":"原因","level":2,"label":"原因"},{"id":"解决","level":2,"label":"解决"}],
+    excerpt: "pi的小瑕疵",
+    lead: "作者的疏忽",
+    content: `<p>默认情况下:grok4.5调用pi的read和write会返回错误, 被迫使用bash命令实现读写, 一次思考中反复出现这种情况, 看着心烦, 浪费时间, 还浪费token</p>
+<h2 id="现象">现象</h2>
+<p>模型先调用read和write, 返回失败, 然后重新调用bash工具</p>
+<section class="code-block" data-language="text">
+<div class="code-toolbar"><span class="code-language">Text</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="hljs">The read tool seems to be failing.</code></pre>
+</section>
+<p>和</p>
+<section class="code-block" data-language="text">
+<div class="code-toolbar"><span class="code-language">Text</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="hljs">The write tool is failing</code></pre>
+</section>
+<h2 id="自测">自测</h2>
+<p>让不同模型只使用read读取一个文件的内容,不能使用bash</p>
+<section class="code-block" data-language="text">
+<div class="code-toolbar"><span class="code-language">Text</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="hljs">只用一次 read 读 ./a.txt，禁止 bash，不要解释, 成功就成功, 失败就失败</code></pre>
+</section>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>模型</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>grok-4.5</td>
+<td>失败</td>
+</tr>
+<tr>
+<td></td>
+<td>gpt-5.6-sol</td>
+<td>成功</td>
+</tr>
+<tr>
+<td></td>
+<td>deepseek-v4-pro/flash</td>
+<td>成功</td>
+</tr>
+</tbody></table>
+<p>claude可能也有类似情况,没有测试</p>
+<h2 id="原因">原因</h2>
+<p>grok的参数名称是file_path,但是pi的read和write使用的是path</p>
+<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/blog/2026/07/clip-20260724-150234-431-b5fe2ad4af.png" alt="clip_20260724_150234_431" loading="lazy" decoding="async" /></p>
+<h2 id="解决">解决</h2>
+<p>在进入schema之前强制将file_path转化成path</p>
+<section class="code-block" data-language="shell">
+<div class="code-toolbar"><span class="code-language">Shell Session</span><span class="code-lines">1 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-shell hljs">cp tool-param-compat.ts \\~/.pi/agent/extensions/</code></pre>
+</section>
+<p>[details=&quot;tool-param-compat.ts&quot;]</p>
+<section class="code-block" data-language="ts">
+<div class="code-toolbar"><span class="code-language">ts</span><span class="code-lines">221 行</span><span class="code-actions"><button type="button" class="code-toggle" aria-expanded="true">折叠</button><button type="button" class="code-copy">复制</button></span></div>
+<pre><span class="code-line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span>32</span><span>33</span><span>34</span><span>35</span><span>36</span><span>37</span><span>38</span><span>39</span><span>40</span><span>41</span><span>42</span><span>43</span><span>44</span><span>45</span><span>46</span><span>47</span><span>48</span><span>49</span><span>50</span><span>51</span><span>52</span><span>53</span><span>54</span><span>55</span><span>56</span><span>57</span><span>58</span><span>59</span><span>60</span><span>61</span><span>62</span><span>63</span><span>64</span><span>65</span><span>66</span><span>67</span><span>68</span><span>69</span><span>70</span><span>71</span><span>72</span><span>73</span><span>74</span><span>75</span><span>76</span><span>77</span><span>78</span><span>79</span><span>80</span><span>81</span><span>82</span><span>83</span><span>84</span><span>85</span><span>86</span><span>87</span><span>88</span><span>89</span><span>90</span><span>91</span><span>92</span><span>93</span><span>94</span><span>95</span><span>96</span><span>97</span><span>98</span><span>99</span><span>100</span><span>101</span><span>102</span><span>103</span><span>104</span><span>105</span><span>106</span><span>107</span><span>108</span><span>109</span><span>110</span><span>111</span><span>112</span><span>113</span><span>114</span><span>115</span><span>116</span><span>117</span><span>118</span><span>119</span><span>120</span><span>121</span><span>122</span><span>123</span><span>124</span><span>125</span><span>126</span><span>127</span><span>128</span><span>129</span><span>130</span><span>131</span><span>132</span><span>133</span><span>134</span><span>135</span><span>136</span><span>137</span><span>138</span><span>139</span><span>140</span><span>141</span><span>142</span><span>143</span><span>144</span><span>145</span><span>146</span><span>147</span><span>148</span><span>149</span><span>150</span><span>151</span><span>152</span><span>153</span><span>154</span><span>155</span><span>156</span><span>157</span><span>158</span><span>159</span><span>160</span><span>161</span><span>162</span><span>163</span><span>164</span><span>165</span><span>166</span><span>167</span><span>168</span><span>169</span><span>170</span><span>171</span><span>172</span><span>173</span><span>174</span><span>175</span><span>176</span><span>177</span><span>178</span><span>179</span><span>180</span><span>181</span><span>182</span><span>183</span><span>184</span><span>185</span><span>186</span><span>187</span><span>188</span><span>189</span><span>190</span><span>191</span><span>192</span><span>193</span><span>194</span><span>195</span><span>196</span><span>197</span><span>198</span><span>199</span><span>200</span><span>201</span><span>202</span><span>203</span><span>204</span><span>205</span><span>206</span><span>207</span><span>208</span><span>209</span><span>210</span><span>211</span><span>212</span><span>213</span><span>214</span><span>215</span><span>216</span><span>217</span><span>218</span><span>219</span><span>220</span><span>221</span></span><code class="hljs">/**
+ * Tool Param Compat — make pi's four built-in tools tolerant of Claude-Code style args.
+ *
+ * Background
+ * ----------
+ * pi schema:
+ *   read  → path [, offset, limit]
+ *   write → path, content
+ *   edit  → path, edits: [{ oldText, newText }]
+ *   bash  → command [, timeout]
+ *
+ * Some models (esp. Grok) emit Claude Code / Cursor style names instead:
+ *   file_path          → path
+ *   old_string/new_string → oldText/newText
+ *   (occasionally) cmd → command
+ *
+ * Schema validation runs BEFORE execute(). Built-in runtime code already does
+ * \`args.file_path ?? args.path\` for rendering, but never gets there if validation fails.
+ *
+ * This extension re-registers read/write/edit/bash with prepareArguments() that
+ * normalizes aliases BEFORE validation, then delegates to the real built-in impl.
+ *
+ * Location: ~/.pi/agent/extensions/tool-param-compat.ts  (auto-loaded)
+ * Reload:   /reload  or start a new pi session
+ *
+ * Smoke test (Grok):
+ *   只用一次 read 读 /tmp/pi-tool-param-test.txt，禁止 bash，不要解释
+ *   只用一次 write 把 hello 写入 /tmp/pi-tool-param-write-test.txt，禁止 bash，不要解释
+ *   只用一次 edit 把 /tmp/pi-tool-param-write-test.txt 里的 hello 改成 world，禁止 bash，不要解释
+ *   只用一次 bash 执行 echo ok，不要解释
+ */
+
+import type { ExtensionAPI } from &quot;@earendil-works/pi-coding-agent&quot;;
+import {
+	createBashToolDefinition,
+	createEditToolDefinition,
+	createReadToolDefinition,
+	createWriteToolDefinition,
+} from &quot;@earendil-works/pi-coding-agent&quot;;
+
+type AnyArgs = Record&lt;string, unknown&gt;;
+
+function isObject(value: unknown): value is AnyArgs {
+	return typeof value === &quot;object&quot; &amp;&amp; value !== null &amp;&amp; !Array.isArray(value);
+}
+
+/** Prefer existing \`path\`; otherwise promote common aliases. Drop aliases after. */
+function normalizePathArg(args: unknown): unknown {
+	if (!isObject(args)) return args;
+	const next: AnyArgs = { ...args };
+
+	if (typeof next.path !== &quot;string&quot;) {
+		const alias =
+			(typeof next.file_path === &quot;string&quot; &amp;&amp; next.file_path) ||
+			(typeof next.filePath === &quot;string&quot; &amp;&amp; next.filePath) ||
+			(typeof next.filepath === &quot;string&quot; &amp;&amp; next.filepath) ||
+			(typeof next.filename === &quot;string&quot; &amp;&amp; next.filename) ||
+			(typeof next.file === &quot;string&quot; &amp;&amp; next.file) ||
+			null;
+		if (alias) next.path = alias;
+	}
+
+	delete next.file_path;
+	delete next.filePath;
+	delete next.filepath;
+	delete next.filename;
+	delete next.file;
+	return next;
+}
+
+/** Map Claude-style edit field names; keep only schema-safe keys. */
+function normalizeEditArgs(args: unknown): unknown {
+	const withPath = normalizePathArg(args);
+	if (!isObject(withPath)) return withPath;
+	const next: AnyArgs = { ...withPath };
+
+	const mapPair = (obj: AnyArgs): AnyArgs =&gt; {
+		const out: AnyArgs = { ...obj };
+		if (typeof out.oldText !== &quot;string&quot;) {
+			if (typeof out.old_string === &quot;string&quot;) out.oldText = out.old_string;
+			else if (typeof out.old_str === &quot;string&quot;) out.oldText = out.old_str;
+			else if (typeof out.oldString === &quot;string&quot;) out.oldText = out.oldString;
+		}
+		if (typeof out.newText !== &quot;string&quot;) {
+			if (typeof out.new_string === &quot;string&quot;) out.newText = out.new_string;
+			else if (typeof out.new_str === &quot;string&quot;) out.newText = out.new_str;
+			else if (typeof out.newString === &quot;string&quot;) out.newText = out.newString;
+		}
+		// Keep only fields edit schema accepts inside each edit item
+		const item: AnyArgs = {};
+		if (typeof out.oldText === &quot;string&quot;) item.oldText = out.oldText;
+		if (typeof out.newText === &quot;string&quot;) item.newText = out.newText;
+		return item;
+	};
+
+	// Build a clean object (edit schema has additionalProperties: false)
+	const clean: AnyArgs = {};
+	if (typeof next.path === &quot;string&quot;) clean.path = next.path;
+
+	// Top-level single-edit Claude style → leave oldText/newText for built-in prepareArguments
+	const topMapped = mapPair(next);
+	if (typeof topMapped.oldText === &quot;string&quot;) clean.oldText = topMapped.oldText;
+	if (typeof topMapped.newText === &quot;string&quot;) clean.newText = topMapped.newText;
+
+	if (Array.isArray(next.edits)) {
+		clean.edits = next.edits.map((e) =&gt; (isObject(e) ? mapPair(e) : e));
+	} else if (typeof next.edits === &quot;string&quot;) {
+		try {
+			const parsed = JSON.parse(next.edits);
+			if (Array.isArray(parsed)) {
+				clean.edits = parsed.map((e) =&gt; (isObject(e) ? mapPair(e) : e));
+			}
+		} catch {
+			// leave unset; validation will surface a clear error
+		}
+	}
+
+	return clean;
+}
+
+/** Bash is already fine for Grok (\`command\`), but accept a few aliases defensively. */
+function normalizeBashArgs(args: unknown): unknown {
+	if (!isObject(args)) return args;
+	const next: AnyArgs = { ...args };
+
+	if (typeof next.command !== &quot;string&quot;) {
+		const alias =
+			(typeof next.cmd === &quot;string&quot; &amp;&amp; next.cmd) ||
+			(typeof next.shell === &quot;string&quot; &amp;&amp; next.shell) ||
+			(typeof next.script === &quot;string&quot; &amp;&amp; next.script) ||
+			(typeof next.bash === &quot;string&quot; &amp;&amp; next.bash) ||
+			null;
+		if (alias) next.command = alias;
+	}
+
+	// timeout sometimes arrives as string
+	if (typeof next.timeout === &quot;string&quot; &amp;&amp; next.timeout.trim() !== &quot;&quot;) {
+		const n = Number(next.timeout);
+		if (Number.isFinite(n)) next.timeout = n;
+	}
+
+	delete next.cmd;
+	delete next.shell;
+	delete next.script;
+	delete next.bash;
+	return next;
+}
+
+const PATH_GUIDELINE =
+	&quot;Built-in file tools use parameter name path (never file_path / filePath). edit uses edits[].oldText and edits[].newText (never old_string / new_string).&quot;;
+
+export default function (pi: ExtensionAPI) {
+	const cwd = process.cwd();
+
+	const readBase = createReadToolDefinition(cwd);
+	const writeBase = createWriteToolDefinition(cwd);
+	const editBase = createEditToolDefinition(cwd);
+	const bashBase = createBashToolDefinition(cwd);
+
+	// ── read ────────────────────────────────────────────────────────────
+	pi.registerTool({
+		...readBase,
+		label: &quot;read&quot;,
+		promptGuidelines: [...(readBase.promptGuidelines ?? []), PATH_GUIDELINE],
+		prepareArguments(args) {
+			return normalizePathArg(args);
+		},
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
+			return createReadToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx);
+		},
+	});
+
+	// ── write ───────────────────────────────────────────────────────────
+	pi.registerTool({
+		...writeBase,
+		label: &quot;write&quot;,
+		promptGuidelines: [...(writeBase.promptGuidelines ?? []), PATH_GUIDELINE],
+		prepareArguments(args) {
+			return normalizePathArg(args);
+		},
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
+			return createWriteToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx);
+		},
+	});
+
+	// ── edit ────────────────────────────────────────────────────────────
+	pi.registerTool({
+		...editBase,
+		label: &quot;edit&quot;,
+		promptGuidelines: [...(editBase.promptGuidelines ?? []), PATH_GUIDELINE],
+		prepareArguments(args) {
+			const normalized = normalizeEditArgs(args);
+			// Built-in folds top-level oldText/newText into edits[]
+			if (typeof editBase.prepareArguments === &quot;function&quot;) {
+				return editBase.prepareArguments(normalized);
+			}
+			return normalized;
+		},
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
+			return createEditToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx);
+		},
+	});
+
+	// ── bash ────────────────────────────────────────────────────────────
+	// Grok already uses \`command\` correctly; still wrap for alias safety.
+	pi.registerTool({
+		...bashBase,
+		label: &quot;bash&quot;,
+		promptGuidelines: [
+			...(bashBase.promptGuidelines ?? []),
+			&quot;bash uses parameter name command (not cmd).&quot;,
+		],
+		prepareArguments(args) {
+			return normalizeBashArgs(args);
+		},
+		async execute(toolCallId, params, signal, onUpdate, ctx) {
+			return createBashToolDefinition(ctx.cwd).execute(toolCallId, params, signal, onUpdate, ctx);
+		},
+	});
+}
+</code></pre>
+</section>
+<p>[/details]</p>`,
   }
 ];
