@@ -3,8 +3,8 @@ title: grok4.5调用pi工具的问题
 date: 2026-07-24
 tag: 随笔
 slug: pi-grok45
-excerpt:
-lead:
+excerpt: pi的小瑕疵
+lead: 作者的疏忽
 ---
 
 默认情况下:grok4.5调用pi的read和write会返回错误, 被迫使用bash命令实现读写, 一次思考中反复出现这种情况, 看着心烦, 浪费时间, 还浪费token
