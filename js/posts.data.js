@@ -733,5 +733,89 @@ export default function (pi: ExtensionAPI) {
 <li>gpt-5.5 high 128 </li>
 <li>gpt-5.6-sol</li>
 </ul>`,
+  },
+  {
+    slug: "blog",
+    title: "进军小红书的第一篇 blog",
+    date: "2026-07-31",
+    tags: ["随笔"],
+    readingMinutes: 4,
+    wordCount: 1242,
+    codeBlockCount: 0,
+    toc: [{"id":"名词解释","level":2,"label":"名词解释"},{"id":"claude-code-和-codex-是什么","level":3,"label":"Claude Code 和 Codex 是什么"},{"id":"agent-是什么","level":3,"label":"Agent 是什么"},{"id":"fable-和-gpt-是什么","level":3,"label":"Fable 和 GPT 是什么"},{"id":"cli-和-gui-是什么","level":3,"label":"CLI 和 GUI 是什么"},{"id":"codex-gpt-和-openai-的关系是什么","level":3,"label":"Codex、GPT 和 OpenAI 的关系是什么"},{"id":"ai编程工具-codex-opencode-cc-ccs-pi-agent","level":3,"label":"ai编程工具: Codex、OpenCode、CC、CCS、Pi Agent"},{"id":"ccs-是什么","level":3,"label":"CCS 是什么"},{"id":"中转站是什么","level":3,"label":"中转站是什么"},{"id":"api-是什么","level":3,"label":"API 是什么"},{"id":"token-是什么","level":3,"label":"Token 是什么"},{"id":"分享","level":2,"label":"分享"},{"id":"去-ai-味-skill","level":3,"label":"去 AI 味 skill"},{"id":"superpowers","level":3,"label":"Superpowers"},{"id":"ui-设计提示词网站","level":3,"label":"UI 设计提示词网站"},{"id":"ui设计skill","level":3,"label":"ui设计skill"},{"id":"如何使用","level":3,"label":"如何使用"},{"id":"skill只是锦上添花-在日新月异的今天-模型越来越强大-很多情况下将需求提给ai-不需要skill他自己就能完成得很好-skill反而会浪费token-延长思考时间","level":2,"label":"skill只是锦上添花,在日新月异的今天,模型越来越强大,很多情况下将需求提给ai,不需要skill他自己就能完成得很好,skill反而会浪费token,延长思考时间"},{"id":"最后","level":2,"label":"最后"}],
+    excerpt: "用通俗语言解释 Claude Code、Codex、Agent、GPT、API、Token 等 AI 常见名词，帮小白快速建立第一张地图。",
+    lead: "这是我小红书的第一篇文章，我会使用通俗的语言帮助大家理解关于 AI 的名词，旨在帮助小白打破信息差。",
+    content: `<p>干货满满，收藏防迷路。</p>
+<p>下面我用尽量通俗的话，把常见名词讲清楚。</p>
+<h2 id="名词解释">名词解释</h2>
+<h3 id="claude-code-和-codex-是什么">Claude Code 和 Codex 是什么</h3>
+<p>Claude Code 是 Anthropic(简称a社) 推出的 AI 编程工具，常被简称为 CC。你可以把它理解成一个会在终端里工作的程序员助手：它能读项目文件、理解代码结构、修改代码、运行命令、分析报错，也能帮你写测试和整理文档。</p>
+<p>Codex 是 OpenAI 面向编程场景的工具和模型体系。早期 Codex 主要指 OpenAI 的代码模型，现在很多时候也指 OpenAI 的编程 Agent 或命令行编程工具。它的核心用途也很明确：帮你在真实项目里写代码、改代码、跑测试、修问题。</p>
+<h3 id="agent-是什么">Agent 是什么</h3>
+<p>解释起来比较模糊, 可以理解为有调用工具能力的ai, 有点像&quot;人&quot;</p>
+<h3 id="fable-和-gpt-是什么">Fable 和 GPT 是什么</h3>
+<p>GPT 是 OpenAI 的模型系列，也可以理解成一种大语言模型技术路线。我们常说的 GPT-4、GPT-5，都是模型名字；ChatGPT 则是面向普通用户的聊天产品。</p>
+<ul>
+<li>截止2026.7.31 openai的旗舰模型是gpt-5.6-sol, 除此之外还有gpt-5.6-luna和gpt-5.6-terra以及5.5等等系列</li>
+</ul>
+<p>Fable 是a社现在的最强模型, 比opus系列更强</p>
+<ul>
+<li>目前fable是不是最好的还有待商榷,但是一定是最贵的!!!和烧钱没区别</li>
+</ul>
+<h3 id="cli-和-gui-是什么">CLI 和 GUI 是什么</h3>
+<p>CLI 是 Command Line Interface，意思是命令行界面。你需要在终端里输入命令来使用它。</p>
+<p>GUI 是 Graphical User Interface，意思是图形界面。使用按钮、菜单、窗口，用鼠标点来操作的，就是 GUI。</p>
+<h3 id="codex-gpt-和-openai-的关系是什么">Codex、GPT 和 OpenAI 的关系是什么</h3>
+<ul>
+<li>OpenAI 是公司和平台</li>
+<li>GPT 是 OpenAI 旗下的大语言模型系列</li>
+<li>Codex 是 OpenAI 面向编程任务的能力或工具形态</li>
+</ul>
+<p>codex, gpt, openai对应到豆包就是:豆包app, 豆包大模型, 字节跳动</p>
+<h3 id="ai编程工具-codex-opencode-cc-ccs-pi-agent">ai编程工具: Codex、OpenCode、CC、CCS、Pi Agent</h3>
+<p>codex和cloude code一样都是官方的ai 编程工具</p>
+<p>opencode是口碑比较好的第三方ai 编程工具,用来调用各家的大模型</p>
+<p>CC是cloude code的简称</p>
+<p>ccs是cloude code switch的简称</p>
+<p>pi agent也是一个第三方ai 编程工具,特点是简单,可定制性强(我现在用的就是pi,也是我最喜欢的了)</p>
+<p>openclaw 小龙虾,基于pi agent进行开发的个人ai助手, 严格来说不是ai 编程工具了(龙虾濒临灭绝)</p>
+<h3 id="ccs-是什么">CCS 是什么</h3>
+<p>全称Cloude code Switch ,用于统一管理api key,方便进行账号切换</p>
+<h3 id="中转站是什么">中转站是什么</h3>
+<p>由于a社和openai在国外,很多人直接购买&quot;会员&quot;很麻烦,而且封号不断 (这可不是有钱就能正常使用的)</p>
+<p>中转就是将官方的额度进行二次计费,然后卖给普通用户</p>
+<p>好的中转站就是:&quot;稳定&quot;和&quot;便宜&quot;</p>
+<p>中转站的价格一般会比官方的便宜很多, 一般是1 rmb= 1 $, gpt-5.6-sol模型比较划算的的倍率一般是0.2左右, A社的模型会更贵,价格一般是gpt的好几倍</p>
+<p>有的中转需要科学上网有的不需要</p>
+<h3 id="api-是什么">API 是什么</h3>
+<p>一般有两种登录模式,账号登录和api接入, 账号登录就是使用你的gpt账号,适合长期稳定的使用
+api登录是给你一个api key类似于sk-xxxxxxxxxxxxxxxxxxxxxxxx, 可以不使用账号直接使用模型, api key就是一把调用ai的钥匙</p>
+<h3 id="token-是什么">Token 是什么</h3>
+<p>token 可以简单理解为一个&quot;单词&quot;或者一个&quot;汉字&quot;, token也可以理解为使用额度 </p>
+<h2 id="分享">分享</h2>
+<h3 id="去-ai-味-skill">去 AI 味 skill</h3>
+<p>可以看这个项目：</p>
+<p><a href="https://github.com/hardikpandya/stop-slop" target="_blank" rel="noopener noreferrer">stop-slop：去 AI 味写作提示与规则</a></p>
+<h3 id="superpowers">Superpowers</h3>
+<p>Superpowers 更适合已经开始使用 Claude Code、Codex 这类工具的人。</p>
+<p><a href="https://github.com/obra/superpowers" target="_blank" rel="noopener noreferrer">superpowers：给 AI 编程工具增强工作流的项目</a></p>
+<ul>
+<li>在gpt5.6之前最权威的skill, 对大项目来说很香, 但是小项目可能会比较繁琐, 增加工作量</li>
+</ul>
+<h3 id="ui-设计提示词网站">UI 设计提示词网站</h3>
+<p>做页面、海报、App 原型时，提示词很重要。不是因为提示词能替代审美，而是它能帮你把需求讲清楚。</p>
+<p><a href="https://youmind.com/zh-CN/nano-banana-pro-prompts" target="_blank" rel="noopener noreferrer">UI 设计提示词参考</a></p>
+<h3 id="ui设计skill">ui设计skill</h3>
+<p><a href="https://github.com/leonxlnx/taste-skill" target="_blank" rel="noopener noreferrer">taste-skill</a>现在比较好用的前端skill了</p>
+<ul>
+<li>ui-ux-pro-max,曾经很好用,现在有点落伍了</li>
+</ul>
+<h3 id="如何使用">如何使用</h3>
+<p>使用自然语言调用 或者 /skill强行调用</p>
+<hr>
+<h2 id="skill只是锦上添花-在日新月异的今天-模型越来越强大-很多情况下将需求提给ai-不需要skill他自己就能完成得很好-skill反而会浪费token-延长思考时间">skill只是锦上添花,在日新月异的今天,模型越来越强大,很多情况下将需求提给ai,不需要skill他自己就能完成得很好,skill反而会浪费token,延长思考时间</h2>
+<h2 id="最后">最后</h2>
+<p>ai编程工具 + api key ( + skill + 插件)</p>
+<p>嗯嗯,这样你就可以开始你的ai之旅了</p>`,
   }
 ];
