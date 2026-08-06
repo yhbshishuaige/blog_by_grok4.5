@@ -1,5 +1,5 @@
 ---
-title: 进军小红书的第一篇 blog
+title: XiaoHongShu
 date: 2026-07-31
 tag: 随笔
 slug: blog

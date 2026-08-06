@@ -736,7 +736,7 @@ export default function (pi: ExtensionAPI) {
   },
   {
     slug: "blog",
-    title: "进军小红书的第一篇 blog",
+    title: "XiaoHongShu",
     date: "2026-07-31",
     tags: ["随笔"],
     readingMinutes: 4,
