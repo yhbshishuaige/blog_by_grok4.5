@@ -868,7 +868,7 @@ api登录是给你一个api key类似于sk-xxxxxxxxxxxxxxxxxxxxxxxx, 可以不�
     date: "2026-08-25",
     tags: ["随笔"],
     readingMinutes: 2,
-    wordCount: 672,
+    wordCount: 675,
     codeBlockCount: 0,
     toc: [],
     excerpt: "",
@@ -876,7 +876,7 @@ api登录是给你一个api key类似于sk-xxxxxxxxxxxxxxxxxxxxxxxx, 可以不�
     content: `<p>去夫子庙转了一圈遇到个送扇子帮忙下载某手极速版的,之后搜索一个关键词,跳转到一个签到领取奖品的页面,说是能帮他领低保</p>
 <p>在大学里,景区边,某鱼,短视频平台,上有很多这种推广的人,形形色色,什么人都有,隐隐觉得这是一个门槛很低而且真的能赚到钱的行为</p>
 <p>今天上班无事可做,想起这个事搜索发现一个叫&quot;任*邦&quot;的app,首页就是各个app的拉新价格,包括短视频app:某手,小某书;外卖app:某宝闪购;AI:某问;网盘app:某夸网盘,某雷网盘</p>
-<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/blog/2026/08/ab8e609565f78b37ddfbbd48052ca6db-d5af55ac4c.jpg" alt="ab8e609565f78b37ddfbbd48052ca6db" loading="lazy" decoding="async" /></p>
+<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/blog/2026/08/clip-20260825-164655-061-1bc3abdc34.png" alt="clip_20260825_164655_061" loading="lazy" decoding="async" /></p>
 <p>每个招新任务中有很详细价格,以及很详细的教学视频,一些术语也有对应的解释,看了之后感觉立刻能开始上手</p>
 <p>下面以莫手推广为例</p>
 <p>背景:抖音在短视频领域占了大头,吸引很多用户,导致快手失去流量,快手为了引流,悬赏拉新或者拉回的行为</p>
