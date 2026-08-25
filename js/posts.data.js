@@ -887,5 +887,19 @@ api登录是给你一个api key类似于sk-xxxxxxxxxxxxxxxxxxxxxxxx, 可以不�
 <p>一般情况下遇到这种情况就会觉得麻烦而拒绝,但总会有人会下载,比如我昨天和朋友在一起逛街,很高兴,顺口就答应了;又或者是在餐厅一个人吃饭,一个女孩直接坐到你旁边,漂亮主动还能提供情绪价值,也不会拒绝.所以这条路是真的能赚到钱的</p>
 <p>今天了解了原理之后,发现没有人有恶意,他们也不是骗子,这是一个多赢的局面:对于平台,可以引流,得到更好看的数据;对于推广的人可以拿到佣金;对于普通人来说只是损失了一点时间罢了,但也收获了情绪价值,或者一分钱买了一包纸巾之类的</p>
 <p>PS:流量为王</p>`,
+  },
+  {
+    slug: "post-2026-08-25-2",
+    title: "升三",
+    date: "2026-08-25",
+    tags: ["随笔"],
+    readingMinutes: 1,
+    wordCount: 10,
+    codeBlockCount: 0,
+    toc: [],
+    excerpt: "",
+    lead: "",
+    content: `<p>终于要升三了</p>
+<p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/blog/2026/08/clip-20260825-171947-128-b81be4673b.png" alt="clip_20260825_171947_128" loading="lazy" decoding="async" /></p>`,
   }
 ];
