@@ -861,5 +861,20 @@ api登录是给你一个api key类似于sk-xxxxxxxxxxxxxxxxxxxxxxxx, 可以不�
 <p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/%E7%9D%A1%E8%A7%89_4.jpg" alt="睡觉4" loading="lazy" decoding="async" /></p>
 <p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/%E8%B6%B4%E5%9C%A8%E8%BA%AB%E4%B8%8A%E7%9D%A1%E8%A7%89.jpg" alt="睡觉1" loading="lazy" decoding="async" /></p>
 <p class="article-figure"><img src="https://pub-ea6dd7d8982049e299e02d4aab71225c.r2.dev/%E8%B6%B4%E5%9C%A8%E8%BA%AB%E4%B8%8A%E7%9D%A1%E8%A7%89_2.jpg" alt="睡觉2" loading="lazy" decoding="async" /></p>`,
+  },
+  {
+    slug: "post-2026-08-25",
+    title: "推广",
+    date: "2026-08-25",
+    tags: ["随笔"],
+    readingMinutes: 1,
+    wordCount: 103,
+    codeBlockCount: 0,
+    toc: [],
+    excerpt: "",
+    lead: "",
+    content: `<p>原因:在快手以外的平台宣传快手,通过拉新和拉回来维持快手的用户基数,快手会给推广者宣传费</p>
+<p>归因:通过下载app之后立即搜索关键字进行归因,确定是哪一位推广者的功劳</p>
+<p>新用户:新设备(既没有安装过<em>快手</em>又没有安装过<em>快手极速版</em>)上进行注册</p>`,
   }
 ];
