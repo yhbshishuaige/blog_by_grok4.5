@@ -9,6 +9,8 @@ import { createCardMotion } from "./card-motion.js";
 import { createArticleTools } from "./article-tools.js";
 import { createHomeDeck } from "./home-deck.js";
 import { createHomeLayout } from "./home-layout.js";
+import { createSearch } from "./search.js";
+import { createPrivateUnlock } from "./private-unlock.js";
 import { createScrollAtmosphere } from "./scroll-atmosphere.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
@@ -31,6 +33,10 @@ async function boot() {
   const articleTools = createArticleTools();
   const homeDeck = createHomeDeck();
   const homeLayout = createHomeLayout();
+  const search = createSearch();
+  const privateUnlock = createPrivateUnlock({
+    navigate: () => router.navigate(),
+  });
   const scrollAtmosphere = createScrollAtmosphere({
     getWeatherType: () => weather.getType(),
   });
@@ -42,10 +48,12 @@ async function boot() {
       articleTools.bind(main, route);
       homeLayout.bind(main, route);
       homeDeck.bind(main, route);
+      privateUnlock.bind(main, route);
       scrollAtmosphere.bind(main, route);
     },
   });
   router.start();
+  privateUnlock.syncLockButton();
 
   // Expose for console playground
   window.WeatherBlog = {
@@ -58,6 +66,8 @@ async function boot() {
     articleTools,
     homeDeck,
     homeLayout,
+    search,
+    privateUnlock,
     scrollAtmosphere,
     transitions,
     router,

@@ -16,6 +16,10 @@ npm-debug.log*
 # Local R2 credentials (copy values from .env.r2.example)
 .env.r2
 
+# Private encrypted-post sources (plaintext markdown + grants/passwords)
+# NEVER commit these — only the ciphertext in js/private.data.js is public.
+private/
+
 # Local-only notes (optional personal archive)
 # .MY_README.md
 img/狗球_实战.gif

@@ -261,6 +261,51 @@
             </button>
           </div>
         </div>
+        <div class="search-control" id="searchControl">
+          <button
+            type="button"
+            class="search-btn"
+            id="searchBtn"
+            aria-expanded="false"
+            aria-controls="searchPanel"
+            title="搜索文章"
+          >
+            <span class="search-btn-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="m16.2 16.2 3.8 3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="search-btn-label">搜索</span>
+          </button>
+          <div class="search-panel" id="searchPanel" hidden role="search" aria-label="搜索文章">
+            <div class="search-panel-head">
+              <span class="search-panel-title">搜索文章</span>
+              <span class="search-panel-hint" id="searchPanelHint">输入关键词</span>
+            </div>
+            <div class="search-input-wrap">
+              <span class="search-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none">
+                  <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="m16.2 16.2 3.8 3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <input
+                type="search"
+                class="search-input"
+                id="searchInput"
+                placeholder="搜索标题、标签、正文…"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="搜索关键词"
+              />
+              <button type="button" class="search-clear" id="searchClear" aria-label="清空搜索" hidden>✕</button>
+            </div>
+            <div class="search-results" id="searchResults" role="listbox" aria-label="搜索结果"></div>
+            <p class="search-empty" id="searchEmpty" hidden>没有找到相关文章</p>
+            <p class="search-hint" id="searchHint">输入关键词，实时搜索全部文章</p>
+          </div>
+        </div>
         <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/雷电/小雪/中雪/大雪/大风">
           <span class="weather-icon" id="weatherIcon">☀️</span>
           <span class="weather-text" id="weatherText">加载中…</span>

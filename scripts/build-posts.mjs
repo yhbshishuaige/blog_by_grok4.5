@@ -368,4 +368,18 @@ function main() {
   }
 }
 
-main();
+// Allow scripts (e.g. private-encrypt.mjs) to reuse the markdown pipeline.
+export {
+  parseFrontmatter,
+  markdownToHtml,
+  articleStats,
+  parseTags,
+  slugFromFilename,
+  escapeHtml,
+  escapeJs,
+};
+
+// Run only when executed directly (not when imported as a module).
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}

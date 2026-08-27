@@ -15,8 +15,10 @@
     "prestart": "node scripts/build-posts.mjs",
     "start": "node scripts/start-server.mjs",
     "new": "node scripts/new-post.mjs",
+    "new:private": "node scripts/new-post.mjs --private",
     "image": "node scripts/upload-image.mjs",
     "images": "node scripts/upload-image.mjs",
+    "private": "node scripts/private-encrypt.mjs",
     "hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'git hooks → .githooks (提交 posts 时自动 build)'"
   },
   "devDependencies": {

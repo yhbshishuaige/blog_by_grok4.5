@@ -28,6 +28,8 @@ PORT=8080 npm start
 - 首页可在右上角切换一屏式 3D 翻卡与经典纵向列表；选择会自动记忆。
 - 鼠标滚轮会唤起随方向、速度和天气变化的环境风迹，文章章节进入阅读区时同步回应。
 - 右上角选择纯天空或动态雪山，选择保存在 `localStorage`。
+- 顶栏搜索：实时全文检索标题、标签、摘要与正文，结果按相关度排序并高亮关键词，支持键盘上下选择与回车直达。
+- 私密文章：部分文章可加密不公开，管理员密码可读全部，访客临时密码只读被授权部分；首页不展示，仅专属链接 + 密码可打开（详见下方「私密文章」）。
 - GFM Markdown 文章、代码高亮 / 折叠 / 复制、浮动目录、字数统计、友链、Hash 路由和页面转场。
 - 彩蛋触发、效果与调试方法见 `docs/EASTER_EGGS.md`。
 
@@ -36,7 +38,8 @@ PORT=8080 npm start
 文章放在 `posts/*.md`，模板为 `posts/_template.md`。文章图片推荐直接上传到 Cloudflare R2：
 
 ```bash
-npm run new -- "文章标题"  # 新建文章
+npm run new -- "文章标题"  # 新建公开文章
+npm run new:private -- "文章标题"  # 新建私密文章（自动随机 slug，写入 private/）
 npm run images -- ~/Pictures/photo.jpg # 上传 R2，生成并复制 Markdown
 npm run build              # 生成文章数据
 npm run watch              # 监听文章并自动构建
@@ -54,6 +57,29 @@ npm run watch              # 监听文章并自动构建
 
 友链配置位于 `js/friends.js`，按现有对象格式增加名称、地址、说明和缩写即可。
 
+## 私密文章
+
+部分文章可以加密后发布，没有密码的人即使拿到全部源码也读不了内容。**密码只在你本地输入，永远不会上传。**
+
+```bash
+npm run private         # 加密 private/*.md → js/private.data.js（密文，可提交）
+```
+
+工作流：
+
+1. `npm run new:private -- "标题"` 在 `private/` 下创建明文源文件（随机 slug，`private: true` + `grants` 已就绪）；也可手写，模板见 `private/_template.md`。
+2. `private/grants.json`（同样被忽略）定义密码：`admin` 是管理员密码（可读全部私密文章），其余是访客临时密码（只读被授权文章）。
+3. 运行 `npm run private` 生成 `js/private.data.js`（只含密文与包裹密钥，可正常提交），把专属链接 `#/post/<slug>` 分享给需要的人。
+4. **增删访客密码或文章**：改 `private/` 下的文件 → 重新 `npm run private` → `git push`，旧的临时密码立即失效。
+
+安全模型与边界：
+
+- 采用 PBKDF2-SHA256（60 万次迭代）+ AES-256-GCM 信封加密，浏览器端 WebCrypto 解密，需 HTTPS（GitHub Pages 已满足）。
+- 管理员解锁后浏览器会记住凭据（免密），顶栏出现「锁定」按钮可随时清除；访客每次访问需重新输入密码。
+- 密码没有找回渠道：管理员密码丢失可通过本地明文重新加密恢复，但 `private/` 明文源文件丢失则内容永久无法重建。
+- 加密只能防「没有密码的人」，防不了「持有密码的人主动分享」，也无法阻止在你自己的设备上被窥屏 / 键盘记录。
+- 私密文章不出现在首页列表和搜索索引中，slug 建议用随机字符串。
+
 ## 架构与数据流
 
 ```text
@@ -62,6 +88,11 @@ posts/*.md + R2 图片（或 img/*）
   -> js/posts.data.js
   -> js/posts.js
   -> js/router.js
+
+private/*.md + private/grants.json（gitignored，密码只在本地）
+  -> scripts/private-encrypt.mjs（PBKDF2 + AES-256-GCM 信封加密）
+  -> js/private.data.js（纯密文，可提交）
+  -> js/private-access.js / js/private-unlock.js（浏览器端解密）
 ```
 
 | 位置 | 职责 |
@@ -72,6 +103,10 @@ posts/*.md + R2 图片（或 img/*）
 | `js/article-tools.js` | 文章目录、代码折叠与复制交互 |
 | `js/home-deck.js` | 首页文章卡片的滚轮、键盘、按钮与触屏切换 |
 | `js/home-layout.js` | 首页翻卡 / 经典布局切换与本地记忆 |
+| `js/search.js` | 顶栏文章全文搜索：索引、打分排序、关键词高亮与键盘导航 |
+| `js/private-access.js` | 私密文章解密：PBKDF2 / AES-GCM、凭据缓存、管理员免密 |
+| `js/private-unlock.js` | 私密文章锁屏交互、自动解锁、顶栏锁定按钮 |
+| `js/private.data.js` | 私密文章密文（构建产物，内容公开但不可读） |
 | `js/scroll-atmosphere.js` | 滚轮风感、天气反馈与章节进入效果 |
 | `js/friends.js` | 友链数据配置 |
 | `js/time-sky.js`、`js/time-dial.js` | 24 小时天空和时间轮盘 |
@@ -118,6 +153,8 @@ npm start
 
 ## 最近更新
 
+- 2026-08-27：新增私密文章功能：本地 `private/` 明文源 + 信封加密（PBKDF2 + AES-256-GCM），线上仅密文；管理员密码读全部、访客临时密码读被授权部分，增删访客密码重新 `npm run private` 后 push 即生效；管理员解锁免密（顶栏锁定按钮），访客每次访问需输密码。
+- 2026-08-27：顶栏新增文章全文搜索，输入即搜标题 / 标签 / 摘要 / 正文，按相关度排序、关键词高亮，支持键盘操作与中文输入法；纯前端实现，无需服务器。
 - 2026-07-23：天气读取当前降水与当前小时天气码，避免 Open-Meteo 的阴天码覆盖正在发生的降雨；天气页签每 10 分钟自动刷新，回到前台时立即更新。
 - 2026-07-17：新增 Cloudflare R2 图片上传命令，自动哈希命名、输出 Markdown 并复制到剪贴板；本地密钥不会进入 Git。
 - 2026-07-17：首页改为旧文章优先；文章标签支持中英文逗号分隔并独立显示；顶栏换用 256×256 矢量 Logo；翻卡滚轮支持单次连续翻阅多张卡片。

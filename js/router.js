@@ -2,6 +2,7 @@
  * Hash router with weather-aware transitions
  */
 import { posts, getPostBySlug, formatDate } from "./posts.js";
+import { getUnlocked } from "./private-access.js";
 import { friends } from "./friends.js";
 
 function escapeHtml(value) {
@@ -48,7 +49,8 @@ function parseRoute() {
 }
 
 function renderHome() {
-  const cards = posts
+  const visible = posts.filter((post) => !post.private);
+  const cards = visible
     .map(
       (p, i) => `
     <a
@@ -75,7 +77,7 @@ function renderHome() {
     )
     .join("");
 
-  const dots = posts
+  const dots = visible
     .map(
       (p, i) => `
         <button
@@ -88,7 +90,7 @@ function renderHome() {
     )
     .join("");
 
-  const classicCards = posts
+  const classicCards = visible
     .map(
       (p, i) => `
         <a href="#/post/${p.slug}" class="post-card home-classic-card" data-nav style="--stagger:${i}">
@@ -114,7 +116,7 @@ function renderHome() {
         <div class="home-deck-position" aria-hidden="true">
           <span data-deck-current>01</span>
           <i></i>
-          <span>${String(posts.length).padStart(2, "0")}</span>
+          <span>${String(visible.length).padStart(2, "0")}</span>
         </div>
       </header>
 
@@ -162,10 +164,8 @@ function renderToc(post) {
     </details>`;
 }
 
-function renderPost(slug) {
-  const post = getPostBySlug(slug);
-  if (!post) return renderNotFound();
-
+/** Shared article template — used for public posts and decrypted private ones. */
+function renderArticleHtml(post) {
   const lead = post.lead
     ? `<p class="article-lead">${post.lead}</p>`
     : "";
@@ -196,6 +196,40 @@ function renderPost(slug) {
       ${renderToc(post)}
     </div>
   `;
+}
+
+function renderPrivateLock(slug) {
+  return `
+    <section class="private-lock" data-private-slug="${escapeHtml(slug)}">
+      <span class="private-lock-icon" aria-hidden="true">🔒</span>
+      <h1>私密文章</h1>
+      <p>这篇文章已加密保存，输入密码解锁后即可阅读。</p>
+      <div class="private-lock-form">
+        <input
+          type="password"
+          class="private-lock-input"
+          placeholder="请输入密码"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="私密文章密码"
+        />
+        <button type="button" class="private-lock-btn">解锁</button>
+      </div>
+      <p class="private-lock-error" hidden>密码错误，或该密码无权访问这篇文章。</p>
+      <a href="#/" class="back-link" data-nav style="opacity:1;animation:none">← 回首页</a>
+    </section>
+  `;
+}
+
+function renderPost(slug) {
+  const post = getPostBySlug(slug);
+  if (!post) return renderNotFound();
+
+  if (post.private) {
+    const unlocked = getUnlocked(slug);
+    return unlocked ? renderArticleHtml(unlocked) : renderPrivateLock(slug);
+  }
+  return renderArticleHtml(post);
 }
 
 function renderFriends() {
@@ -264,7 +298,14 @@ export function createRouter({ transitions, getWeatherType, onRender }) {
     } else if (route.name === "post") {
       html = renderPost(route.slug);
       const post = getPostBySlug(route.slug);
-      title = post ? `${post.title} · Weather Blog` : "未找到 · Weather Blog";
+      const unlocked = post?.private ? getUnlocked(route.slug) : null;
+      title = post
+        ? unlocked
+          ? `${unlocked.title} · Weather Blog`
+          : post.private
+            ? "私密文章 · Weather Blog"
+            : `${post.title} · Weather Blog`
+        : "未找到 · Weather Blog";
       message = undefined;
     } else {
       html = renderNotFound();
