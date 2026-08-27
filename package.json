@@ -16,6 +16,7 @@
     "start": "node scripts/start-server.mjs",
     "new": "node scripts/new-post.mjs",
     "new:private": "node scripts/new-post.mjs --private",
+    "make-private": "node scripts/make-private.mjs",
     "image": "node scripts/upload-image.mjs",
     "images": "node scripts/upload-image.mjs",
     "private": "node scripts/private-encrypt.mjs",

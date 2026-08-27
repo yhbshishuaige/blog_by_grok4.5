@@ -5,7 +5,7 @@
  * Run: npm run private
  */
 export const privateConfig = {
-  "salt": "lapvsyR6gOrBrY8sR8PGKQ==",
+  "salt": "uaag5TnxEBSYpb/dVh4mUA==",
   "iterations": 600000
 };
 
@@ -19,7 +19,7 @@ export const privatePosts = [
     lead: "",
     wordCount: 1,
     readingMinutes: 1,
-    keys: [{"grant":"admin","iv":"jegz+irUoRWoKGg/","data":"+fqnE6qw90loWvQBOK6kdZVA3X1khlvybOgmf1F2Uv2xlbsn+HWVcAJE29rCC4uW"},{"grant":"guest-001","iv":"9jlrHD0RU7nhVJGk","data":"9ry8+Cc7TQ462pQHDcwhStGss4+4d7xknGi41Y/t0v29lcdf7ZC0qVl+LF2dX/mH"}],
-    cipher: {"iv":"aeQYmbU9NVwKzZDj","data":"1fQ6LDtPl1Fqi5frnNB0KGUz6M4uRcPgu11gBs8pPYRb8Wg9+0KvYssKaPHMSbKD+QdI5OJskOmsLYIUpvtQU0B/3YWsLLsG"},
+    keys: [{"grant":"admin","iv":"YdZZ8tQC3KPjo/nc","data":"CZw16dSISeho6T85NQ8TigJ0FCO1M6zxcwxq3uHQqwhj4bQJUdHP4E9gGP8wpkKI"},{"grant":"guest-001","iv":"IKD6zoPXNIL3x+eW","data":"4vIqWqIpV25p0Oyfv74poX3p2BT4NkyG7A6gqSUQ8qHOqPFm7TuTz9GTBF8YAVhH"}],
+    cipher: {"iv":"DHPMs6NGkCAH8VRt","data":"N9PR6SiQMqc/xZFJ2WPSiukXifu2jHhNDCB3goTJCSgm9Rbu8EkBf74qjpeiSoxkeoNmycTvGMjHuG13zsfS/JpNGCAtqItw"},
   }
 ];

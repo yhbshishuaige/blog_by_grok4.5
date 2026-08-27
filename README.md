@@ -40,6 +40,7 @@ PORT=8080 npm start
 ```bash
 npm run new -- "文章标题"  # 新建公开文章
 npm run new:private -- "文章标题"  # 新建私密文章（自动随机 slug，写入 private/）
+npm run make-private -- coc  # 把公开文章转成私密（移动 + 加标记，保留旧链接）
 npm run images -- ~/Pictures/photo.jpg # 上传 R2，生成并复制 Markdown
 npm run build              # 生成文章数据
 npm run watch              # 监听文章并自动构建

@@ -16,7 +16,7 @@
 1. **需求背景**：博主想要部分文章不公开，但纯静态站 + GitHub 无法做服务端鉴权；经讨论采用「内容加密」方案——线上只有密文，密码只在浏览器本地解密，与 CTF 加密逆向题同模型。最终范围：只保留「管理员密码（全部）/ 访客临时密码（被授权部分）」两种权限；增删临时密码通过重新加密 + 重新部署实现，无需服务器。
 2. **信封加密**：每篇私密文章随机生成数据密钥 DEK 加密正文载荷；DEK 分别用管理员密钥和每个访客密钥包裹（AES-256-GCM）。密钥派生 PBKDF2-SHA256、60 万次迭代、每次运行随机盐；密文文件 `js/private.data.js` 可公开提交，无明文无密码。
 3. **本地明文源**：`private/*.md` + `private/grants.json`（密码配置）全部 gitignore，绝不进仓库；明文丢失则内容永久无法重建（密码丢失可用本地明文重新加密恢复）。
-4. **命令行**：`npm run private` 读取 `private/` 目录，frontmatter `private: true` + `grants: [...]` 声明授权，渲染管线复用 `build-posts.mjs`（新增导出与 main 守卫），输出密文文件与专属链接。`npm run new:private -- "标题"` 与公开文章同款流程创建私密文章（随机 `p-` slug，写入 gitignore 的 `private/`）。
+4. **命令行**：`npm run private` 读取 `private/` 目录，frontmatter `private: true` + `grants: [...]` 声明授权，渲染管线复用 `build-posts.mjs`（新增导出与 main 守卫），输出密文文件与专属链接。`npm run new:private -- "标题"` 与公开文章同款流程创建私密文章（随机 `p-` slug，写入 gitignore 的 `private/`）。`npm run make-private -- <slug>` 把公开文章一键转为私密：移动到 `private/`、自动补 `private: true` + `grants: [guest-001]`、保留原 slug（旧链接变锁屏），并提示后续 `npm run private` + `npm run build` 两步（缺一不可，防漏）。
 5. **运行时解密**：`js/private-access.js` 用 WebCrypto（PBKDF2 + AES-GCM）逐授权尝试解包，成功即缓存；`js/private-unlock.js` 渲染锁屏、错误反馈、回车提交；管理员解锁后派生密钥存入 localStorage 免密，顶栏出现「锁定」按钮可清除；访客每次访问需重新输入密码。
 6. **路由与隐私**：`js/posts.js` 合并私密元数据（仅 slug），首页列表与搜索索引均过滤私密文章；未解锁时渲染 🔒 锁屏，解密后与公开文章共用同一渲染模板；页面标题同步处理。
 7. **验证**：Node WebCrypto 全链路测试通过——管理员 / guest-001 解密成功、guest-002 与错误密码拒绝、刷新后管理员免密自动解锁、访客解锁不写入管理员凭据；空数据状态（新克隆仓库）构建与运行正常；全部 JS / MJS 语法、`npm run build`、`git diff --check` 通过。
