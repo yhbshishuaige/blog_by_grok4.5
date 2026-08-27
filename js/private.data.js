@@ -5,10 +5,14 @@
  * Run: npm run private
  */
 export const privateConfig = {
-  "salt": "xMmQ3Yvmh7O2dSX0qzboUg==",
+  "salt": "YshMHI0TsVoSYZL+YPrBjQ==",
   "iterations": 600000
 };
 
 export const privatePosts = [
-
+  {
+    slug: "p-36ffeb0b59",
+    keys: [{"grant":"admin","iv":"sKARS5+JADaZj3iJ","data":"SEe/t9T63s+mQQoOTNnpS5X+0/MolVFw2Jx2hx80wmoueOZxCXNtdzak5Wh42pSx"},{"grant":"guest-001","iv":"dl4aSzgQ+BXMa9l4","data":"v+ZL80vxHMXyjwiRHiIuCGxm5OM1VS6HIrx8LXLYEHZWMeEg387z5A7trTVLLJzb"}],
+    cipher: {"iv":"rjCSFNWwmoCpTswR","data":"UueaJfj7UDrR9RP0SNDD8HDRfn/qjni7zQgLZ1ZR/d35TQDVLvSTTyqCpVv1MtottyqVM+99MjYdGQnNulcBbEOyE8+NlYQjCGkeDEoxjqHC7zjrPyI+jKukjzl4XY3Gdfr1cIU+WnmcahdHrWFLwNs/6yoicc+kx7gVbYV2Pf9kaKGXQMoyO9vxRWZpGZGklBRbJiZWeTaNOXCMuzqUYlwG5LgGAFQmFCUiYjq83Qo="},
+  }
 ];
