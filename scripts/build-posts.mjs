@@ -375,6 +375,7 @@ export {
   articleStats,
   parseTags,
   slugFromFilename,
+  excerptFromBody,
   escapeHtml,
   escapeJs,
 };

@@ -1123,6 +1123,25 @@ body.camera-mountain-return .sky::after {
   font-size: 0.78rem;
 }
 
+.private-lock-hint {
+  margin: -0.6rem 0 1.4rem;
+  color: var(--text-dim);
+  font-size: 0.76rem;
+}
+
+.post-card-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background: rgba(255, 230, 168, 0.1);
+  border: 1px solid rgba(255, 230, 168, 0.28);
+}
+
 .private-lock .back-link {
   display: inline-block;
   margin-top: 1.6rem;

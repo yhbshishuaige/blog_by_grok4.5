@@ -49,8 +49,7 @@ function parseRoute() {
 }
 
 function renderHome() {
-  const visible = posts.filter((post) => !post.private);
-  const cards = visible
+  const cards = posts
     .map(
       (p, i) => `
     <a
@@ -65,6 +64,7 @@ function renderHome() {
     >
       <span class="post-deck-number" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
       <div class="post-card-meta">
+        ${p.private ? '<span class="post-card-lock" aria-hidden="true">🔒 私密</span>' : ""}
         ${renderPostTags(p)}
         <time datetime="${p.date}">${formatDate(p.date)}</time>
         <span>· ${formatCount(p.wordCount)} 字</span>
@@ -77,7 +77,7 @@ function renderHome() {
     )
     .join("");
 
-  const dots = visible
+  const dots = posts
     .map(
       (p, i) => `
         <button
@@ -90,11 +90,12 @@ function renderHome() {
     )
     .join("");
 
-  const classicCards = visible
+  const classicCards = posts
     .map(
       (p, i) => `
         <a href="#/post/${p.slug}" class="post-card home-classic-card" data-nav style="--stagger:${i}">
           <div class="post-card-meta">
+            ${p.private ? '<span class="post-card-lock" aria-hidden="true">🔒 私密</span>' : ""}
             ${renderPostTags(p)}
             <time datetime="${p.date}">${formatDate(p.date)}</time>
             <span>· ${formatCount(p.wordCount)} 字</span>
@@ -116,7 +117,7 @@ function renderHome() {
         <div class="home-deck-position" aria-hidden="true">
           <span data-deck-current>01</span>
           <i></i>
-          <span>${String(visible.length).padStart(2, "0")}</span>
+          <span>${String(posts.length).padStart(2, "0")}</span>
         </div>
       </header>
 
@@ -198,12 +199,13 @@ function renderArticleHtml(post) {
   `;
 }
 
-function renderPrivateLock(slug) {
+function renderPrivateLock(post) {
   return `
-    <section class="private-lock" data-private-slug="${escapeHtml(slug)}">
+    <section class="private-lock" data-private-slug="${escapeHtml(post.slug)}">
       <span class="private-lock-icon" aria-hidden="true">🔒</span>
-      <h1>私密文章</h1>
-      <p>这篇文章已加密保存，输入密码解锁后即可阅读。</p>
+      <h1>${escapeHtml(post.title)}</h1>
+      ${post.excerpt ? `<p>${escapeHtml(post.excerpt)}</p>` : ""}
+      <p class="private-lock-hint">这篇文章已加密保存，输入密码解锁后即可阅读正文。</p>
       <div class="private-lock-form">
         <input
           type="password"
@@ -226,8 +228,12 @@ function renderPost(slug) {
   if (!post) return renderNotFound();
 
   if (post.private) {
-    const unlocked = getUnlocked(slug);
-    return unlocked ? renderArticleHtml(unlocked) : renderPrivateLock(slug);
+    const decrypted = getUnlocked(slug);
+    if (decrypted) {
+      // Merge public display meta with the decrypted body payload.
+      return renderArticleHtml({ ...post, ...decrypted });
+    }
+    return renderPrivateLock(post);
   }
   return renderArticleHtml(post);
 }
@@ -298,14 +304,7 @@ export function createRouter({ transitions, getWeatherType, onRender }) {
     } else if (route.name === "post") {
       html = renderPost(route.slug);
       const post = getPostBySlug(route.slug);
-      const unlocked = post?.private ? getUnlocked(route.slug) : null;
-      title = post
-        ? unlocked
-          ? `${unlocked.title} · Weather Blog`
-          : post.private
-            ? "私密文章 · Weather Blog"
-            : `${post.title} · Weather Blog`
-        : "未找到 · Weather Blog";
+      title = post ? `${post.title} · Weather Blog` : "未找到 · Weather Blog";
       message = undefined;
     } else {
       html = renderNotFound();

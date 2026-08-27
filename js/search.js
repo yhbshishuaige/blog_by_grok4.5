@@ -51,11 +51,10 @@ export function createSearch() {
   const hintCount = document.getElementById("searchPanelHint");
   const clearBtn = document.getElementById("searchClear");
 
-  // Prebuilt index — built once at startup. Private articles are excluded:
-  // they are encrypted and must not surface in search results.
-  const index = posts
-    .filter((post) => !post.private)
-    .map((post) => ({
+  // Prebuilt index — built once at startup. Private articles carry only
+  // public display meta (title/excerpt/tags); their body is encrypted and
+  // never indexed — search results open the lock screen.
+  const index = posts.map((post) => ({
       post,
       title: String(post.title || "").toLowerCase(),
       tags: (post.tags || []).join(" ").toLowerCase(),

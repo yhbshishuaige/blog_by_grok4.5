@@ -2,21 +2,36 @@
  * Blog posts API
  * Content is generated from posts/*.md by: npm run build
  * → js/posts.data.js
- * Private articles (encrypted) come from js/private.data.js; only their
- * slug/metadata is exposed here — content requires a password to decrypt.
+ * Private articles come from js/private.data.js: their display meta
+ * (title/excerpt/tags/date) is public, but the body stays encrypted and is
+ * only rendered after a successful unlock.
  */
 import { posts as publicPosts } from "./posts.data.js";
 import { privatePosts } from "./private.data.js";
 
-export const posts = [
-  ...publicPosts,
-  ...privatePosts.map((p) => ({
+function privateToPost(p) {
+  return {
     slug: p.slug,
-    title: "私密文章",
+    title: p.title,
+    tags: p.tags,
+    date: p.date,
+    excerpt: p.excerpt,
+    lead: p.lead,
+    wordCount: p.wordCount,
+    readingMinutes: p.readingMinutes,
     private: true,
-    date: "",
-  })),
-];
+    content: "",
+    toc: [],
+    codeBlockCount: 0,
+  };
+}
+
+export const posts = [...publicPosts, ...privatePosts.map(privateToPost)].sort(
+  (a, b) => {
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+    return a.slug < b.slug ? -1 : 1;
+  },
+);
 
 export function getPostBySlug(slug) {
   return posts.find((p) => p.slug === slug) || null;

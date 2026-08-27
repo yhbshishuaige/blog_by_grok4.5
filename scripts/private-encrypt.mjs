@@ -6,9 +6,9 @@
  *   private/xxx.md        plaintext markdown, frontmatter: private: true, grants: [guest-001]
  *   private/grants.json   { "admin": {"password": "…"}, "guest-001": {"password": "…"} }
  *
- * What lands in the repo is ONLY ciphertext + wrapped data keys.
- * No plaintext, no passwords. Anyone can download it; nobody can read it
- * without a matching password.
+ * What lands in the repo is ONLY the encrypted body + wrapped data keys plus
+ * plaintext display meta (title/excerpt/tags/date). No passwords, no body text.
+ * Anyone can download it; the article body stays unreadable without a password.
  *
  * Re-run this script after adding/removing articles or grants, then push:
  * old visitor passwords stop working as soon as their wrapped key is gone.
@@ -23,6 +23,7 @@ import {
   articleStats,
   parseTags,
   slugFromFilename,
+  excerptFromBody,
 } from "./build-posts.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -117,22 +118,25 @@ function encryptArticle(file, grants) {
   const title = String(meta.title || slug);
   const tags = parseTags(meta.tags ?? meta.tag);
   const lead = meta.lead != null ? String(meta.lead) : "";
+  const excerpt =
+    meta.excerpt != null ? String(meta.excerpt) : excerptFromBody(body);
   const stats = articleStats(body);
   const { content, toc, codeBlockCount } = markdownToHtml(body);
 
-  // Payload is the fully rendered post object — decrypted client-side and
-  // rendered exactly like a public article.
-  const payload = JSON.stringify({
+  // Plaintext display meta — visitors may see title/excerpt/tags on cards;
+  // only the body (content/toc/code stats) is encrypted.
+  const metaOut = {
+    slug,
     title,
     tags,
     date,
+    excerpt,
     lead,
-    content,
-    toc,
     wordCount: stats.wordCount,
     readingMinutes: stats.readingMinutes,
-    codeBlockCount,
-  });
+  };
+
+  const payload = JSON.stringify({ content, toc, codeBlockCount });
 
   // Envelope: random data key encrypts the payload; the DEK is wrapped once
   // per grant (admin always, plus each visitor grant allowed by frontmatter).
@@ -143,7 +147,7 @@ function encryptArticle(file, grants) {
     return { grant, ...encryptWith(key, crypto.randomBytes(12), dek) };
   });
 
-  return { slug, keys, cipher };
+  return { ...metaOut, keys, cipher };
 }
 
 function writeOutput(posts) {
@@ -159,6 +163,13 @@ function writeOutput(posts) {
     .map((p) => {
       return `  {
     slug: ${JSON.stringify(p.slug)},
+    title: ${JSON.stringify(p.title)},
+    tags: ${JSON.stringify(p.tags)},
+    date: ${JSON.stringify(p.date)},
+    excerpt: ${JSON.stringify(p.excerpt)},
+    lead: ${JSON.stringify(p.lead)},
+    wordCount: ${p.wordCount},
+    readingMinutes: ${p.readingMinutes},
     keys: ${JSON.stringify(p.keys)},
     cipher: ${JSON.stringify(p.cipher)},
   }`;

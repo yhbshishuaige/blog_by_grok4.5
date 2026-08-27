@@ -5,14 +5,21 @@
  * Run: npm run private
  */
 export const privateConfig = {
-  "salt": "YshMHI0TsVoSYZL+YPrBjQ==",
+  "salt": "lapvsyR6gOrBrY8sR8PGKQ==",
   "iterations": 600000
 };
 
 export const privatePosts = [
   {
     slug: "p-36ffeb0b59",
-    keys: [{"grant":"admin","iv":"sKARS5+JADaZj3iJ","data":"SEe/t9T63s+mQQoOTNnpS5X+0/MolVFw2Jx2hx80wmoueOZxCXNtdzak5Wh42pSx"},{"grant":"guest-001","iv":"dl4aSzgQ+BXMa9l4","data":"v+ZL80vxHMXyjwiRHiIuCGxm5OM1VS6HIrx8LXLYEHZWMeEg387z5A7trTVLLJzb"}],
-    cipher: {"iv":"rjCSFNWwmoCpTswR","data":"UueaJfj7UDrR9RP0SNDD8HDRfn/qjni7zQgLZ1ZR/d35TQDVLvSTTyqCpVv1MtottyqVM+99MjYdGQnNulcBbEOyE8+NlYQjCGkeDEoxjqHC7zjrPyI+jKukjzl4XY3Gdfr1cIU+WnmcahdHrWFLwNs/6yoicc+kx7gVbYV2Pf9kaKGXQMoyO9vxRWZpGZGklBRbJiZWeTaNOXCMuzqUYlwG5LgGAFQmFCUiYjq83Qo="},
+    title: "private_test",
+    tags: ["私密"],
+    date: "2026-08-27",
+    excerpt: "TEST...",
+    lead: "",
+    wordCount: 1,
+    readingMinutes: 1,
+    keys: [{"grant":"admin","iv":"jegz+irUoRWoKGg/","data":"+fqnE6qw90loWvQBOK6kdZVA3X1khlvybOgmf1F2Uv2xlbsn+HWVcAJE29rCC4uW"},{"grant":"guest-001","iv":"9jlrHD0RU7nhVJGk","data":"9ry8+Cc7TQ462pQHDcwhStGss4+4d7xknGi41Y/t0v29lcdf7ZC0qVl+LF2dX/mH"}],
+    cipher: {"iv":"aeQYmbU9NVwKzZDj","data":"1fQ6LDtPl1Fqi5frnNB0KGUz6M4uRcPgu11gBs8pPYRb8Wg9+0KvYssKaPHMSbKD+QdI5OJskOmsLYIUpvtQU0B/3YWsLLsG"},
   }
 ];
