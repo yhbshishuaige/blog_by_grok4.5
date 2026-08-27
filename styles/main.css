@@ -644,26 +644,20 @@ body.camera-mountain-return .sky::after {
   width: 32px;
   height: 32px;
   flex: 0 0 32px;
-  border-radius: 9px;
+  border-radius: 50%;
+  object-fit: cover;
   box-shadow:
     0 0 0 1px rgba(217, 237, 255, 0.18),
-    0 5px 12px rgba(3, 12, 28, 0.32),
-    0 0 7px rgba(255, 200, 100, 0.28);
-  animation: logoPulse 4s ease-in-out infinite;
+    0 5px 12px rgba(3, 12, 28, 0.32);
+  animation: logoSpin 12s linear infinite;
 }
 
-@keyframes logoPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 1px rgba(217, 237, 255, 0.18),
-      0 5px 12px rgba(3, 12, 28, 0.32),
-      0 0 7px rgba(255, 200, 100, 0.28);
+@keyframes logoSpin {
+  from {
+    transform: rotate(0deg);
   }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(217, 237, 255, 0.28),
-      0 5px 12px rgba(3, 12, 28, 0.32),
-      0 0 11px rgba(255, 200, 100, 0.42);
+  to {
+    transform: rotate(360deg);
   }
 }
 
