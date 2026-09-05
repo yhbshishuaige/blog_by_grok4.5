@@ -7,6 +7,17 @@
   height: 100%;
   pointer-events: none;
   opacity: 1;
+  filter: saturate(1);
+  transition: filter 3.8s ease, opacity 2.4s ease;
+}
+
+/* Dawn and dusk tint the moving cloud bank as well as the static sky. */
+body.is-dawn .weather-canvas {
+  filter: saturate(1.2) sepia(0.12) hue-rotate(-8deg) brightness(1.06);
+}
+
+body.is-dusk .weather-canvas {
+  filter: saturate(1.28) sepia(0.22) hue-rotate(-12deg) brightness(0.92);
 }
 
 /* Global weather tint overlay via body pseudo */

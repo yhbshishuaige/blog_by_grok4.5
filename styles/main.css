@@ -260,6 +260,21 @@ body.is-dusk .moon-orb { opacity: 0.18; }
   backface-visibility: hidden;
 }
 
+.landscape::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 54% 72%, rgba(255, 154, 102, 0.3), transparent 42%),
+    linear-gradient(180deg, rgba(255, 126, 92, 0.04), rgba(246, 154, 103, 0.16) 72%, rgba(255, 184, 122, 0.04));
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 3.8s ease, transform 5.2s ease, background 3.8s ease;
+}
+
 .horizon-haze {
   position: absolute;
   left: -10%;
@@ -269,6 +284,7 @@ body.is-dusk .moon-orb { opacity: 0.18; }
   background: linear-gradient(180deg, transparent, rgba(205, 224, 232, 0.12) 56%, transparent);
   filter: blur(24px);
   opacity: 0.75;
+  transition: opacity 3.4s ease, background 3.4s ease, filter 3.4s ease;
 }
 
 .mountain-scene {
@@ -278,7 +294,7 @@ body.is-dusk .moon-orb { opacity: 0.18; }
   height: 100%;
   filter: drop-shadow(0 -18px 50px rgba(7, 24, 46, 0.08));
   transform: translate3d(var(--mountain-shift-x), var(--mountain-shift-y), 0) scale(1.012);
-  transition: transform 1.15s ease-out;
+  transition: transform 1.15s ease-out, filter 3.8s ease;
 }
 
 .ridge,
@@ -431,6 +447,24 @@ body.is-dawn {
   --rock-dark: #25334f;
 }
 
+body.is-dawn .landscape::before {
+  opacity: 0.72;
+  transform: scale(1);
+}
+
+body.is-dawn .mountain-scene {
+  filter: drop-shadow(0 -18px 50px rgba(7, 24, 46, 0.08)) saturate(1.24) sepia(0.18) hue-rotate(-10deg) brightness(1.08);
+}
+
+body.is-dawn .horizon-haze {
+  background: linear-gradient(180deg, transparent, rgba(255, 174, 132, 0.2) 54%, rgba(255, 208, 160, 0.08) 78%, transparent);
+  opacity: 0.96;
+}
+
+body.is-dawn .mountain-mist {
+  background: linear-gradient(90deg, transparent, rgba(255, 188, 150, 0.12) 20%, rgba(255, 223, 189, 0.22) 48%, rgba(228, 185, 157, 0.1) 75%, transparent);
+}
+
 body.is-dusk {
   --peak-light: #6f6476;
   --peak-mid: #3f4665;
@@ -442,6 +476,27 @@ body.is-dusk {
   --rock-mid: #3e4058;
   --rock-dark: #222b46;
   --bird-color: rgba(16, 22, 40, 0.72);
+}
+
+body.is-dusk .landscape::before {
+  opacity: 0.86;
+  transform: scale(1);
+  background:
+    radial-gradient(ellipse at 62% 70%, rgba(255, 114, 76, 0.38), transparent 44%),
+    linear-gradient(180deg, rgba(158, 77, 91, 0.08), rgba(238, 125, 86, 0.2) 72%, rgba(255, 160, 104, 0.06));
+}
+
+body.is-dusk .mountain-scene {
+  filter: drop-shadow(0 -18px 50px rgba(7, 24, 46, 0.08)) saturate(1.32) sepia(0.3) hue-rotate(-13deg) brightness(0.92);
+}
+
+body.is-dusk .horizon-haze {
+  background: linear-gradient(180deg, transparent, rgba(247, 130, 98, 0.22) 54%, rgba(188, 105, 128, 0.13) 78%, transparent);
+  opacity: 0.98;
+}
+
+body.is-dusk .mountain-mist {
+  background: linear-gradient(90deg, transparent, rgba(239, 134, 125, 0.12) 20%, rgba(255, 184, 157, 0.2) 48%, rgba(194, 117, 142, 0.1) 75%, transparent);
 }
 
 body.is-night {

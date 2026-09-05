@@ -216,6 +216,50 @@ body[data-route="home"] .home-layout-control {
     box-shadow 0.45s ease;
 }
 
+.post-deck-sheen {
+  position: absolute;
+  inset: -32% -22%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 37%,
+    rgba(255, 255, 255, 0.04) 43%,
+    rgba(255, 236, 189, 0.72) 49%,
+    rgba(179, 222, 255, 0.28) 54%,
+    transparent 63%
+  );
+  mix-blend-mode: screen;
+  transform: translate3d(-128%, 0, 0) rotate(5deg);
+}
+
+.post-deck-sheen.is-sweeping {
+  animation: deckSheenSweep 0.88s cubic-bezier(0.18, 0.78, 0.2, 1) both;
+}
+
+.home-deck-stage[data-deck-direction="previous"] .post-deck-sheen {
+  transform: translate3d(128%, 0, 0) rotate(5deg);
+}
+
+.home-deck-stage[data-deck-direction="previous"] .post-deck-sheen.is-sweeping {
+  animation-name: deckSheenSweepReverse;
+}
+
+@keyframes deckSheenSweep {
+  0% { opacity: 0; transform: translate3d(-128%, 0, 0) rotate(5deg); }
+  18% { opacity: 0.28; }
+  52% { opacity: 0.92; }
+  100% { opacity: 0; transform: translate3d(128%, 0, 0) rotate(5deg); }
+}
+
+@keyframes deckSheenSweepReverse {
+  0% { opacity: 0; transform: translate3d(128%, 0, 0) rotate(5deg); }
+  18% { opacity: 0.28; }
+  52% { opacity: 0.92; }
+  100% { opacity: 0; transform: translate3d(-128%, 0, 0) rotate(5deg); }
+}
+
 .post-deck-card::before {
   opacity: 1;
   background:
@@ -233,6 +277,12 @@ body[data-route="home"] .home-layout-control {
   opacity: 1;
   transform: translate(-50%, -50%) translate3d(0, 0, 0) rotateX(0) scale(1);
   pointer-events: auto;
+  border-color: hsla(var(--deck-hue), 74%, 84%, 0.3);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.38),
+    0 0 0 1px hsla(var(--deck-hue), 82%, 86%, 0.08),
+    0 0 42px hsla(var(--deck-hue), 78%, 76%, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .post-deck-card[data-deck-state="active"]:hover {

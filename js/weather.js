@@ -249,6 +249,9 @@ const RAIN_PRESETS = {
     sheet: null,
     splash: false,
     mist: 0.04,
+    rippleChance: 0.12,
+    groundGlow: 0.06,
+    splashScale: 0.72,
   },
   "rain-medium": {
     count: 220,
@@ -261,6 +264,9 @@ const RAIN_PRESETS = {
     sheet: "rgba(18, 36, 62, 0.1)",
     splash: true,
     mist: 0.08,
+    rippleChance: 0.42,
+    groundGlow: 0.12,
+    splashScale: 1,
   },
   "rain-heavy": {
     count: 480,
@@ -273,6 +279,9 @@ const RAIN_PRESETS = {
     sheet: "rgba(8, 18, 36, 0.22)",
     splash: true,
     mist: 0.14,
+    rippleChance: 0.82,
+    groundGlow: 0.22,
+    splashScale: 1.36,
   },
   thunder: {
     count: 400,
@@ -285,6 +294,9 @@ const RAIN_PRESETS = {
     sheet: "rgba(6, 10, 28, 0.28)",
     splash: true,
     mist: 0.12,
+    rippleChance: 0.7,
+    groundGlow: 0.19,
+    splashScale: 1.22,
   },
 };
 
@@ -353,6 +365,7 @@ class ParticleEngine {
     this.ctx = canvas.getContext("2d", { alpha: true });
     this.particles = [];
     this.splashes = [];
+    this.rainRipples = [];
     this.leaves = [];
     this.type = "sunny";
     this.running = false;
@@ -385,6 +398,7 @@ class ParticleEngine {
   setType(type) {
     this.type = type;
     this.splashes = [];
+    this.rainRipples = [];
     this.bolts = [];
     this.lightningAlpha = 0;
     this.flashHold = 0;
@@ -587,18 +601,41 @@ class ParticleEngine {
       ctx.fillRect(0, this.h * 0.7, this.w, this.h * 0.3);
     }
 
+    this.drawRainGround(ctx, preset);
+
     const rgb = preset.color;
 
     for (const p of this.particles) {
       p.x += p.drift;
       p.y += p.speed;
       if (p.y > this.h + 12) {
-        if (preset.splash && Math.random() > 0.35) {
+        if (Math.random() < preset.rippleChance) {
+          const impactX = p.x + p.drift * 2.4;
+          const impactY = this.h - 2 - Math.random() * 12;
           this.splashes.push({
-            x: p.x,
-            y: this.h - 2 - Math.random() * 10,
+            x: impactX,
+            y: impactY,
+            life: 0.9 + Math.random() * 0.2,
+            r: (1.8 + Math.random() * 4.5) * preset.splashScale,
+            spray: Math.max(1, Math.round((1 + Math.random() * 4) * preset.splashScale)),
+            phase: Math.random() * Math.PI * 2,
+          });
+          this.rainRipples.push({
+            x: impactX,
+            y: impactY,
             life: 1,
-            r: 2 + Math.random() * 5,
+            radius: (2.5 + Math.random() * 4) * preset.splashScale,
+            speed: 0.7 + Math.random() * 1.3,
+            alpha: 0.25 + preset.groundGlow * 1.25,
+          });
+        } else if (preset.splash && Math.random() > 0.45) {
+          this.rainRipples.push({
+            x: p.x,
+            y: this.h - 2 - Math.random() * 8,
+            life: 0.72,
+            radius: 2 + Math.random() * 3,
+            speed: 0.5 + Math.random() * 0.8,
+            alpha: 0.16 + preset.groundGlow,
           });
         }
         Object.assign(p, this.makeParticle(false));
@@ -622,11 +659,11 @@ class ParticleEngine {
       ctx.stroke();
     }
 
-    // ground splashes (medium / heavy / thunder)
+    // ground splashes and spray crowns
     for (let i = this.splashes.length - 1; i >= 0; i--) {
       const s = this.splashes[i];
-      s.life -= 0.045;
-      s.r += 0.45;
+      s.life -= 0.052;
+      s.r += 0.4;
       if (s.life <= 0) {
         this.splashes.splice(i, 1);
         continue;
@@ -636,7 +673,78 @@ class ParticleEngine {
       ctx.beginPath();
       ctx.ellipse(s.x, s.y, s.r * 1.8, s.r * 0.4, 0, 0, Math.PI * 2);
       ctx.stroke();
+
+      ctx.fillStyle = `rgba(224, 242, 255, ${s.life * 0.42})`;
+      for (let j = 0; j < s.spray; j++) {
+        const angle = s.phase + (j / Math.max(1, s.spray)) * Math.PI * 2;
+        const distance = s.r * (0.55 + j * 0.18);
+        const x = s.x + Math.cos(angle) * distance;
+        const y = s.y - Math.abs(Math.sin(angle)) * distance * 0.72 - s.life * 4;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 0.8, 1.8 + s.life * 1.8, angle, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
+
+    // layered expanding rings make rainfall read against the dark valley
+    for (let i = this.rainRipples.length - 1; i >= 0; i--) {
+      const ripple = this.rainRipples[i];
+      ripple.life -= 0.035;
+      ripple.radius += ripple.speed;
+      if (ripple.life <= 0) {
+        this.rainRipples.splice(i, 1);
+        continue;
+      }
+      const progress = 1 - ripple.life;
+      const alpha = ripple.alpha * (1 - progress) * 0.7;
+      ctx.strokeStyle = `rgba(204, 235, 255, ${alpha})`;
+      ctx.lineWidth = 0.8 + ripple.life * 0.9;
+      ctx.beginPath();
+      ctx.ellipse(ripple.x, ripple.y, ripple.radius * (1.8 + progress), ripple.radius * 0.34, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      if (ripple.radius > 6) {
+        ctx.strokeStyle = `rgba(164, 214, 245, ${alpha * 0.45})`;
+        ctx.beginPath();
+        ctx.ellipse(ripple.x, ripple.y, ripple.radius * 0.74, ripple.radius * 0.16, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+  }
+
+  drawRainGround(ctx, preset) {
+    const horizon = this.h * 0.68;
+    const wet = ctx.createLinearGradient(0, horizon, 0, this.h);
+    wet.addColorStop(0, "rgba(91, 143, 183, 0)");
+    wet.addColorStop(0.32, `rgba(67, 119, 161, ${preset.groundGlow * 0.42})`);
+    wet.addColorStop(1, `rgba(13, 34, 57, ${0.18 + preset.groundGlow})`);
+    ctx.fillStyle = wet;
+    ctx.fillRect(0, horizon, this.w, this.h - horizon);
+
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    const reflection = ctx.createRadialGradient(
+      this.w * 0.52,
+      this.h * 0.88,
+      0,
+      this.w * 0.52,
+      this.h * 0.88,
+      this.w * 0.72
+    );
+    reflection.addColorStop(0, `rgba(135, 194, 226, ${preset.groundGlow * 0.75})`);
+    reflection.addColorStop(0.42, `rgba(77, 133, 177, ${preset.groundGlow * 0.34})`);
+    reflection.addColorStop(1, "rgba(50, 90, 125, 0)");
+    ctx.fillStyle = reflection;
+    ctx.fillRect(0, horizon, this.w, this.h - horizon);
+
+    const shimmer = 3 + Math.round(preset.groundGlow * 14);
+    for (let i = 0; i < shimmer; i++) {
+      const y = horizon + (i / shimmer) * (this.h - horizon) + Math.sin(this.time * 0.0012 + i) * 5;
+      const width = this.w * (0.18 + ((i * 0.19) % 0.45));
+      const x = ((this.time * (0.018 + i * 0.003) + i * 173) % (this.w + width)) - width;
+      ctx.fillStyle = `rgba(180, 222, 246, ${preset.groundGlow * (0.14 + (i % 3) * 0.06)})`;
+      ctx.fillRect(x, y, width, 1 + (i % 2));
+    }
+    ctx.restore();
   }
 
   drawSnow(ctx, type) {

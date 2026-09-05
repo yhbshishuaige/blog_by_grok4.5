@@ -102,6 +102,7 @@ export function createHomeDeck() {
     const liveRegion = main.querySelector("[data-deck-live]");
     if (!stage || !cards.length) return;
     const wheelStyledCards = new Set();
+    let lastRenderedActive = null;
 
     controller = new AbortController();
     const { signal } = controller;
@@ -129,6 +130,17 @@ export function createHomeDeck() {
         if (card.getAttribute("aria-hidden") !== hidden) card.setAttribute("aria-hidden", hidden);
         if (card.tabIndex !== tabIndex) card.tabIndex = tabIndex;
       });
+
+      if (lastRenderedActive !== null && lastRenderedActive !== activeIndex) {
+        const activeCard = cards[activeIndex];
+        const sheen = activeCard?.querySelector(".post-deck-sheen");
+        if (sheen) {
+          sheen.classList.remove("is-sweeping");
+          void sheen.offsetWidth;
+          sheen.classList.add("is-sweeping");
+        }
+      }
+      lastRenderedActive = activeIndex;
 
       dots.forEach((dot, index) => {
         if (index === activeIndex && dot.getAttribute("aria-current") !== "true") {

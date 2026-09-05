@@ -62,6 +62,7 @@ function renderHome() {
       aria-label="打开文章：${escapeHtml(p.title)}"
       style="--deck-hue:${205 + (i * 47) % 135}"
     >
+      <span class="post-deck-sheen" aria-hidden="true"></span>
       <span class="post-deck-number" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
       <div class="post-card-meta">
         ${p.private ? '<span class="post-card-lock" aria-hidden="true">🔒 私密</span>' : ""}
