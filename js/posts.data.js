@@ -25,7 +25,7 @@ export const posts = [
 </ul>
 <h2 id="如何体验">如何体验</h2>
 <ol>
-<li>看右上角的天气徽章——固定读取<strong>江苏南京江宁区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
+<li>看右上角的天气徽章——固定读取<strong>山西晋中榆次区</strong>实况（Open-Meteo，不用浏览器定位）；</li>
 <li>点天气徽章，循环预览：晴 → 阴 → 小雨 → 中雨 → 大雨 → 雷电 → 小雪 → 中雪 → 大雪 → 大风；</li>
 <li>点天气徽章左侧的「时间」按钮，拖动轮盘预览昼夜，可随时「回到实时」；</li>
 <li>在首页与本页之间跳转，应感觉像同一页里内容轻轻换了，而不是整页被盖住再打开；</li>
@@ -41,7 +41,7 @@ export const posts = [
 <pre><span class="code-line-numbers" aria-hidden="true"><span>1</span></span><code class="language-javascript hljs"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello, Weather World! ☀️🌧️❄️☁️&quot;</span>);</code></pre>
 </section>
 <h3 id="设计意图">设计意图</h3>
-<p>页面上的光与粒子尽量绑定到「当下」：当下的江宁天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
+<p>页面上的光与粒子尽量绑定到「当下」：当下的榆次天气、当下的钟点。这样博客不只是文字容器，更像一扇会呼吸的窗。</p>
 <p>测试通过的话，你应该已经看到：从首页点进来时，旧内容轻轻淡出，新文章在同一位置落定——天空、顶栏始终还在。</p>
 <p>那就这样——<em>Hello World</em>，我们下次见。</p>
 <h2 id="配图示例">配图示例</h2>

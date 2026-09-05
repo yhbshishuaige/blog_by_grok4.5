@@ -88,13 +88,13 @@ function isSnowType(t) {
 
 /**
  * Fixed observation point — no browser geolocation.
- * 中国江苏南京江宁区（大致中心）
+ * 中国山西晋中榆次区（大致中心）
  */
 export const WEATHER_LOCATION = {
-  name: "南京·江宁",
-  label: "江苏南京江宁区",
-  latitude: 31.9526,
-  longitude: 118.8399,
+  name: "晋中·榆次",
+  label: "山西晋中榆次区",
+  latitude: 37.6803,
+  longitude: 112.7319,
   timezone: "Asia/Shanghai",
 };
 
@@ -203,7 +203,7 @@ async function fetchWeather() {
       location: WEATHER_LOCATION.name,
     };
   } catch {
-    // Network fail: mild seasonal guess for Nanjing, still usable offline
+    // Network fail: mild seasonal guess for Jinzhong Yuci, still usable offline
     const m = new Date().getMonth();
     const h = new Date().getHours();
     let type = "sunny";
