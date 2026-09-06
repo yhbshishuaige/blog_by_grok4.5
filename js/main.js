@@ -14,6 +14,9 @@ import { createPrivateUnlock } from "./private-unlock.js";
 import { createScrollAtmosphere } from "./scroll-atmosphere.js";
 import { createWeather } from "./weather.js";
 import { createTransitions } from "./transitions.js";
+import { createEnhance } from "./enhance.js";
+import { createSeason } from "./season.js";
+import { createSeasonControl } from "./season-control.js";
 import { createRouter } from "./router.js";
 
 async function boot() {
@@ -40,6 +43,10 @@ async function boot() {
   const scrollAtmosphere = createScrollAtmosphere({
     getWeatherType: () => weather.getType(),
   });
+  const enhance = createEnhance();
+  const season = createSeason();
+  season.init();
+  const seasonControl = createSeasonControl({ season });
   const router = createRouter({
     transitions,
     getWeatherType: () => weather.getType(),
@@ -50,6 +57,7 @@ async function boot() {
       homeDeck.bind(main, route);
       privateUnlock.bind(main, route);
       scrollAtmosphere.bind(main, route);
+      enhance.bind(main, route);
     },
   });
   router.start();
@@ -69,6 +77,9 @@ async function boot() {
     search,
     privateUnlock,
     scrollAtmosphere,
+    enhance,
+    season,
+    seasonControl,
     transitions,
     router,
     weatherReady,

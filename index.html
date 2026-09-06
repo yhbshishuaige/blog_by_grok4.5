@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="styles/scroll-atmosphere.css" />
   <link rel="stylesheet" href="styles/transitions.css" />
   <link rel="stylesheet" href="styles/secrets.css" />
+  <link rel="stylesheet" href="styles/enhance.css" />
+  <link rel="stylesheet" href="styles/season.css" />
+  <link rel="stylesheet" href="styles/festival.css" />
 </head>
 <body>
   <script>
@@ -33,6 +36,14 @@
     <div class="stars" id="stars"></div>
     <div class="sun-orb" id="sunOrb"></div>
     <div class="moon-orb" id="moonOrb"></div>
+    <div class="ambient-layer" aria-hidden="true">
+      <div class="ambient-aurora ambient-aurora-a"></div>
+      <div class="ambient-aurora ambient-aurora-b"></div>
+      <div class="ambient-bokeh">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+    <div class="season-ambient" id="seasonAmbient" aria-hidden="true"></div>
     <div class="secret-sky" id="secretSky" aria-hidden="true">
       <div class="aurora aurora-one"></div>
       <div class="aurora aurora-two"></div>
@@ -132,6 +143,8 @@
     </div>
   </div>
 
+  <!-- Festival effects (fixed, above sky, below weather particles) -->
+  <div class="festival-layer" id="festivalLayer" aria-hidden="true"></div>
   <!-- Weather particle canvas -->
   <canvas id="weatherCanvas" class="weather-canvas" aria-hidden="true"></canvas>
   <div class="ground-secrets" id="groundSecrets" aria-hidden="true"></div>
@@ -258,6 +271,71 @@
                 <small>动态山景、飞鸟与薄雾</small>
               </span>
               <span class="background-option-check" aria-hidden="true">✓</span>
+            </button>
+          </div>
+        </div>
+        <div class="season-control" id="seasonControl">
+          <button
+            type="button"
+            class="season-btn"
+            id="seasonBtn"
+            aria-expanded="false"
+            aria-controls="seasonPanel"
+            title="选择季节"
+          >
+            <span class="season-btn-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <path d="M19.2 4.2c-6.2 0-10.6 3.3-10.6 8.6 0 1.9.9 3.6 2.4 4.9 1.2 1.1 2.6 1.6 4.2 1.6 5.8 0 6.6-5.6 4-15.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M5.4 19.6c.8-3.8 3.4-7 7.4-9.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M4.6 20.4c2-3.3 4.4-5.9 7.4-8.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.5"/>
+              </svg>
+            </span>
+            <span class="season-btn-label" id="seasonBtnLabel">季节</span>
+          </button>
+          <div class="season-panel" id="seasonPanel" hidden role="dialog" aria-label="选择季节">
+            <div class="season-panel-head">
+              <span>流转四季</span>
+              <small id="seasonAutoNote">跟随日期</small>
+            </div>
+            <button type="button" class="season-option" data-season-option="auto" aria-pressed="true">
+              <span class="season-option-preview preview-auto" aria-hidden="true">✨</span>
+              <span class="season-option-copy">
+                <strong>自动跟随</strong>
+                <small id="seasonAutoCopy">按真实月份切换四季</small>
+              </span>
+              <span class="season-option-check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="season-option" data-season-option="spring" aria-pressed="false">
+              <span class="season-option-preview preview-spring" aria-hidden="true">🌸</span>
+              <span class="season-option-copy">
+                <strong>春天</strong>
+                <small>樱瓣飘落 · 3–5 月</small>
+              </span>
+              <span class="season-option-check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="season-option" data-season-option="summer" aria-pressed="false">
+              <span class="season-option-preview preview-summer" aria-hidden="true">☀️</span>
+              <span class="season-option-copy">
+                <strong>夏天</strong>
+                <small>萤火入夜 · 6–8 月</small>
+              </span>
+              <span class="season-option-check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="season-option" data-season-option="autumn" aria-pressed="false">
+              <span class="season-option-preview preview-autumn" aria-hidden="true">🍂</span>
+              <span class="season-option-copy">
+                <strong>秋天</strong>
+                <small>落叶知秋 · 9–11 月</small>
+              </span>
+              <span class="season-option-check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="season-option" data-season-option="winter" aria-pressed="false">
+              <span class="season-option-preview preview-winter" aria-hidden="true">❄️</span>
+              <span class="season-option-copy">
+                <strong>冬天</strong>
+                <small>雪落无声 · 12–2 月</small>
+              </span>
+              <span class="season-option-check" aria-hidden="true">✓</span>
             </button>
           </div>
         </div>

@@ -1,0 +1,591 @@
+/* ============================================================
+   Festival layer — 节日氛围
+   通过 body.festival-* 类生效。所有场景元素由 js/season.js
+   生成到 #festivalLayer(固定层,天空之上、内容之下)。
+   节日一览:
+     元旦 new-year · 除夕 new-year-eve · 春节 spring-festival
+     元宵 lantern · 情人节 valentine · 清明 qingming
+     劳动节 labor · 端午 duanwu · 七夕 qixi
+     中秋 mid-autumn · 国庆 national · 重阳 chongyang
+   ============================================================ */
+
+#festivalLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ---------- 节日色调叠加 ---------- */
+#festivalLayer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 2.4s ease;
+}
+
+body.festival-spring-festival #festivalLayer::before,
+body.festival-new-year-eve #festivalLayer::before {
+  opacity: 0.16;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 72, 48, 0.28) 0%,
+    rgba(255, 120, 72, 0.1) 45%,
+    rgba(255, 190, 90, 0.12) 100%
+  );
+}
+
+body.festival-national #festivalLayer::before {
+  opacity: 0.14;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 64, 40, 0.26) 0%,
+    rgba(255, 140, 60, 0.08) 50%,
+    rgba(255, 210, 100, 0.1) 100%
+  );
+}
+
+body.festival-new-year #festivalLayer::before,
+body.festival-labor #festivalLayer::before {
+  opacity: 0.12;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 120, 90, 0.16) 0%,
+    rgba(140, 210, 255, 0.1) 55%,
+    rgba(255, 220, 130, 0.1) 100%
+  );
+}
+
+body.festival-lantern #festivalLayer::before,
+body.festival-mid-autumn #festivalLayer::before {
+  opacity: 0.13;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 190, 100, 0.2) 0%,
+    rgba(255, 160, 80, 0.1) 50%,
+    rgba(120, 80, 160, 0.12) 100%
+  );
+}
+
+body.festival-valentine #festivalLayer::before {
+  opacity: 0.15;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 110, 160, 0.22) 0%,
+    rgba(255, 150, 190, 0.12) 55%,
+    rgba(255, 130, 170, 0.1) 100%
+  );
+}
+
+body.festival-qixi #festivalLayer::before {
+  opacity: 0.13;
+  background: linear-gradient(
+    180deg,
+    rgba(120, 110, 255, 0.18) 0%,
+    rgba(190, 130, 255, 0.12) 50%,
+    rgba(255, 140, 200, 0.1) 100%
+  );
+}
+
+body.festival-duanwu #festivalLayer::before {
+  opacity: 0.12;
+  background: linear-gradient(
+    180deg,
+    rgba(90, 190, 110, 0.18) 0%,
+    rgba(70, 160, 120, 0.1) 55%,
+    rgba(110, 200, 140, 0.1) 100%
+  );
+}
+
+body.festival-chongyang #festivalLayer::before {
+  opacity: 0.12;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 190, 90, 0.16) 0%,
+    rgba(255, 150, 80, 0.08) 60%,
+    rgba(160, 200, 230, 0.1) 100%
+  );
+}
+
+body.festival-qingming #festivalLayer::before {
+  opacity: 0.09;
+  background: linear-gradient(
+    180deg,
+    rgba(180, 205, 220, 0.2) 0%,
+    rgba(160, 200, 190, 0.12) 60%,
+    rgba(190, 220, 205, 0.1) 100%
+  );
+}
+
+/* 清明细雨斜丝 */
+body.festival-qingming #festivalLayer::after {
+  content: "";
+  position: absolute;
+  inset: -20% -50%;
+  background: repeating-linear-gradient(
+    102deg,
+    transparent 0 22px,
+    rgba(200, 220, 228, 0.14) 22px 23px
+  );
+  opacity: 0.55;
+  animation: qingmingRain 0.9s linear infinite;
+}
+
+@keyframes qingmingRain {
+  from { transform: translate3d(0, -14px, 0); }
+  to { transform: translate3d(18px, 14px, 0); }
+}
+
+/* ===================== 场景:红灯笼 ===================== */
+.fest-lantern {
+  position: absolute;
+  top: 2px;
+  left: var(--x, 50%);
+  width: 26px;
+  height: 33px;
+  border-radius: 46% 46% 42% 42%;
+  transform-origin: 50% -16px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 0 1.5px,
+      transparent 1.5px 7px
+    ),
+    radial-gradient(circle at 50% 42%, #ffb06a 0%, #f0503a 55%, #b32018 100%);
+  border-top: 3px solid #ffd98a;
+  border-bottom: 3px solid #b31e14;
+  box-shadow:
+    inset 0 -6px 10px rgba(120, 20, 10, 0.55),
+    0 4px 16px rgba(255, 90, 40, 0.42),
+    0 0 30px 2px rgba(255, 90, 40, 0.18);
+  animation:
+    lanternSwing var(--dur, 4.4s) ease-in-out infinite alternate,
+    lanternGlow 2.6s ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s), 0s;
+}
+
+.fest-lantern::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 1px;
+  height: 12px;
+  background: linear-gradient(rgba(255, 210, 130, 0.15), rgba(255, 210, 130, 0.65));
+}
+
+.fest-lantern::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 50%;
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(#ffd98a, #ff9a5c 70%, #d9542a);
+  transform: translateX(-50%);
+  box-shadow: 0 1px 0 rgba(180, 70, 20, 0.4);
+}
+
+@keyframes lanternSwing {
+  from { transform: rotate(-8deg); }
+  to { transform: rotate(8deg); }
+}
+
+@keyframes lanternGlow {
+  from { filter: brightness(0.92); }
+  to { filter: brightness(1.18); }
+}
+
+body.festival-valentine .fest-lantern,
+body.festival-qixi .fest-lantern {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 0 1.5px,
+      transparent 1.5px 7px
+    ),
+    radial-gradient(circle at 50% 42%, #ffc4d8 0%, #f0709a 55%, #c0306a 100%);
+  border-top-color: #ffd9e4;
+  border-bottom-color: #a02858;
+  box-shadow:
+    inset 0 -6px 10px rgba(90, 10, 40, 0.5),
+    0 4px 16px rgba(255, 110, 160, 0.4);
+}
+
+/* ===================== 场景:节日彩旗 ===================== */
+.fest-bunting {
+  position: absolute;
+  top: calc(var(--header-h) - 6px);
+  left: 0;
+  right: 0;
+  height: 44px;
+}
+
+.fest-bunting::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 214, 140, 0.55) 20%, rgba(255, 214, 140, 0.55) 80%, transparent);
+  box-shadow: 0 0 6px rgba(255, 214, 140, 0.35);
+}
+
+.fest-bunting i {
+  position: absolute;
+  top: 5px;
+  width: 22px;
+  height: 30px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: var(--c, #ff5a4e);
+  opacity: 0.88;
+  transform-origin: top center;
+  animation: flagSway 3.4s ease-in-out infinite alternate;
+  box-shadow: inset 0 -4px 5px rgba(0, 0, 0, 0.18);
+}
+
+@keyframes flagSway {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg); }
+}
+
+/* ===================== 场景:孔明灯(元宵 / 中秋) ===================== */
+.fest-kongming {
+  position: absolute;
+  bottom: -9vh;
+  left: var(--x, 50%);
+  width: 15px;
+  height: 19px;
+  border-radius: 46% 46% 40% 40%;
+  opacity: 0;
+  animation:
+    kongmingRise var(--dur, 46s) linear infinite,
+    kongmingFlicker 2.2s ease-in-out infinite;
+  animation-delay: var(--delay, 0s), var(--delay, 0s);
+}
+
+.fest-kongming::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 68%,
+    #fff2c8 0%,
+    #ffc46a 42%,
+    rgba(255, 128, 60, 0.6) 72%,
+    rgba(255, 120, 60, 0.14) 100%
+  );
+  box-shadow:
+    0 0 12px 3px rgba(255, 180, 90, 0.4),
+    0 0 34px 10px rgba(255, 160, 80, 0.16);
+}
+
+@keyframes kongmingRise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  8% { opacity: var(--peak, 0.9); }
+  45% {
+    transform: translate3d(2.4vw, -56vh, 0) scale(var(--scale, 1));
+    opacity: var(--peak, 0.9);
+  }
+  86% {
+    opacity: calc(var(--peak, 0.9) * 0.45);
+  }
+  100% {
+    transform: translate3d(-1.8vw, -112vh, 0) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}
+
+@keyframes kongmingFlicker {
+  from { filter: brightness(0.92); }
+  to { filter: brightness(1.16); }
+}
+
+/* ===================== 场景:漂浮爱心(情人节 / 七夕) ===================== */
+.fest-heart {
+  position: absolute;
+  bottom: -7vh;
+  left: var(--x, 50%);
+  width: 13px;
+  height: 13px;
+  background: var(--c, #ff7aa2);
+  transform: rotate(45deg);
+  opacity: 0;
+  animation: heartRise var(--dur, 17s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  filter: drop-shadow(0 0 6px rgba(255, 120, 160, 0.55));
+}
+
+.fest-heart::before,
+.fest-heart::after {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.fest-heart::before { top: -6.5px; left: 0; }
+.fest-heart::after { left: -6.5px; top: 0; }
+
+@keyframes heartRise {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(45deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--peak, 0.8);
+  }
+  50% {
+    transform: translate3d(var(--drift, 2vw), -52vh, 0) rotate(45deg) scale(var(--scale, 1));
+  }
+  88% {
+    opacity: calc(var(--peak, 0.8) * 0.6);
+  }
+  100% {
+    transform: translate3d(calc(var(--drift, 2vw) * -0.6), -110vh, 0) rotate(45deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}
+
+/* ===================== 场景:烟花(除夕 / 春节 / 国庆) ===================== */
+.fest-fw {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 20%);
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border-radius: 50%;
+  opacity: 0;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      var(--c, #ffd98a) 0deg 1.4deg,
+      transparent 1.4deg 21deg
+    ),
+    repeating-conic-gradient(
+      from 9deg,
+      var(--c2, #fff) 0deg 0.9deg,
+      transparent 0.9deg 42deg
+    );
+  -webkit-mask: radial-gradient(circle, transparent 12%, #000 22%, rgba(0, 0, 0, 0.7) 52%, transparent 70%);
+  mask: radial-gradient(circle, transparent 12%, #000 22%, rgba(0, 0, 0, 0.7) 52%, transparent 70%);
+  filter: drop-shadow(0 0 12px var(--c, #ffd98a));
+  animation: fwBurst 2s cubic-bezier(0.16, 0.8, 0.3, 1) forwards;
+}
+
+.fest-fw::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.85), transparent 60%);
+  opacity: 0.85;
+}
+
+@keyframes fwBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.05) translateY(0);
+  }
+  8% { opacity: 1; }
+  30% {
+    transform: scale(0.6) translateY(-2vh);
+  }
+  55% {
+    opacity: 0.9;
+    transform: scale(1.02) translateY(-3vh);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1) translateY(-2vh);
+  }
+}
+
+/* ===================== 场景:中秋明月 ===================== */
+.fest-moon {
+  position: absolute;
+  top: 12%;
+  right: 12%;
+  width: min(17vw, 130px);
+  height: min(17vw, 130px);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 2.6s ease;
+  background: radial-gradient(circle at 36% 32%, #fffdf4 0%, #ffedc0 52%, #f3cf8a 82%, #dfae68 100%);
+  box-shadow:
+    0 0 44px 14px rgba(255, 220, 150, 0.4),
+    0 0 140px 60px rgba(255, 200, 120, 0.16),
+    inset -14px -10px 30px rgba(214, 160, 90, 0.4);
+  animation: moonBreath 7s ease-in-out infinite alternate;
+}
+
+.fest-moon::before {
+  content: "";
+  position: absolute;
+  inset: -24%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 224, 170, 0.3);
+  box-shadow: 0 0 24px rgba(255, 220, 160, 0.22);
+  animation: haloPulse 6s ease-in-out infinite alternate;
+}
+
+.fest-moon::after {
+  content: "";
+  position: absolute;
+  inset: -48%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 224, 170, 0.14);
+  animation: haloPulse 6s 1.6s ease-in-out infinite alternate;
+}
+
+body.is-night .fest-moon { opacity: 1; }
+body.is-dawn .fest-moon,
+body.is-dusk .fest-moon { opacity: 0.5; }
+
+@keyframes moonBreath {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.1); }
+}
+
+@keyframes haloPulse {
+  from { transform: scale(0.98); opacity: 0.5; }
+  to { transform: scale(1.04); opacity: 1; }
+}
+
+/* ===================== 场景:七夕双星 ===================== */
+.fest-star {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 2.6s ease;
+  box-shadow:
+    0 0 12px 3px rgba(210, 190, 255, 0.85),
+    0 0 36px 12px rgba(180, 140, 255, 0.3);
+  animation: starPulse 3.4s ease-in-out infinite alternate;
+}
+
+.fest-star::before {
+  content: "";
+  position: absolute;
+  inset: -260%;
+  background: radial-gradient(circle, transparent 40%, rgba(190, 150, 255, 0.1) 72%, transparent 75%);
+}
+
+.fest-star::after {
+  content: attr(data-name);
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.62rem;
+  letter-spacing: 0.34em;
+  color: rgba(235, 225, 255, 0.82);
+  text-shadow: 0 0 10px rgba(190, 150, 255, 0.6);
+}
+
+body.is-night .fest-star { opacity: 1; }
+body.is-dawn .fest-star,
+body.is-dusk .fest-star { opacity: 0.6; }
+
+@keyframes starPulse {
+  from { transform: scale(0.92); filter: brightness(0.9); }
+  to { transform: scale(1.12); filter: brightness(1.3); }
+}
+
+/* ===================== 节日飘落粒子(彩纸 / 粽叶 / 菊瓣) ===================== */
+#festivalLayer > .confetti,
+#festivalLayer > .leafgreen,
+#festivalLayer > .chrysanth {
+  position: absolute;
+  top: -8vh;
+  left: var(--x, 50%);
+  opacity: 0;
+  animation: seasonFall var(--dur, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+#festivalLayer > .confetti {
+  width: 5px;
+  height: 13px;
+  border-radius: 2px;
+  background: var(--c, #ff5a4e);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+#festivalLayer > .leafgreen {
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(135deg, #a9df9a 0%, var(--c, #7fc86e) 60%, rgba(40, 100, 50, 0.9) 100%);
+  clip-path: polygon(
+    50% 0%, 62% 28%, 92% 18%, 76% 48%, 100% 74%,
+    62% 68%, 50% 100%, 38% 68%, 0% 74%, 24% 48%, 8% 18%, 38% 28%
+  );
+}
+
+#festivalLayer > .chrysanth {
+  width: 12px;
+  height: 8px;
+  border-radius: 100% 3px 100% 3px;
+  background: radial-gradient(circle at 30% 30%, #fff8e0, var(--c, #f0b429) 78%);
+  box-shadow: 0 0 5px rgba(255, 220, 130, 0.35);
+}
+
+/* ===================== 节日祝福 Toast 镶边 ===================== */
+body.festival-spring-festival .secret-toast,
+body.festival-national .secret-toast,
+body.festival-new-year-eve .secret-toast {
+  background: linear-gradient(120deg, rgba(120, 24, 16, 0.88), rgba(60, 16, 10, 0.9));
+  border-color: rgba(255, 190, 110, 0.45);
+}
+
+body.festival-mid-autumn .secret-toast {
+  background: linear-gradient(120deg, rgba(70, 44, 16, 0.88), rgba(40, 26, 10, 0.9));
+  border-color: rgba(255, 220, 150, 0.45);
+}
+
+body.festival-valentine .secret-toast,
+body.festival-qixi .secret-toast {
+  background: linear-gradient(120deg, rgba(110, 20, 58, 0.88), rgba(60, 12, 32, 0.9));
+  border-color: rgba(255, 160, 200, 0.45);
+}
+
+body.festival-duanwu .secret-toast {
+  background: linear-gradient(120deg, rgba(24, 70, 34, 0.9), rgba(12, 40, 20, 0.92));
+  border-color: rgba(160, 230, 150, 0.4);
+}
+
+/* ===================== 减少动效 ===================== */
+@media (prefers-reduced-motion: reduce) {
+  #festivalLayer::after,
+  .fest-lantern,
+  .fest-bunting i,
+  .fest-kongming,
+  .fest-heart,
+  .fest-fw,
+  .fest-moon,
+  .fest-moon::before,
+  .fest-moon::after,
+  .fest-star,
+  #festivalLayer > .confetti,
+  #festivalLayer > .leafgreen,
+  #festivalLayer > .chrysanth {
+    animation: none !important;
+  }
+}

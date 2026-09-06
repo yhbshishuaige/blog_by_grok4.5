@@ -25,6 +25,9 @@ PORT=8080 npm start
 - 晋中榆次天气（Open-Meteo 当前值 + 当前小时降水校正，每 10 分钟刷新）；请求失败时使用本地预估。数据是网格化预报，局地暴雨仍可能与雨量站 / 雷达有差异。
 - 天气徽章依次切换：晴、阴、小雨、中雨、大雨、雷电、小雪、中雪、大雪、大风。
 - 首页文章按发布日期由旧到新排列，先看到最早发布的内容。
+- 全局氛围增强层（`styles/enhance.css`）：极光缎带、上升光斑、胶片颗粒与暗角叠加在天空之上；经典文章卡片悬停有流光扫过与旋转渐变描边，文章页顶部有流光阅读进度条；均遵循系统减少动效偏好。
+- 四季氛围：按月份自动切换春 / 夏 / 秋 / 冬——四季色调与山体配色随之改变，并飘落对应季节粒子（春樱瓣、夏夜萤火、秋枫叶、冬冰晶），秋天整体呈金色暖调；右上角新增「季节」按钮可随时固定到某个季节或回到自动跟随（选择会记忆，`localStorage`），也可用 `WeatherBlog.season.setSeason('autumn')` 预览。
+- 中国节日氛围：内置农历换算，除夕、春节、元宵、端午、七夕、中秋、重阳自动触发专属场景，公历节日元旦、情人节、清明、劳动节、国庆同步识别；灯笼轻摆、彩旗迎风、烟花绽放、孔明灯升空、彩纸飘落、中秋明月放大挂天、七夕双星遥望，节日当天第一次打开会弹出祝福；URL 参数 `?festival=mid-autumn`（或 `?season=autumn&festival=spring-festival`）可预览任意节日，`festival=none` 关闭，控制台 `WeatherBlog.season.setFestival('national')` 等同。
 - 首页可在右上角切换一屏式 3D 翻卡与经典纵向列表；选择会自动记忆。
 - 鼠标滚轮会唤起随方向、速度和天气变化的环境风迹，文章章节进入阅读区时同步回应。
 - 右上角选择纯天空或动态雪山，选择保存在 `localStorage`。
@@ -105,6 +108,9 @@ private/*.md + private/grants.json（gitignored，密码只在本地）
 | `js/article-tools.js` | 文章目录、代码折叠与复制交互 |
 | `js/home-deck.js` | 首页文章卡片的滚轮、键盘、按钮与触屏切换 |
 | `js/home-layout.js` | 首页翻卡 / 经典布局切换与本地记忆 |
+| `js/enhance.js` | 文章阅读进度条：滚动测量与视图切换显隐 |
+| `js/season.js` | 四季判定与农历换算（1900–2099）、季节粒子与节日场景生成、祝福播报 |
+| `js/season-control.js` | 右上角季节按钮：自动跟随 / 春 / 夏 / 秋 / 冬，选择记忆到 localStorage |
 | `js/search.js` | 顶栏文章全文搜索：索引、打分排序、关键词高亮与键盘导航 |
 | `js/private-access.js` | 私密文章解密：PBKDF2 / AES-GCM、凭据缓存、管理员免密 |
 | `js/private-unlock.js` | 私密文章锁屏交互、自动解锁、顶栏锁定按钮 |
@@ -121,6 +127,9 @@ private/*.md + private/grants.json（gitignored，密码只在本地）
 | `styles/transitions.css` | 路由、天气和背景转场 |
 | `styles/scroll-atmosphere.css` | 滚轮环境反馈与章节光迹 |
 | `styles/secrets.css` | 彩蛋视觉效果 |
+| `styles/enhance.css` | 氛围增强层：极光 / 光斑 / 颗粒 / 暗角、流光标题与卡片、文章排版光效、进度条样式 |
+| `styles/season.css` | 四季色调叠加与山体配色、季节粒子（花瓣 / 萤火 / 落叶 / 冰晶） |
+| `styles/festival.css` | 节日场景：灯笼 / 彩旗 / 烟花 / 孔明灯 / 爱心 / 明月 / 双星 / 飘落粒子 |
 | `scripts/` | 文章构建、新建、R2 图片上传、监听和本地服务器 |
 
 ## 接手修改
@@ -129,6 +138,8 @@ private/*.md + private/grants.json（gitignored，密码只在本地）
 - 改天气地点：`js/weather.js` 的 `WEATHER_LOCATION`。
 - 改雨雪密度：`js/weather.js` 的 `RAIN_PRESETS`、`SNOW_PRESETS`。
 - 改页面或雪山：`styles/main.css`；改天气和转场时同步检查对应拆分样式。
+- 改氛围光效 / 阅读进度条：`styles/enhance.css` 与 `js/enhance.js`（在所有样式之后加载，只做增量覆盖）。
+- 改四季或节日：`js/season.js`（判定 / 农历 / 场景生成）＋ `styles/season.css`（四季）＋ `styles/festival.css`（节日）；新节日只需在 `FESTIVALS` 加定义并写好 build 场景。
 - 改首页翻卡：同步检查 `js/router.js`、`js/home-deck.js` 和 `styles/home-deck.css`。
 - 改彩蛋：同时核对 `js/secrets.js`、`styles/secrets.css` 和 `docs/EASTER_EGGS.md`。
 - 改文章解析：检查 `scripts/build-posts.mjs`、`js/posts.js`、`js/article-tools.js` 和 `js/router.js` 的完整数据链。
@@ -155,6 +166,9 @@ npm start
 
 ## 最近更新
 
+- 2026-09-06：右上角新增季节按钮：可一键固定春 / 夏 / 秋 / 冬或回到「自动跟随」，选择持久化（localStorage），按钮文字与光色随所选季节变化；交互与背景选择器一致（点外 / Esc 关闭、键盘可达），移动端适配。
+- 2026-09-06：新增四季与节日系统：内置农历换算自动识别除夕 / 春节 / 元宵 / 端午 / 七夕 / 中秋 / 重阳及元旦 / 情人节 / 清明 / 劳动节 / 国庆，按月份切换四季色调与山体配色（秋季金色暖调），四季粒子 + 节日场景（灯笼、彩旗、烟花、孔明灯、爱心、中秋明月、七夕双星等）自动出现并播报祝福；支持 `?season=&festival=` URL 预览与控制台 API。
+- 2026-09-06：新增全局氛围增强层：天空叠加极光缎带与上升光斑、全屏胶片颗粒与暗角；顶栏流光发丝线与导航下划线，首页标题流光渐变字；经典卡片悬停流光扫过 + 旋转渐变描边，翻卡加深辉光；文章页新增流光阅读进度条（`js/enhance.js`），正文标题 / 链接 / 引用 / 表格 / 代码块 / 图片全面光效化；纯增量叠加，不影响天气与昼夜系统，遵循减少动效偏好。
 - 2026-08-27：新增私密文章功能：本地 `private/` 明文源 + 信封加密（PBKDF2 + AES-256-GCM），线上仅密文；管理员密码读全部、访客临时密码读被授权部分，增删访客密码重新 `npm run private` 后 push 即生效；管理员解锁免密（顶栏锁定按钮），访客每次访问需输密码。
 - 2026-08-27：顶栏新增文章全文搜索，输入即搜标题 / 标签 / 摘要 / 正文，按相关度排序、关键词高亮，支持键盘操作与中文输入法；纯前端实现，无需服务器。
 - 2026-07-23：天气读取当前降水与当前小时天气码，避免 Open-Meteo 的阴天码覆盖正在发生的降雨；天气页签每 10 分钟自动刷新，回到前台时立即更新。

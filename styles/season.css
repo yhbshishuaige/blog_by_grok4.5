@@ -1,0 +1,338 @@
+/* ============================================================
+   Season layer — 四季氛围
+   通过 body.season-* 类生效:天空色调叠加、山体四季配色、
+   季节环境粒子(春樱瓣 / 夏萤火 / 秋落叶 / 冬冰晶)。
+   说明:天空 --sky-* 变量由 time-sky.js 内联注入,无法用 CSS
+   覆盖,因此季节色调通过独立叠加层实现;山体变量是类驱动,
+   可按 is-day/is-dusk 等相位分别覆盖。
+   ============================================================ */
+
+/* ---------- 容器:在雪山之上飘落,在内容卡片之下 ---------- */
+.season-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ---------- 四季色调叠加(天与地的呼吸) ---------- */
+.season-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 3.2s ease;
+  pointer-events: none;
+}
+
+body.season-spring .season-ambient::before {
+  opacity: 0.5;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 183, 197, 0.22) 0%,
+    rgba(196, 227, 200, 0.18) 55%,
+    rgba(255, 214, 224, 0.1) 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+body.season-summer .season-ambient::before {
+  opacity: 0.55;
+  background: linear-gradient(
+    180deg,
+    rgba(126, 231, 205, 0.2) 0%,
+    rgba(86, 190, 214, 0.16) 55%,
+    rgba(70, 150, 200, 0.12) 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+body.season-autumn .season-ambient::before {
+  opacity: 0.85;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 168, 90, 0.3) 0%,
+    rgba(255, 190, 110, 0.26) 48%,
+    rgba(210, 120, 62, 0.3) 100%
+  );
+  mix-blend-mode: overlay;
+}
+
+body.season-winter .season-ambient::before {
+  opacity: 0.5;
+  background: linear-gradient(
+    180deg,
+    rgba(168, 198, 232, 0.24) 0%,
+    rgba(206, 226, 244, 0.2) 55%,
+    rgba(226, 240, 252, 0.18) 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* 秋日地平线金雾(傍晚更浓,温度适宜的秋意) */
+.season-ambient::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 46%;
+  opacity: 0;
+  transition: opacity 3.2s ease;
+  pointer-events: none;
+}
+
+body.season-autumn .season-ambient::after {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 176, 84, 0.1) 55%,
+    rgba(255, 190, 110, 0.16) 100%
+  );
+  mix-blend-mode: screen;
+}
+
+body.season-spring .season-ambient::after {
+  opacity: 1;
+  background: linear-gradient(180deg, transparent 55%, rgba(255, 214, 224, 0.1) 100%);
+  mix-blend-mode: screen;
+}
+
+/* ---------- 山体四季配色(按昼夜相位分别覆盖) ---------- */
+
+/* 秋:金杉与赭石,雪顶染上奶油色 */
+body.season-autumn.is-day {
+  --peak-light: #9c8258;
+  --peak-mid: #6e5f42;
+  --peak-deep: #3f3a2c;
+  --peak-shade-light: #6b5c40;
+  --peak-shade-deep: #241f14;
+  --snow-bright: #f5e9c8;
+  --snow-blue: #d8c49a;
+  --snow-shadow: #8a744f;
+  --ridge-far: rgba(122, 92, 56, 0.48);
+  --ridge-mid: rgba(94, 70, 46, 0.72);
+  --ridge-near-top: #4a3a26;
+  --ridge-near-bottom: #20180f;
+  --rock-light: #7c6544;
+  --rock-mid: #56462e;
+  --rock-dark: #2f2417;
+}
+
+body.season-autumn.is-dawn {
+  --peak-light: #a8866a;
+  --peak-mid: #77604a;
+  --peak-deep: #43362a;
+  --snow-bright: #ffe7d1;
+  --snow-blue: #d9bfa0;
+  --snow-shadow: #8a6f52;
+  --ridge-far: rgba(128, 96, 66, 0.5);
+  --ridge-mid: rgba(98, 72, 50, 0.72);
+  --rock-light: #83684a;
+  --rock-mid: #5c4930;
+  --rock-dark: #332718;
+}
+
+body.season-autumn.is-dusk {
+  --peak-light: #9a7258;
+  --peak-mid: #6b4e3e;
+  --peak-deep: #3d2c22;
+  --snow-bright: #f2cdb4;
+  --snow-blue: #cfa88e;
+  --snow-shadow: #7d5f4a;
+  --ridge-far: rgba(118, 82, 58, 0.5);
+  --ridge-mid: rgba(88, 60, 42, 0.74);
+  --rock-light: #77563e;
+  --rock-mid: #52392a;
+  --rock-dark: #2c1f15;
+}
+
+body.season-autumn.is-night {
+  --peak-light: #4a4032;
+  --peak-mid: #322b20;
+  --peak-deep: #1a1610;
+  --peak-shade-light: #2c2619;
+  --peak-shade-deep: #0d0b07;
+  --snow-bright: #b3a68a;
+  --snow-blue: #7d7259;
+  --snow-shadow: #4a4028;
+  --ridge-far: rgba(58, 48, 32, 0.55);
+  --ridge-mid: rgba(38, 32, 20, 0.8);
+  --ridge-near-top: #241e12;
+  --ridge-near-bottom: #0a0806;
+  --rock-light: #3a3122;
+  --rock-mid: #262015;
+  --rock-dark: #12100a;
+}
+
+/* 春:山脊与岩石带一点新绿 */
+body.season-spring.is-day {
+  --ridge-far: rgba(78, 112, 84, 0.48);
+  --ridge-mid: rgba(52, 88, 62, 0.72);
+  --rock-light: #4c7052;
+  --rock-mid: #33513a;
+  --rock-dark: #1c3122;
+}
+
+/* 夏:植被最盛,山脊深翠 */
+body.season-summer.is-day {
+  --ridge-far: rgba(58, 112, 82, 0.5);
+  --ridge-mid: rgba(36, 84, 58, 0.74);
+  --rock-light: #3e6b4a;
+  --rock-mid: #2a4c36;
+  --rock-dark: #16301f;
+}
+
+/* 冬:更冷更清透 */
+body.season-winter.is-day {
+  --ridge-far: rgba(96, 128, 168, 0.5);
+  --ridge-mid: rgba(60, 92, 136, 0.74);
+  --rock-light: #46648c;
+  --rock-mid: #2e4468;
+  --rock-dark: #182844;
+}
+
+/* ---------- 季节粒子基础(下落 + 摇摆 + 旋转) ---------- */
+.season-ambient i {
+  position: absolute;
+  top: -8vh;
+  left: var(--x, 50%);
+  opacity: 0;
+  animation: seasonFall var(--dur, 11s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes seasonFall {
+  0% {
+    transform: translate3d(0, -4vh, 0) rotate(0deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--peak, 0.85);
+  }
+  25% {
+    transform: translate3d(calc(var(--drift, 3vw) * -0.5), 28vh, 0)
+      rotate(calc(var(--spin, 200deg) * 0.3)) scale(var(--scale, 1));
+  }
+  55% {
+    transform: translate3d(calc(var(--drift, 3vw) * 0.7), 58vh, 0)
+      rotate(calc(var(--spin, 200deg) * 0.7)) scale(var(--scale, 1));
+    opacity: var(--peak, 0.85);
+  }
+  85% {
+    opacity: calc(var(--peak, 0.85) * 0.7);
+  }
+  100% {
+    transform: translate3d(var(--drift, 3vw), 110vh, 0)
+      rotate(var(--spin, 200deg)) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}
+
+/* 春:樱花瓣 */
+.season-ambient .petal {
+  width: 12px;
+  height: 9px;
+  border-radius: 100% 4px 100% 4px;
+  background: radial-gradient(circle at 32% 32%, #fff, var(--c, #ffc7d8) 70%);
+  box-shadow: 0 0 6px rgba(255, 200, 218, 0.4);
+}
+
+/* 秋:枫叶(六角剪影,枫红鎏金) */
+.season-ambient .leaf {
+  width: 17px;
+  height: 17px;
+  background: linear-gradient(135deg, #ffd9a0 0%, var(--c, #e8964a) 55%, rgba(120, 50, 20, 0.85) 100%);
+  clip-path: polygon(
+    50% 0%, 62% 28%, 92% 18%, 76% 48%, 100% 74%,
+    62% 68%, 50% 100%, 38% 68%, 0% 74%, 24% 48%, 8% 18%, 38% 28%
+  );
+  filter: drop-shadow(0 1px 2px rgba(90, 40, 10, 0.3));
+}
+
+/* 夏:萤火虫(只在夜间亮起) */
+.season-ambient .firefly {
+  width: 5px;
+  height: 5px;
+  top: auto;
+  bottom: -6vh;
+  border-radius: 50%;
+  background: #e8ffc0;
+  box-shadow:
+    0 0 8px 2px rgba(200, 255, 130, 0.7),
+    0 0 20px 6px rgba(160, 255, 100, 0.25);
+  animation-name: fireflyWander;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+body.season-summer .season-ambient .firefly {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+body.season-summer.is-night .season-ambient .firefly,
+body.season-summer.is-dusk .season-ambient .firefly {
+  opacity: var(--peak, 0.85);
+}
+
+@keyframes fireflyWander {
+  0% {
+    transform: translate3d(0, 0, 0) scale(var(--scale, 1));
+    filter: brightness(0.7);
+  }
+  30% {
+    transform: translate3d(4vw, -18vh, 0) scale(var(--scale, 1));
+    filter: brightness(1.2);
+  }
+  60% {
+    transform: translate3d(-3vw, -40vh, 0) scale(var(--scale, 1));
+    filter: brightness(0.8);
+  }
+  100% {
+    transform: translate3d(5vw, -66vh, 0) scale(var(--scale, 1));
+    filter: brightness(1.25);
+  }
+}
+
+/* 冬:冰晶(细小钻石光点,缓缓飘落闪烁) */
+.season-ambient .crystal {
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(circle at 35% 35%, #ffffff, var(--c, #eaf4ff) 65%, rgba(200, 224, 250, 0.6));
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation-name: crystalFall;
+}
+
+@keyframes crystalFall {
+  0% {
+    transform: translate3d(0, -4vh, 0) rotate(0deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--peak, 0.85);
+  }
+  40% {
+    transform: translate3d(1.5vw, 42vh, 0) rotate(120deg) scale(var(--scale, 1));
+    filter: brightness(1.3);
+  }
+  70% {
+    transform: translate3d(-1.5vw, 74vh, 0) rotate(250deg) scale(var(--scale, 1));
+    filter: brightness(0.9);
+  }
+  100% {
+    transform: translate3d(1vw, 110vh, 0) rotate(400deg) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}
+
+/* ---------- 减少动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .season-ambient i {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
