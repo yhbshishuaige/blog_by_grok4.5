@@ -28,6 +28,8 @@ if (!title) {
 
 const slugArg = positional[1];
 const date = new Date().toISOString().slice(0, 10);
+const now = new Date();
+const created = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
 const DIR = path.join(ROOT, isPrivate ? "private" : "posts");
 
@@ -71,6 +73,7 @@ const body = isPrivate
   ? `---
 title: ${title}
 date: ${date}
+created: "${created}"
 tag: 私密
 private: true
 grants: [guest-001]
@@ -90,6 +93,7 @@ lead:
   : `---
 title: ${title}
 date: ${date}
+created: "${created}"
 tag: 随笔
 slug: ${safeSlug}
 excerpt:

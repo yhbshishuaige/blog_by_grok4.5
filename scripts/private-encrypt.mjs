@@ -19,6 +19,8 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import {
   parseFrontmatter,
+  normalizeDateTime,
+  normalizeSealWeather,
   markdownToHtml,
   articleStats,
   parseTags,
@@ -124,7 +126,8 @@ function encryptArticle(file, grants) {
   const { content, toc, codeBlockCount } = markdownToHtml(body);
 
   // Plaintext display meta — visitors may see title/excerpt/tags on cards;
-  // only the body (content/toc/code stats) is encrypted.
+  // only the body (content/toc/code stats) is encrypted. 时间印章只取
+  // frontmatter 中显式写的 created / updated，不读取文件改动时间。
   const metaOut = {
     slug,
     title,
@@ -132,6 +135,9 @@ function encryptArticle(file, grants) {
     date,
     excerpt,
     lead,
+    createdAt: normalizeDateTime(meta.created) || `${date} 12:00`,
+    updatedAt: normalizeDateTime(meta.updated),
+    weather: normalizeSealWeather(meta.weather),
     wordCount: stats.wordCount,
     readingMinutes: stats.readingMinutes,
   };
@@ -168,6 +174,9 @@ function writeOutput(posts) {
     date: ${JSON.stringify(p.date)},
     excerpt: ${JSON.stringify(p.excerpt)},
     lead: ${JSON.stringify(p.lead)},
+    createdAt: ${JSON.stringify(p.createdAt)},
+    updatedAt: ${JSON.stringify(p.updatedAt)},
+    weather: ${JSON.stringify(p.weather)},
     wordCount: ${p.wordCount},
     readingMinutes: ${p.readingMinutes},
     keys: ${JSON.stringify(p.keys)},

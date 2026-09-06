@@ -4,6 +4,7 @@
 import { posts, getPostBySlug, formatDate } from "./posts.js";
 import { getUnlocked } from "./private-access.js";
 import { friends } from "./friends.js";
+import { renderCardSeal, renderArticleSeal } from "./time-seal.js";
 
 function escapeHtml(value) {
   return String(value)
@@ -66,6 +67,7 @@ function renderHome() {
       <span class="post-deck-number" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
       <div class="post-card-meta">
         ${p.private ? '<span class="post-card-lock" aria-hidden="true">🔒 私密</span>' : ""}
+        ${renderCardSeal(p)}
         ${renderPostTags(p)}
         <time datetime="${p.date}">${formatDate(p.date)}</time>
         <span>· ${formatCount(p.wordCount)} 字</span>
@@ -97,6 +99,7 @@ function renderHome() {
         <a href="#/post/${p.slug}" class="post-card home-classic-card" data-nav style="--stagger:${i}">
           <div class="post-card-meta">
             ${p.private ? '<span class="post-card-lock" aria-hidden="true">🔒 私密</span>' : ""}
+            ${renderCardSeal(p)}
             ${renderPostTags(p)}
             <time datetime="${p.date}">${formatDate(p.date)}</time>
             <span>· ${formatCount(p.wordCount)} 字</span>
@@ -187,6 +190,7 @@ function renderArticleHtml(post) {
         <h1>${post.title}</h1>
         ${lead}
       </header>
+      ${renderArticleSeal(post)}
       <div class="article-body">
         ${post.content}
       </div>

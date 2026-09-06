@@ -1,6 +1,8 @@
 ---
 title: Hello World
 date: 2026-07-09
+created: "2026-07-09 23:42"
+weather: thunder
 tag: 第一篇
 slug: hello-world
 readingMinutes: 3

@@ -1,0 +1,297 @@
+/* ═══════════════════════════════════════════════════════════════
+   Time Seal · 时间印章
+   微型动态天空圆盘：昼夜渐变 + 日/月相/星点 + 天气粒子。
+   由 js/time-seal.js 生成 HTML；CSS 仅做增量呈现。
+   ─────────────────────────────────────────────────────
+   尺寸：在 .time-seal__disc 容器(父级)设定 font-size 或 width；
+   内部一律用 %/em/相对单位，一套样式自适应小程序。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ---------- 卡片 meta 行内小图章 ---------- */
+.time-seal--chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.1rem 0.5rem 0.1rem 0.28rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  font-size: 0.72rem;
+  color: var(--text-dim, #a4b0c2);
+  letter-spacing: 0.03em;
+  cursor: help;
+  white-space: nowrap;
+}
+.time-seal--chip .time-seal__badge {
+  display: block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.time-seal--chip .time-seal__disc {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-shadow: none;
+}
+/* 小盘里的内粒子按比例较小，直接按盘尺寸即可 */
+.time-seal--chip .time-seal__chip-text {
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.time-seal--chip:hover {
+  border-color: hsla(var(--deck-hue, 205), 60%, 82%, 0.5);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ---------- 圆盘本体 ---------- */
+.time-seal__disc {
+  --st-top: #3a80c8;
+  --st-mid: #6ab0e8;
+  --st-bot: #a8d4f8;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  flex: none;
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background:
+    radial-gradient(130% 100% at 50% 112%, var(--st-bot) 0%, transparent 58%),
+    linear-gradient(180deg, var(--st-top), var(--st-mid) 58%, var(--st-bot));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 -3px 9px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  transform: translateZ(0);
+}
+
+/* 底部地平雾霭 */
+.time-seal__haze {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(40% 20% at 50% 96%, rgba(255, 255, 255, 0.55) 0%, transparent 72%);
+  opacity: 0.4;
+}
+
+/* ---------- 星点（仅夜晚，disc.is-night） ---------- */
+.time-seal__stars {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-image:
+    radial-gradient(1px 1px at 16% 20%, #fff 50%, transparent 55%),
+    radial-gradient(1px 1px at 34% 58%, #dfe9ff 50%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 52% 28%, #fff 50%, transparent 55%),
+    radial-gradient(1px 1px at 71% 62%, #d5e2ff 50%, transparent 55%),
+    radial-gradient(1px 1px at 84% 30%, #fff 50%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 44% 82%, #fff 50%, transparent 55%),
+    radial-gradient(1px 1px at 63% 13%, #fff 50%, transparent 55%),
+    radial-gradient(1px 1px at 6% 70%, #d5e2ff 50%, transparent 55%);
+  opacity: 0.7;
+}
+
+/* ---------- 太阳 ---------- */
+.time-seal__sun {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 15%;
+  aspect-ratio: 1 / 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #fff8e6, #ffe9a8 62%, #ffd76a);
+  box-shadow: 0 0 8px 2px rgba(255, 216, 120, 0.9);
+}
+
+/* ---------- 月亮（背景渐变已在 style 内联做月相） ---------- */
+.time-seal__moon {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 16%;
+  aspect-ratio: 1 / 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 6px 1.5px rgba(215, 226, 245, 0.6);
+}
+.time-seal__moon::after {
+  /* 月面中心微高光，模拟球体 */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 32%, rgba(255, 255, 255, 0.55), transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* ---------- 阴雨天：低饱和云带（仅 disc.has-cloud / 过渡） ---------- */
+.time-seal__cloud {
+  position: absolute;
+  inset: -6% -20%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 25% 60%, rgba(245, 248, 252, 0.92) 60%, transparent),
+    radial-gradient(closest-side at 52% 46%, rgba(238, 244, 250, 0.95) 55%, transparent),
+    radial-gradient(closest-side at 80% 62%, rgba(244, 247, 252, 0.9) 60%, transparent);
+  filter: blur(1.5px);
+}
+.has-cloud .time-seal__cloud {
+  opacity: 0.6;
+  animation: timeSealDrift 7s ease-in-out infinite alternate;
+}
+@keyframes timeSealDrift {
+  from { transform: translate3d(-4%, 0, 0); }
+  to   { transform: translate3d(4%, 0, 0); }
+}
+
+/* ---------- 三种天气粒子层 ---------- */
+.time-seal__wx {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 雨（晴雨/雷共用列状），雷暴时叠加闪帧 */
+.time-seal__wx--rain {
+  background-image:
+    repeating-linear-gradient(96deg, transparent 0 5px, rgba(185, 214, 255, 0.7) 5px 6px, transparent 6px),
+    repeating-linear-gradient(84deg, transparent 0 9px, rgba(205, 228, 255, 0.55) 9px 10px, transparent 10px);
+  background-size: 100% 100%, 100% 100%;
+  opacity: 0.8;
+  animation: timeSealRain 0.7s linear infinite;
+}
+@keyframes timeSealRain {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: -6px 10px, 10px 12px; }
+}
+.time-seal__wx--rain.is-thunder {
+  opacity: 0.95;
+}
+.time-seal__disc:has(.time-seal__wx--rain.is-thunder) {
+  animation: timeSealFlash 4.2s steps(1, end) 0.3s infinite;
+}
+@keyframes timeSealFlash {
+  0%, 88%, 100% { filter: brightness(1); }
+  90% { filter: brightness(2.1) saturate(0.7); }
+  92% { filter: brightness(1); }
+}
+
+/* 雪 */
+.time-seal__wx--snow {
+  background-image:
+    radial-gradient(1.4px 1.4px at 18px 8px, #fff 40%, transparent 60%),
+    radial-gradient(1.2px 1.2px at 40px 3px, #eaf3ff 40%, transparent 60%),
+    radial-gradient(1.5px 1.5px at 4px 20px, #fff 40%, transparent 60%),
+    radial-gradient(1.1px 1.1px at 30px 15px, #dcecff 40%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 46px 26px, #fff 40%, transparent 60%),
+    radial-gradient(1px 1px at 10px 34px, #e6f2ff 40%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 28px 40px, #fff 40%, transparent 60%);
+  background-size: 56px 52px;
+  opacity: 0.9;
+  animation: timeSealSnow 2.4s linear infinite;
+}
+@keyframes timeSealSnow {
+  from { background-position: 0 0; }
+  to   { background-position: 14px 52px; }
+}
+
+/* 风：细斜丝掠过 */
+.time-seal__wx--wind {
+  background-image:
+    repeating-linear-gradient(178deg, transparent 0 18px, rgba(255, 255, 255, 0.35) 18px 19px),
+    repeating-linear-gradient(183deg, transparent 0 30px, rgba(226, 240, 255, 0.25) 30px 31px);
+  opacity: 0.5;
+  animation: timeSealWind 1.6s linear infinite;
+}
+@keyframes timeSealWind {
+  from { transform: translate3d(-30%, 0, 0); }
+  to   { transform: translate3d(30%, 0, 0); }
+}
+
+/* ---------- 尊重减少动效偏好 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .time-seal__cloud,
+  .time-seal__wx,
+  .time-seal__disc:has(.time-seal__wx--rain.is-thunder) {
+    animation: none !important;
+  }
+  .time-seal__cloud { opacity: 0.6; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   布局：卡片大方位 与 文章页印章条 在本文件外由对应模块注入类名，
+   这里给通用样式。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ---------- 文章页印章条 ---------- */
+.article-seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 18px 0 26px;
+  padding: 6px 2px 8px;
+}
+.time-seal--entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.time-seal--entry > .time-seal__disc {
+  width: 52px;
+  height: 52px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 -3px 9px rgba(0, 0, 0, 0.28),
+    0 3px 9px rgba(0, 0, 0, 0.35);
+}
+.time-seal--entry > .time-seal__disc .time-seal__sun { width: 13%; }
+.time-seal--entry > .time-seal__disc .time-seal__moon { width: 15%; }
+
+.time-seal__words {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.3;
+}
+.time-seal__words strong {
+  font: inherit;
+  font-weight: 600;
+  color: var(--article-text, #d5dce8);
+  letter-spacing: 0.02em;
+}
+.time-seal__words time {
+  font-weight: 700;
+  color: #eef3ff;
+}
+.time-seal__words small {
+  font-size: 0.86em;
+  color: var(--article-muted, #93a0b4);
+  letter-spacing: 0.04em;
+}
+
+/* 深色页基本白字基调（文章正文通常在玻璃卡内，颜色由主题 var 决定） */
+.time-seal__words time {
+  font-weight: 700;
+  color: #eef3ff;
+}
+/* 两枚印章间的小分隔点——用口述 no */
+.article-seals .time-seal--entry + .time-seal--entry::before {
+  content: "";
+  align-self: center;
+  width: 1px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.12);
+  margin-right: 8px;
+}

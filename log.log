@@ -2,6 +2,22 @@
 
 > `README.md` 只保留项目接手信息和精简更新摘要；本文件记录详细更新；彩蛋规则单独维护在 `docs/EASTER_EGGS.md`。更新按时间倒序排列。
 
+### 2026-09-06 · 时间印章（文章天气记忆）
+
+1. **需求**：让每篇文章成为“时间胶囊”——不只记发布日期，还给卡片 / 文章页一枚“创作当时的小天空”。月相 / 昼夜由时刻（时分）推导，天气则用 frontmatter 里顺手写的 `weather` 在圆盘内叠雨丝 / 雪花 / 雷光 / 风丝。文案如“写于 2026-03-14 · 雨夜 23:42”“最后修订于 2026-09-06 · 静夜 · 亏凸月 · 20:02”。
+2. **字段管道**：公开文章 frontmatter 新增可选 `created: "YYYY-MM-DD HH:MM"`（缺省取 `date` 正午）、`weather: clear|cloudy|rain|snow|thunder|wind`、`updated`；`updated` 不填则 `scripts/build-posts.mjs` 用 `git log -1 --format=%cI` 取最后一次提交时间，失败退化为文件 mtime（同一时刻则置 null 不展示）。`js/posts.data.js` 每篇新增 `createdAt / updatedAt / weather`。
+3. **私密一致**：`scripts/private-encrypt.mjs` 仅把 frontmatter 显式的 `created / updated / weather` 写入展示 meta（与标题 / 日期同级，本就是明文），不读文件时间——避免意外泄露本地版本；`js/posts.js` 的 `privateToPost` 透传三字段。
+4. **天空采样复用**：把 `js/time-sky.js` 内部纯函数 `sampleSky() / celestialPosition()` 加 export 供印章用，避免复制色彩表。
+5. **渲染模块 `js/time-seal.js`**：
+   - `sampleSky` 提供 top/mid/bot 三色渐变 → 内联 CSS 变量注入圆盘 `background`；小时走时间戳的 floor hour + 分钟。
+   - 昼夜：hours 6–19.5 显示太阳并给出位置弧；其余放月（月相在 JS 用一个“亮/暗”线性渐变直描——to right 上半月光自右、下半月光自左，新月近纯暗 / 满月近纯亮，`(1-cos2πφ)/2` 给照度，附中心高光伪元素）与夜色星点。
+   - 天气层：`time-seal__wx` 三类 CSS 动画（雨/雷 shared 斜列 + 雷暴 `brightness` 闪电帧、雪用径向渐变 + `background-position` 下沉、风用斜丝平移）；阴天叠 `.time-seal__cloud` 漂移。全部跟随 `prefers-reduced-motion`。
+   - 文案：`clockWord()` 时辰词（日凌晨…深夜）+ `WEATHER_CN` 映射 → 夜“雷雨夜 / 雪夜 / 晴夜 / 静夜”、昼“晴日午后 / 雨日上午 / 大风天色 / 雪后初晴”；月相八分名（新月…残月）。
+   - 卡片（deck / classic 共用）走 `renderCardSeal()`：注入**meta 行**里一枚小图章 chip（16px 圆盘 + “雷雨夜 23:42”文字），风格对齐标签 tag，无布局碰撞；大而炫的两枚圆盘放文章页 `renderArticleSeal()`，置于 `<header>` 后、正文前，创建与修订两者并列（中间 1px 分隔），修订盘不重复天气词。
+6. **样式 `styles/time-seal.css`** 增量：图章 chip / 圆盘（径向地平光 + 渐变）、星点 8 处、日辉、月相暗部、三类天气动画、`@media (prefers-reduced-motion: reduce)` 停动画。尺寸全单位化（chip 16px / 文页盘 52px），一套自适应。
+7. **脚手架**：`scripts/new-post.mjs` 新文自动写 `created`（本地 datetime）注释行；`posts/_template.md` 与 `private/_template.md` 补字段注释示例。
+8. **验证**：`node --check` 全部新 / 改 JS 通过；`npm run build` 成功，posts.data.js 每篇含三新字段（hello-world 演示 `2026-07-09 23:42 thunder`）；用 Node 导入 `time-seal` 对昼雨 / 夜雷 / 黄昏月等样例打 HTML，肉眼核对渐变端色、日/月载体与文案词无越界；git diff --check 留待提交前跑。README 功能与写文章各补一段，`log.log` 倒序插入本条。
+
 ### 2026-09-06 · 右上角季节选择按钮
 
 1. **需求**：上一轮加入的四季是自动跟随日期，博主希望右上角能像背景选择器那样手动固定季节，体验不同季节的氛围；要好看、顺手、可恢复自动。

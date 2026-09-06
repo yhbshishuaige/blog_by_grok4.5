@@ -12,6 +12,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import hljs from "highlight.js/lib/core";
 import bash from "highlight.js/lib/languages/bash";
@@ -253,6 +254,63 @@ function slugFromFilename(name) {
   return name.replace(/\.md$/i, "").toLowerCase().replace(/\s+/g, "-");
 }
 
+/** "2026-03-14 23:42" / "2026-03-14T23:42" / "2026-03-14" → "2026-03-14 23:42"（无时间则默认正午） */
+function normalizeDateTime(value) {
+  if (value == null) return null;
+  const m = String(value)
+    .trim()
+    .match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s]+(\d{1,2}):(\d{2}))?/);
+  if (!m) return null;
+  const pad = (n) => String(n).padStart(2, "0");
+  const [, y, mo, d, h, mi] = m;
+  return `${y}-${pad(mo)}-${pad(d)} ${h != null ? pad(h) : "12"}:${mi ?? "00"}`;
+}
+
+const SEAL_WEATHERS = new Set([
+  "clear",
+  "cloudy",
+  "rain",
+  "snow",
+  "thunder",
+  "wind",
+]);
+
+/** frontmatter weather 字段 → 印章天气类型（非法值忽略） */
+function normalizeSealWeather(value) {
+  const v = String(value || "").trim().toLowerCase();
+  return SEAL_WEATHERS.has(v) ? v : "";
+}
+
+/** git 最后一次提交该文件的本地时间（失败返回 null，例如尚未提交或 CI 浅克隆） */
+function gitLastModified(relFile) {
+  try {
+    const out = execSync(`git log -1 --format=%cI -- "${relFile}"`, {
+      cwd: ROOT,
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 5000,
+    })
+      .toString()
+      .trim();
+    if (!out) return null;
+    return normalizeDateTime(
+      new Date(out).toLocaleString("sv-SE").replace("T", " ")
+    );
+  } catch {
+    return null;
+  }
+}
+
+/** 文件 mtime 兜底 */
+function fileMtime(full) {
+  try {
+    return normalizeDateTime(
+      fs.statSync(full).mtime.toLocaleString("sv-SE").replace("T", " ")
+    );
+  } catch {
+    return null;
+  }
+}
+
 function parseTags(value) {
   const tags = String(value || "随笔")
     .split(/[,，]/u)
@@ -298,10 +356,23 @@ function loadPosts() {
 
     const { content, toc, codeBlockCount } = markdownToHtml(body);
 
+    // 时间印章：created 记录写作时刻（frontmatter 可选）；updated 优先取
+    // frontmatter 显式值，否则取 git 最后提交时间，再退化为文件改动时间。
+    const createdAt = normalizeDateTime(meta.created) || `${date} 12:00`;
+    let updatedAt =
+      normalizeDateTime(meta.updated) ||
+      gitLastModified(`posts/${file}`) ||
+      fileMtime(full);
+    if (updatedAt === createdAt) updatedAt = null;
+    const weather = normalizeSealWeather(meta.weather);
+
     posts.push({
       slug,
       title,
       date,
+      createdAt,
+      updatedAt,
+      weather,
       tags,
       readingMinutes,
       wordCount: stats.wordCount,
@@ -330,6 +401,9 @@ function writeOutput(posts) {
     slug: ${JSON.stringify(p.slug)},
     title: ${JSON.stringify(p.title)},
     date: ${JSON.stringify(p.date)},
+    createdAt: ${JSON.stringify(p.createdAt)},
+    updatedAt: ${JSON.stringify(p.updatedAt)},
+    weather: ${JSON.stringify(p.weather)},
     tags: ${JSON.stringify(p.tags)},
     readingMinutes: ${p.readingMinutes},
     wordCount: ${p.wordCount},
@@ -371,6 +445,8 @@ function main() {
 // Allow scripts (e.g. private-encrypt.mjs) to reuse the markdown pipeline.
 export {
   parseFrontmatter,
+  normalizeDateTime,
+  normalizeSealWeather,
   markdownToHtml,
   articleStats,
   parseTags,

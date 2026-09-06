@@ -1,6 +1,9 @@
 ---
 title: 文章标题
 date: 2026-07-10
+created: "2026-07-10 23:42"   # 写作时刻（时间印章用）；可省略，默认取 date 正午
+weather: rain                # 当时天气：clear/cloudy/rain/snow/thunder/wind（可省略）
+# updated: "2026-09-06 15:20"  # 最近修订时刻；留空则构建时自动用最后一次 git 提交时间
 tag: 随笔
 # 多个标签用英文逗号或中文逗号分隔，例如：tag: 游戏, 攻略, 随笔
 slug: my-post-slug

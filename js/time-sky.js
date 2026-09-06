@@ -75,7 +75,7 @@ function lerpGlow(g1, g2, t) {
   return `rgba(${lerp(a.r, b.r, t)}, ${lerp(a.g, b.g, t)}, ${lerp(a.b, b.b, t)}, ${lerp(a.a, b.a, t)})`;
 }
 
-function sampleSky(hour) {
+export function sampleSky(hour) {
   let h = hour % 24;
   if (h < 0) h += 24;
 
@@ -97,7 +97,7 @@ function sampleSky(hour) {
 }
 
 /** Sun arc: rises east (~10%) at dawn, high at noon, sets west (~90%) */
-function celestialPosition(hour, kind) {
+export function celestialPosition(hour, kind) {
   if (kind === "sun") {
     const rise = 5.5;
     const set = 19.5;
