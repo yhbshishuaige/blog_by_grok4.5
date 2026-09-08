@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="styles/season.css" />
   <link rel="stylesheet" href="styles/festival.css" />
   <link rel="stylesheet" href="styles/time-seal.css" />
+  <link rel="stylesheet" href="styles/settings.css" />
+  <link rel="stylesheet" href="styles/typo.css" />
 </head>
 <body>
   <script>
@@ -180,7 +182,7 @@
         </nav>
       </div>
       <div class="header-meta">
-        <div class="home-layout-control" id="homeLayoutControl">
+        <div class="home-layout-control" id="homeLayoutControl" hidden>
           <button
             type="button"
             class="home-layout-btn"
@@ -235,7 +237,7 @@
             </button>
           </div>
         </div>
-        <div class="background-control" id="backgroundControl">
+        <div class="background-control" id="backgroundControl" hidden>
           <button
             type="button"
             class="background-btn"
@@ -275,7 +277,7 @@
             </button>
           </div>
         </div>
-        <div class="season-control" id="seasonControl">
+        <div class="season-control" id="seasonControl" hidden>
           <button
             type="button"
             class="season-btn"
@@ -385,9 +387,29 @@
             <p class="search-hint" id="searchHint">输入关键词，实时搜索全部文章</p>
           </div>
         </div>
-        <div class="weather-badge" id="weatherBadge" title="点击切换：晴/阴/小雨/中雨/大雨/雷电/小雪/中雪/大雪/大风">
+        <div class="weather-badge" id="weatherBadge" hidden title="点击切换：晴/阴/小雨/中雨/大雨/雷电/小雪/中雪/大雪/大风">
           <span class="weather-icon" id="weatherIcon">☀️</span>
           <span class="weather-text" id="weatherText">加载中…</span>
+        </div>
+        <div class="config-control" id="configControl">
+          <button
+            type="button"
+            class="config-btn"
+            id="configBtn"
+            aria-expanded="false"
+            aria-controls="configPanel"
+            title="个性化：首页布局 / 背景 / 时间 / 天气 / 季节"
+          >
+            <span class="config-btn-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.5 1.5M16.9 16.9l1.5 1.5M18.4 5.6l-1.5 1.5M7.1 16.9l-1.5 1.5"
+                  stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="config-btn-label">设置</span>
+          </button>
+          <div class="config-panel" id="configPanel" hidden role="dialog" aria-label="博客设置"></div>
         </div>
         <div class="clock" id="clock">--:--</div>
       </div>

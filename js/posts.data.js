@@ -9,7 +9,7 @@ export const posts = [
     title: "Hello World",
     date: "2026-07-09",
     createdAt: "2026-07-09 23:42",
-    updatedAt: "2026-09-05 20:02",
+    updatedAt: "2026-09-06 18:50",
     weather: "thunder",
     tags: ["第一篇"],
     readingMinutes: 3,

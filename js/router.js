@@ -190,10 +190,10 @@ function renderArticleHtml(post) {
         <h1>${post.title}</h1>
         ${lead}
       </header>
-      ${renderArticleSeal(post)}
       <div class="article-body">
         ${post.content}
       </div>
+      ${renderArticleSeal(post)}
       <footer class="article-end">
         <p class="article-end-note">—— ${post.title} · Weather Blog</p>
         <a href="#/" class="back-link" data-nav style="margin:0;animation-delay:0.5s">← 回首页</a>

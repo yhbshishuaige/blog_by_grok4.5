@@ -48,17 +48,6 @@ body.season-summer .season-ambient::before {
   mix-blend-mode: soft-light;
 }
 
-body.season-autumn .season-ambient::before {
-  opacity: 0.85;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 168, 90, 0.3) 0%,
-    rgba(255, 190, 110, 0.26) 48%,
-    rgba(210, 120, 62, 0.3) 100%
-  );
-  mix-blend-mode: overlay;
-}
-
 body.season-winter .season-ambient::before {
   opacity: 0.5;
   background: linear-gradient(
@@ -70,7 +59,8 @@ body.season-winter .season-ambient::before {
   mix-blend-mode: soft-light;
 }
 
-/* 秋日地平线金雾(傍晚更浓,温度适宜的秋意) */
+/* 地平线氛围色带：底部默认透明，各季节按需翻开；
+   (秋天刻意不开——保持天空与雪峰本来的通透，只留空中落叶。) */
 .season-ambient::after {
   content: "";
   position: absolute;
@@ -83,89 +73,15 @@ body.season-winter .season-ambient::before {
   pointer-events: none;
 }
 
-body.season-autumn .season-ambient::after {
-  opacity: 1;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(255, 176, 84, 0.1) 55%,
-    rgba(255, 190, 110, 0.16) 100%
-  );
-  mix-blend-mode: screen;
-}
-
 body.season-spring .season-ambient::after {
   opacity: 1;
   background: linear-gradient(180deg, transparent 55%, rgba(255, 214, 224, 0.1) 100%);
   mix-blend-mode: screen;
 }
 
-/* ---------- 山体四季配色(按昼夜相位分别覆盖) ---------- */
-
-/* 秋:金杉与赭石,雪顶染上奶油色 */
-body.season-autumn.is-day {
-  --peak-light: #9c8258;
-  --peak-mid: #6e5f42;
-  --peak-deep: #3f3a2c;
-  --peak-shade-light: #6b5c40;
-  --peak-shade-deep: #241f14;
-  --snow-bright: #f5e9c8;
-  --snow-blue: #d8c49a;
-  --snow-shadow: #8a744f;
-  --ridge-far: rgba(122, 92, 56, 0.48);
-  --ridge-mid: rgba(94, 70, 46, 0.72);
-  --ridge-near-top: #4a3a26;
-  --ridge-near-bottom: #20180f;
-  --rock-light: #7c6544;
-  --rock-mid: #56462e;
-  --rock-dark: #2f2417;
-}
-
-body.season-autumn.is-dawn {
-  --peak-light: #a8866a;
-  --peak-mid: #77604a;
-  --peak-deep: #43362a;
-  --snow-bright: #ffe7d1;
-  --snow-blue: #d9bfa0;
-  --snow-shadow: #8a6f52;
-  --ridge-far: rgba(128, 96, 66, 0.5);
-  --ridge-mid: rgba(98, 72, 50, 0.72);
-  --rock-light: #83684a;
-  --rock-mid: #5c4930;
-  --rock-dark: #332718;
-}
-
-body.season-autumn.is-dusk {
-  --peak-light: #9a7258;
-  --peak-mid: #6b4e3e;
-  --peak-deep: #3d2c22;
-  --snow-bright: #f2cdb4;
-  --snow-blue: #cfa88e;
-  --snow-shadow: #7d5f4a;
-  --ridge-far: rgba(118, 82, 58, 0.5);
-  --ridge-mid: rgba(88, 60, 42, 0.74);
-  --rock-light: #77563e;
-  --rock-mid: #52392a;
-  --rock-dark: #2c1f15;
-}
-
-body.season-autumn.is-night {
-  --peak-light: #4a4032;
-  --peak-mid: #322b20;
-  --peak-deep: #1a1610;
-  --peak-shade-light: #2c2619;
-  --peak-shade-deep: #0d0b07;
-  --snow-bright: #b3a68a;
-  --snow-blue: #7d7259;
-  --snow-shadow: #4a4028;
-  --ridge-far: rgba(58, 48, 32, 0.55);
-  --ridge-mid: rgba(38, 32, 20, 0.8);
-  --ridge-near-top: #241e12;
-  --ridge-near-bottom: #0a0806;
-  --rock-light: #3a3122;
-  --rock-mid: #262015;
-  --rock-dark: #12100a;
-}
+/* ---------- 山体四季配色(按昼夜相位分别覆盖) ----------
+   注意：秋天不再覆盖峰/雪/岩石色 —— 让默认雪山(蓝灰雪峰)保持不变，
+   秋意只由空中落叶承担。春夏冬各自覆盖。 */
 
 /* 春:山脊与岩石带一点新绿 */
 body.season-spring.is-day {

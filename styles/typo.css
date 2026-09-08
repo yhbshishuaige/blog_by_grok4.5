@@ -1,0 +1,90 @@
+/* ═══════════════════════════════════════════════════════════════
+   Editorial type · 阅读用字（衬 / 非衬 搭配层）
+   在最末加载、只作用于“阅读叙事”表面，不扰动顶栏 / 按钮/代码等
+   UI 层，原站点字量体系（数字度量、代码）依旧走等宽。
+
+   搭配思路（拒绝“千篇一律”的通用字体）：
+   ─ 标题 / 导语中的字母·数字自托管的衬线可变字体 Fraunces
+     （带 optical sizing 的编辑感衬线）来勾勒。
+   ─ 中文标题 —— 衬线（思源宋体系，书卷气），用同一个
+     font-family 栈与 Latin 的 Fraunces 天然混排。
+   ─ 中文正文 —— 非衬线（思源黑体系的清秀印刷味）。
+   Fraunces 仅 Latin 已自托管于 fonts/，无远程依赖；中文由系统字体渲染。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 自托管 Fraunces（Latin, 可变 wght 400–900, 带 optical） ── */
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-full-latin-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-latin-full-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+:root {
+  /* 衬线栈——Latin 走 Fraunces，中文落到宋体系 */
+  --font-editorial: "Fraunces", "Source Han Serif SC", "Noto Serif CJK SC",
+    "Noto Serif SC", "Source Han Serif CN", "Songti SC", "STSong", "SimSun", serif;
+  /* 非衬正文栈——中文思源黑体系，清爽耐久 */
+  --font-plain: "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei",
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* 尊重用户系统偏好中的字体（默认即通用非衬），保留一个独立令牌便于日后换正文字体 */
+:root {
+  --font-prose: var(--font-plain);
+}
+
+/* ───────── 阅读叙事表面的字距、字重微调（增量，仅排版）────── */
+.article-body,
+.post-card p,
+.post-deck-card p,
+.hero-desc,
+.article-lead {
+  font-family: var(--font-prose);
+  letter-spacing: 0.01em;
+}
+/* 正文里的引导性连字符用斜体打点？不必。保持简洁。 */
+
+/* 标题切到衬线栈（含 Fraunces Latin + 宋体中文） */
+.site header .logo-text,
+.hero-kicker,
+.hero h1,
+.article-header h1,
+.article-header h2,
+.article h2,
+.article h3,
+.article h4,
+.post-card h2,
+.post-deck-card h2,
+.article-title {
+  font-family: var(--font-editorial);
+}
+
+/* 衬线的大标题字重更生动：Fraunces 的可变轴以更亮眼的轨迹呈现 */
+.hero h1,
+.article-header h1,
+.post-deck-card h2 {
+  letter-spacing: -0.01em;
+}
+
+/* 保持“命令行气质”的部分故意不换：顶栏、导航、tags、脚注、
+   代码、meta 与任何等宽控件数据仍由原 var 驱动。可随时在此追加。 */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 标题字重可做一点悬浮加重的拟纸感（可选，先关闭以免动画干扰） */
+}

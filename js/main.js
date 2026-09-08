@@ -17,6 +17,7 @@ import { createTransitions } from "./transitions.js";
 import { createEnhance } from "./enhance.js";
 import { createSeason } from "./season.js";
 import { createSeasonControl } from "./season-control.js";
+import { createSettings } from "./settings.js";
 import { createRouter } from "./router.js";
 
 async function boot() {
@@ -47,6 +48,15 @@ async function boot() {
   const season = createSeason();
   season.init();
   const seasonControl = createSeasonControl({ season });
+  const settings = createSettings({
+    g: {
+      homeLayout,
+      background,
+      timeSky,
+      seasonControl,
+      weather,
+    },
+  });
   const router = createRouter({
     transitions,
     getWeatherType: () => weather.getType(),
@@ -80,6 +90,7 @@ async function boot() {
     enhance,
     season,
     seasonControl,
+    settings,
     transitions,
     router,
     weatherReady,
